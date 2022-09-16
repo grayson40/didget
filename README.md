@@ -19,6 +19,14 @@ We use Git to manage our codebase. Download the latest version of Git [here.](ht
 </details>
 
 <details>
+	<summary>React</summary>
+
+Execute the command:
+
+    npm i react
+</details>
+
+<details>
 	<summary>VS Code</summary>
 
 VS Code is used to build and test the app. Debugging and version control is very easy through this editor. Download the latest version of VS Code [here](https://code.visualstudio.com/download).
