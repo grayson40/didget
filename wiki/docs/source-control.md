@@ -60,6 +60,40 @@ The following document will walk you through the process of creating a branch, c
 
 1. Once your pull request has been reviewed and approved, it is time to merge your changes into the `master` branch. Click on the `Merge pull request` button to merge your changes into the `master` branch. 
 
-![merge-pull-request](/wiki/assets/merge-pull-request.PNG)
+    ![merge-pull-request](/wiki/assets/merge-pull-request.PNG)
 
 ### Your changes are now merged into master!!
+
+# Updating
+
+## How to update your local branch to master
+
+1. Execute the following commands:
+
+    `git fetch origin master`
+
+    `git merge origin/master`
+
+# Checking out
+
+## How to checkout another branch
+
+1. Execute the following commands:
+
+    `git checkout <name of branch>`
+
+    `git pull`
+
+### **OR**
+
+1. Navigate to the bottom left of VS Code and click on your current checked out branch.
+
+    ![checkout-branch](/wiki/assets/checkout-branch.PNG)
+
+2. Select desired branch to checkout.
+
+    ![branch-select](/wiki/assets/branch-select.PNG)
+
+3. Execute the following command:
+
+    `git pull`
