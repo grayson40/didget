@@ -19,14 +19,6 @@ We use Git to manage our codebase. Download the latest version of Git [here.](ht
 </details>
 
 <details>
-	<summary>React</summary>
-
-Execute the command:
-
-    npm i react
-</details>
-
-<details>
 	<summary>VS Code</summary>
 
 VS Code is used to build and test the app. Debugging and version control is very easy through this editor. Download the latest version of VS Code [here](https://code.visualstudio.com/download).
@@ -40,15 +32,18 @@ VS Code is used to build and test the app. Debugging and version control is very
 2. Copy the HTTPS URL provided.
 3. Open a command prompt and navigate to your desired directory.
 4. Clone the repository onto your local machine by executing the command:
-```
-git clone [URL]
-```
+    ```
+    git clone [URL]
+    ```
 5. Open an instance of VS Code and open the folder where you cloned the repository.
-6. Congrats, you are now ready to develop!
-
-## Preferred method of development
-
-It is highly encouraged that each developer works on a branch based off master and **never** commit directy to the master branch. 
+6. Open a terminal and execute the following command:
+    ```
+    npm install
+    ```
+7. Then run the app by executing the command:
+    ```
+    npm start
+    ```
 
 ## Getting Started with Create React App
 
