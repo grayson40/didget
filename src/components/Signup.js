@@ -14,7 +14,7 @@ export default function Signup() {
     async function handleSubmit(e) {
         e.preventDefault()
 
-        {/*Check if the two entered passwords are equal*/}
+        // Check if the two entered passwords are equal
         if(passwordRef.current.value !== passwordConfirmRef.current.value) {
             return setError('Passwords do not match')
         }
@@ -37,7 +37,7 @@ export default function Signup() {
                 <h2 className="text-center mb-4">Sign Up</h2>
                 {currentUser && currentUser.email}
                 {error && <Alert variant="danger">{error}</Alert>}
-                {/*Create Email, Password, and Password-Confirm Fields on page*/}
+                {/* Create Email, Password, and Password-Confirm Fields on page */}
                 <Form onSubmit={handleSubmit}>
                     <Form.Group id="email">
                         <Form.Label>Email</Form.Label>
