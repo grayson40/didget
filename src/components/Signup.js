@@ -35,7 +35,7 @@ export default function Signup() {
         <Card>
             <Card.Body>
                 <h2 className="text-center mb-4">Sign Up</h2>
-                {currentUser.email}
+                {currentUser && currentUser.email}
                 {error && <Alert variant="danger">{error}</Alert>}
                 {/*Create Email, Password, and Password-Confirm Fields on page*/}
                 <Form onSubmit={handleSubmit}>
@@ -51,7 +51,7 @@ export default function Signup() {
                         <Form.Label>Password Confirmation</Form.Label>
                         <Form.Control type="password" ref={passwordConfirmRef} required />
                     </Form.Group>
-                    <Button disabled={loading} className="w-100" type="submit">
+                    <Button disabled={loading} className="w-100 mt-3" type="submit">
                         Sign Up
                     </Button>
                 </Form>
