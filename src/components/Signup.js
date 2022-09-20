@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { Form, Button, Card } from 'react-bootstrap'
-import { useAuth } from '../contexts/AuthContext'
+// import { useAuth } from '../contexts/AuthContext'
 
 export default function Signup() {
     //  Create constants for each reference required for react among user email, password, and password confirmation
