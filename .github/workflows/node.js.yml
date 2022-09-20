@@ -10,6 +10,13 @@ on:
     branches: ["master"]
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: prettier
+        run: npx prettier --write src/**/*.js
+
   build:
     runs-on: ubuntu-latest
 
@@ -25,7 +32,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npx prettier --write src/**/*.js
       - run: npm ci
       - run: npm run build --if-present
       # - run: npm test
