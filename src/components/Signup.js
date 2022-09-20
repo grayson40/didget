@@ -9,11 +9,11 @@ export default function Signup() {
     const passwordConfirmRef = useRef()
     const { signup } = useAuth()
 
-    function handleSubmit(e) {
+    /*function handleSubmit(e) {
         e.preventDefault()
 
         signup(emailRef.current.value, passwordRef.current.value)
-    }
+    }*/
 
 
     return (
