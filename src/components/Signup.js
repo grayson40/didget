@@ -39,18 +39,25 @@ export default function Signup() {
                 {error && <Alert variant="danger">{error}</Alert>}
                 {/* Create Email, Password, and Password-Confirm Fields on page */}
                 <Form onSubmit={handleSubmit}>
+                    {/* Specify form for email */}
                     <Form.Group id="email">
                         <Form.Label>Email</Form.Label>
                         <Form.Control type="email" ref={emailRef} required />
                     </Form.Group>
+
+                    {/* Specify form for password */}
                     <Form.Group id="password">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" ref={passwordRef} required />
                     </Form.Group>
+
+                    {/* Specify form for password confirmation */}
                     <Form.Group id="password-confirm">
                         <Form.Label>Password Confirmation</Form.Label>
                         <Form.Control type="password" ref={passwordConfirmRef} required />
                     </Form.Group>
+
+                    {/* Create a submit button */}
                     <Button disabled={loading} className="w-100 mt-3" type="submit">
                         Sign Up
                     </Button>
