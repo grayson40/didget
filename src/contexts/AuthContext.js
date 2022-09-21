@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
     }, [])
 
     //  Encapsulate the current user, as well as login, and signup functionality
-    const userInfo = {
+    const value = {
         currentUser,
         login,
         signup
@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
     
     //  Return the encapsulated user info in an authentication provider
     return (
-        <AuthContext.Provider userInfo={userInfo}>
+        <AuthContext.Provider value={value}>
             {!loading && children}
         </AuthContext.Provider>
   )
