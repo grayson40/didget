@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { auth } from '../firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const AuthContext = React.createContext()
 
@@ -16,12 +17,26 @@ export function AuthProvider({ children }) {
 
     //  Function uses an authentication object to create a user
     function signup(email,password) {
-        return auth.createUserWithEmailAndPassword(email,password)
+      createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        return userCredential.user;
+      })
+      .catch((error) => {
+        console.log(`${error.code} ${error.message}`);
+      });
     }
 
     //  Function uses an authentication object to login a user
     function login(email,password) {
-        return auth.signInWithEmailAndPassword(email, password)
+      signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        return userCredential.user;
+      })
+      .catch((error) => {
+        console.log(`${error.code} ${error.message}`);
+      });
     }
 
     //  Function to make user profile 
