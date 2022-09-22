@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { Form, Button, Card, Alert } from 'react-bootstrap'
-import { useAuth } from '../contexts/AuthContext'
+import { formatError, useAuth } from '../contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Signup() {
@@ -26,8 +26,9 @@ export default function Signup() {
             await signup(emailRef.current.value, passwordRef.current.value)
             navigate('/')
         }
-        catch {
-            setError('Failed to Create an Account')
+        catch (err){
+            // Format and set error thrown by Firebase Auth API
+            setError(formatError(err))
         }
         setLoading(false)
     }
