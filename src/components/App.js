@@ -6,7 +6,6 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Dashboard from './Dashboard'
 import Login from './Login'
 import PrivateRoute from './PrivateRoute'
-import TopBar from './TopBar';
 
 function App() {
   return (
