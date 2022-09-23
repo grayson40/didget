@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Dashboard from './Dashboard'
 import Login from './Login'
 import PrivateRoute from './PrivateRoute'
+import TopBar from './TopBar';
 
 function App() {
   return (
@@ -15,9 +16,11 @@ function App() {
         <Router>
           <AuthProvider>
             <Routes>
+              {/* Dashboard is a private path, should be inaccessible unless logged in */}
               <Route exact path="/" element={<PrivateRoute> <Dashboard/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
+              <Route path = "/TopBar" element={<TopBar/>}/>
             </Routes>
           </AuthProvider>
         </Router>
