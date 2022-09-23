@@ -20,7 +20,6 @@ function App() {
               <Route exact path="/" element={<PrivateRoute> <Dashboard/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
-              <Route path = "/TopBar" element={<TopBar/>}/>
             </Routes>
           </AuthProvider>
         </Router>
