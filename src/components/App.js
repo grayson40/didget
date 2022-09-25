@@ -15,6 +15,7 @@ function App() {
         <Router>
           <AuthProvider>
             <Routes>
+              {/* Dashboard is a private path, should be inaccessible unless logged in */}
               <Route exact path="/" element={<PrivateRoute> <Dashboard/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
