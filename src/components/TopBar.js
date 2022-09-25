@@ -10,11 +10,7 @@
 //              All pages except for Signout and Login pages should be set as private routes
 
 import React from 'react'
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import { Button } from 'react-bootstrap';
+import { Container, Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
@@ -31,7 +27,7 @@ export default function TopBar() {
 
   return (
     //  Create a nav bar which is situated at the top of the given workspace
-    <Navbar fixed="top">
+    <Navbar bg="dark" variant="dark" fixed="top">
         <Container fluid>
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
@@ -51,9 +47,7 @@ export default function TopBar() {
             {/* Could be replaced with a profile icon dropdownbutton setup */}
             <DropdownButton id="dropdown-basic-button" title="Profile">
                 <Dropdown.Item href="#/action-4">Settings</Dropdown.Item>
-                <Dropdown.Item>
-                    <Button variant='link' onClick={logOut}>Sign Out</Button>
-                </Dropdown.Item>
+                <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
             </DropdownButton>
         </Container>
     </Navbar>
