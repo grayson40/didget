@@ -14,8 +14,21 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import { Button } from 'react-bootstrap';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function TopBar() {
+
+  /**
+   * Signs out the current user
+   * @param void
+   * @return {Promise<void>} A Promise for the completion of the callback.
+   */
+  function logOut() {
+    return signOut(auth);
+  }
+
   return (
     //  Create a nav bar which is situated at the top of the given workspace
     <Navbar fixed="top">
@@ -38,7 +51,9 @@ export default function TopBar() {
             {/* Could be replaced with a profile icon dropdownbutton setup */}
             <DropdownButton id="dropdown-basic-button" title="Profile">
                 <Dropdown.Item href="#/action-4">Settings</Dropdown.Item>
-                <Dropdown.Item href="#/action-5">Signout</Dropdown.Item>
+                <Dropdown.Item>
+                    <Button variant='link' onClick={logOut}>Sign Out</Button>
+                </Dropdown.Item>
             </DropdownButton>
         </Container>
     </Navbar>
