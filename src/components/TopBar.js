@@ -14,7 +14,7 @@ import { Container, Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
-export default function TopBar() {
+export default function TopBar({ name }) {
 
   /**
    * Signs out the current user
@@ -40,7 +40,7 @@ export default function TopBar() {
             {/* Top Bar should also consist of an app title */}
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-center">
-                <Navbar.Brand href="/">Didget</Navbar.Brand>
+                <Navbar.Brand href="/">{ name }</Navbar.Brand>
             </Navbar.Collapse>
 
             {/* Top Bar should finally consist of a right drop down button */}
