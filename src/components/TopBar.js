@@ -40,7 +40,7 @@ export default function TopBar() {
             {/* Top Bar should also consist of an app title */}
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-center">
-                <Navbar.Brand href="#home">Didget</Navbar.Brand>
+                <Navbar.Brand href="/">Didget</Navbar.Brand>
             </Navbar.Collapse>
 
             {/* Top Bar should finally consist of a right drop down button */}
