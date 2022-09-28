@@ -46,7 +46,7 @@ export default function TopBar() {
             {/* Top Bar should finally consist of a right drop down button */}
             {/* Could be replaced with a profile icon dropdownbutton setup */}
             <DropdownButton id="dropdown-basic-button" title="Profile">
-                <Dropdown.Item href="#/action-4">Settings</Dropdown.Item>
+                <Dropdown.Item href="/settings">Settings</Dropdown.Item>
                 <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
             </DropdownButton>
         </Container>
