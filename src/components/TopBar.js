@@ -13,8 +13,11 @@ import React from 'react'
 import { Container, Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 
 export default function TopBar({ name }) {
+  
+  const navigate = useNavigate()
 
   /**
    * Signs out the current user
@@ -32,9 +35,10 @@ export default function TopBar({ name }) {
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
             <DropdownButton id="dropdown-basic-button" title="Go to...">
-                <Dropdown.Item href="#/action-1">Tasking</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Budgeting</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Debt Tracking</Dropdown.Item>
+                <Dropdown.Item href="/scheduler">Scheduling</Dropdown.Item>
+                <Dropdown.Item href="/budgeting">Budgeting</Dropdown.Item>
+                <Dropdown.Item href="/notes">Notes</Dropdown.Item>
+                <Dropdown.Item href="#/action-4">Debt Tracking</Dropdown.Item>
             </DropdownButton>
             
             {/* Top Bar should also consist of an app title */}

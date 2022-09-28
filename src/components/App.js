@@ -7,6 +7,9 @@ import Dashboard from './Dashboard'
 import Login from './Login'
 import PrivateRoute from './PrivateRoute'
 import Settings from './Settings';
+import Scheduler from './Scheduler';
+import Budgeting from './Budgeting';
+import Notes from './Notes';
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
               {/* Dashboard is a private path, should be inaccessible unless logged in */}
               <Route exact path="/" element={<PrivateRoute> <Dashboard/> </PrivateRoute>}/>
               <Route exact path="/settings" element={<PrivateRoute> <Settings/> </PrivateRoute>}/>
+              <Route exact path="/scheduler" element={<PrivateRoute> <Scheduler/> </PrivateRoute>}/>
+              <Route exact path="/budgeting" element={<PrivateRoute> <Budgeting/> </PrivateRoute>}/>
+              <Route exact path="/notes" element={<PrivateRoute> <Notes/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
             </Routes>
