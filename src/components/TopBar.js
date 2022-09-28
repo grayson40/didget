@@ -13,6 +13,9 @@ import React from 'react'
 import { Container, Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import { FaGrinSquint, FaBars } from 'react-icons/fa'
+
+
 
 export default function TopBar() {
 
@@ -25,18 +28,23 @@ export default function TopBar() {
     return signOut(auth);
   }
 
+  //  Create title constants for the navbar dropdowns
+  const quickAccTitle = (<FaBars glyph="star"> Dropdown </FaBars>);
+  const profileTitle = (<FaGrinSquint title = "Profile"> Dropdown </FaGrinSquint>);
+
   return (
+
     //  Create a nav bar which is situated at the top of the given workspace
     <Navbar bg="dark" variant="dark" fixed="top">
         <Container fluid>
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton id="dropdown-basic-button" title="Go to...">
+            <DropdownButton id="dropdown-basic-button" title={quickAccTitle}>
                 <Dropdown.Item href="#/action-1">Tasking</Dropdown.Item>
                 <Dropdown.Item href="#/action-2">Budgeting</Dropdown.Item>
                 <Dropdown.Item href="#/action-3">Debt Tracking</Dropdown.Item>
             </DropdownButton>
-            
+              
             {/* Top Bar should also consist of an app title */}
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-center">
@@ -45,10 +53,13 @@ export default function TopBar() {
 
             {/* Top Bar should finally consist of a right drop down button */}
             {/* Could be replaced with a profile icon dropdownbutton setup */}
-            <DropdownButton id="dropdown-basic-button" title="Profile">
-                <Dropdown.Item href="#/action-4">Settings</Dropdown.Item>
-                <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
+            <DropdownButton className = "justify-content-left" title = {profileTitle} >
+                <Container>
+                  <Dropdown.Item href="#/action-4">Settings</Dropdown.Item>
+                  <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
+                </Container>
             </DropdownButton>
+              
         </Container>
     </Navbar>
   );
