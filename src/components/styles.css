@@ -1,0 +1,13 @@
+.fixed-top-2 {
+    margin-top: 56px;
+    background-color: gray;
+}
+
+.dropdown-toggle::after{
+    border: none;
+    content: '\icon';
+   }
+
+body {
+    padding-top: 105px;
+}

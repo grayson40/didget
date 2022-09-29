@@ -9,12 +9,12 @@
 //              The signout option should logout the user and route back to signout
 //              All pages except for Signout and Login pages should be set as private routes
 
-import React from 'react'
-import { Container, Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
+import React from 'react';
+import { Container, Navbar, Dropdown, DropdownButton, Nav } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { FaGrinSquint, FaBars } from 'react-icons/fa'
-
+import { FaGrinSquint, FaBars } from 'react-icons/fa';
+import './styles.css';
 
 
 export default function TopBar({ name }) {
@@ -30,36 +30,38 @@ export default function TopBar({ name }) {
 
   //  Create title constants for the navbar dropdowns
   const quickAccTitle = (<FaBars glyph="star"> Dropdown </FaBars>);
-  const profileTitle = (<FaGrinSquint title = "Profile"> Dropdown </FaGrinSquint>);
 
   return (
 
     //  Create a nav bar which is situated at the top of the given workspace
     <Navbar bg="dark" variant="dark" fixed="top">
-        <Container fluid>
+        <div class = "container-fluid d-flex justify-content-start">
+
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton id="dropdown-basic-button" title="Go to...">
-                <Dropdown.Item href="/">Home</Dropdown.Item>
-                <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
-                <Dropdown.Item href="/budget">Budget</Dropdown.Item>
-                <Dropdown.Item href="/notes">Notes</Dropdown.Item>
-            </DropdownButton>
-              
-            {/* Top Bar should also consist of an app title */}
-            <Navbar.Toggle />
-            <Navbar.Collapse className="justify-content-center">
-                <Navbar.Brand href="/">{ name }</Navbar.Brand>
-            </Navbar.Collapse>
+            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle}>
+              <Dropdown.Item href="/">Home</Dropdown.Item>
+              <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
+              <Dropdown.Item href="/budget">Budget</Dropdown.Item>
+              <Dropdown.Item href="/notes">Notes</Dropdown.Item>
+          </DropdownButton>
+        </div>
+        <div class = "container-fluid d-flex justify-content-center">
+          {/* Top Bar should also consist of an app title */}
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-center">
+              <Navbar.Brand href="/">{ name }</Navbar.Brand>
+          </Navbar.Collapse>
+        </div>
+        <div class = "container-fluid d-flex justify-content-end">
 
-            {/* Top Bar should finally consist of a right drop down button */}
-            {/* Could be replaced with a profile icon dropdownbutton setup */}
-            <DropdownButton id="dropdown-basic-button" title="Profile">
-                <Dropdown.Item href="/settings">Settings</Dropdown.Item>
-                <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
-            </DropdownButton>
-              
-        </Container>
+          {/* Top Bar should finally consist of a right drop down button */}
+          {/* Could be replaced with a profile icon dropdownbutton setup */}
+          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button">
+            <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+            <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
+          </DropdownButton>
+        </div>
     </Navbar>
   );
 }
