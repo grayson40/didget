@@ -6,8 +6,9 @@
 .dropdown-toggle::after{
     border: none;
     content: '\icon';
-   }
+}
 
 body {
     padding-top: 105px;
 }
+
