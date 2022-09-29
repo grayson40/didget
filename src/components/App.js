@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Dashboard from './Dashboard'
 import Login from './Login'
 import PrivateRoute from './PrivateRoute'
+import Settings from './Settings';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Routes>
               {/* Dashboard is a private path, should be inaccessible unless logged in */}
               <Route exact path="/" element={<PrivateRoute> <Dashboard/> </PrivateRoute>}/>
+              <Route exact path="/settings" element={<PrivateRoute> <Settings/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
             </Routes>

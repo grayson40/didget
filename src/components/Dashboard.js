@@ -6,7 +6,7 @@ import Cards from './Cards';
 export default function Dashboard() {
   return (
     <Container>
-      <TopBar/>
+      <TopBar name='Didget'/>
       <Cards/>
     </Container>
   )

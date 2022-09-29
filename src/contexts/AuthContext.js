@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { auth } from '../firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword } from "firebase/auth";
 
 const AuthContext = React.createContext()
 
@@ -15,14 +15,42 @@ export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState()
     const [loading, setLoading] = useState(true)
 
-    //  Function uses an authentication object to create a user
+    /**
+     * Creates a new user account associated with the specified email address and password.
+     * @param {*} email The user's email.
+     * @param {*} password The user's password.
+     * @returns 
+     */
     function signup(email,password) {
       return createUserWithEmailAndPassword(auth, email, password)
     }
 
-    //  Function uses an authentication object to login a user
+    /**
+     * Asynchronously signs in using an email and password.
+     * @param {*} email The user's email address.
+     * @param {*} password The user's password.
+     * @returns void
+     */
     function login(email,password) {
       return signInWithEmailAndPassword(auth, email, password)
+    }
+
+    /**
+     * Updates the user's email address.
+     * @param {*} email The new email address.
+     * @returns void 
+     */
+    function changeEmail(email) {
+      return updateEmail(auth.currentUser, email)
+    }
+  
+    /**
+     * Updates the user's password.
+     * @param password The new password.
+     * @returns void 
+     */
+    function changePassword(password) {
+      return updatePassword(auth.currentUser, password)
     }
 
     //  Function to make user profile 
@@ -35,11 +63,13 @@ export function AuthProvider({ children }) {
         return unsubscribe
     }, [])
 
-    //  Encapsulate the current user, as well as login, and signup functionality
+    //  Encapsulate firebase functions
     const value = {
         currentUser,
         login,
-        signup
+        signup,
+        changeEmail,
+        changePassword
     }
     
     //  Return the encapsulated user info in an authentication provider
@@ -50,13 +80,11 @@ export function AuthProvider({ children }) {
   )
 }
 
-/*
-  Formats an error message by mapping each Firebase Auth Error codes to an error message
-
-  @param {error} err - Firebase Auth Error
-
-  @return {String} Returns an error message
-*/
+/**
+ * Formats an error message by mapping each Firebase Auth Error codes to an error message.
+ * @param {*} err Firebase Auth Error
+ * @returns {String} Formatted error message
+ */
 export function formatError(err){
 
   // Switch on the error code
