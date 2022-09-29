@@ -4,7 +4,7 @@ import './styles.css'
 
 export default function DateBar(){
     //  Create a variable that tracks the date currently being looked at
-    let today = new Date;
+    let today = new Date();
 
     return(
         <Nav class = "navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
