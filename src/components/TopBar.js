@@ -10,7 +10,7 @@
 //              All pages except for Signout and Login pages should be set as private routes
 
 import React from 'react';
-import { Container, Navbar, Dropdown, DropdownButton, Nav } from 'react-bootstrap';
+import {  Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { FaGrinSquint, FaBars } from 'react-icons/fa';
