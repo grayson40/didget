@@ -18,7 +18,7 @@ export default function Cards() {
                     aria-controls="example-collapse-text"
                     aria-expanded={open1}
                 >
-                    Tasks
+                    Schedule
                 </Button>
                 <Collapse in={open1}>
                     <div id="example-collapse-text">
@@ -62,7 +62,7 @@ export default function Cards() {
                     aria-controls="example-collapse-text"
                     aria-expanded={open2}
                 >
-                    Budgeting
+                    Budget
                 </Button>
                 <Collapse in={open2}>
                     <div id="example-collapse-text">
