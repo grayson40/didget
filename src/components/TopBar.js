@@ -17,7 +17,7 @@ import { FaGrinSquint, FaBars } from 'react-icons/fa'
 
 
 
-export default function TopBar() {
+export default function TopBar({ name }) {
 
   /**
    * Signs out the current user
@@ -48,16 +48,14 @@ export default function TopBar() {
             {/* Top Bar should also consist of an app title */}
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-center">
-                <Navbar.Brand href="/">Didget</Navbar.Brand>
+                <Navbar.Brand href="/">{ name }</Navbar.Brand>
             </Navbar.Collapse>
 
             {/* Top Bar should finally consist of a right drop down button */}
             {/* Could be replaced with a profile icon dropdownbutton setup */}
-            <DropdownButton className = "justify-content-left" title = {profileTitle} >
-                <Container>
-                  <Dropdown.Item href="#/action-4">Settings</Dropdown.Item>
-                  <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
-                </Container>
+            <DropdownButton id="dropdown-basic-button" title="Profile">
+                <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
             </DropdownButton>
               
         </Container>
