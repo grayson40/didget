@@ -1,7 +1,11 @@
 import React from 'react'
+import Container from 'react-bootstrap/Container'
+import TopBar from './TopBar'
 
 export default function Notes() {
   return (
-    <div>Notes</div>
+    <Container>
+      <TopBar name='Didget'/>
+    </Container>
   )
 }

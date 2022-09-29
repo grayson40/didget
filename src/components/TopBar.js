@@ -13,11 +13,8 @@ import React from 'react'
 import { Container, Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
 
 export default function TopBar({ name }) {
-  
-  const navigate = useNavigate()
 
   /**
    * Signs out the current user
