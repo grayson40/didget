@@ -39,10 +39,11 @@ export default function TopBar({ name }) {
         <Container fluid>
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton id="dropdown-basic-button" title={quickAccTitle}>
-                <Dropdown.Item href="#/action-1">Tasking</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Budgeting</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Debt Tracking</Dropdown.Item>
+            <DropdownButton id="dropdown-basic-button" title="Go to...">
+                <Dropdown.Item href="/">Home</Dropdown.Item>
+                <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
+                <Dropdown.Item href="/budget">Budget</Dropdown.Item>
+                <Dropdown.Item href="/notes">Notes</Dropdown.Item>
             </DropdownButton>
               
             {/* Top Bar should also consist of an app title */}

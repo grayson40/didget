@@ -18,42 +18,44 @@ export default function Cards() {
                     aria-controls="example-collapse-text"
                     aria-expanded={open1}
                 >
-                    Tasks
+                    Schedule
                 </Button>
                 <Collapse in={open1}>
-                    <div id="example-collapse-text">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-
-                    </div>
+                    <a href="/schedule">
+                        <div id="example-collapse-text">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        </div>
+                    </a>
+                    
                 </Collapse>
             </Card>
             <Card>
@@ -62,14 +64,16 @@ export default function Cards() {
                     aria-controls="example-collapse-text"
                     aria-expanded={open2}
                 >
-                    Budgeting
+                    Budget
                 </Button>
                 <Collapse in={open2}>
-                    <div id="example-collapse-text">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    </div>
+                    <a href="/budget">
+                        <div id="example-collapse-text">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        </div>
+                    </a>
                 </Collapse>
             </Card>
             <Card>
@@ -81,11 +85,13 @@ export default function Cards() {
                     Notes
                 </Button>
                 <Collapse in={open3}>
-                    <div id="example-collapse-text">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
-                    </div>
+                    <a href="/notes">
+                        <div id="example-collapse-text">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                        labore wes anderson cred nesciunt sapiente ea proident.
+                        </div>
+                    </a>
                 </Collapse>
             </Card>
         </Container>
