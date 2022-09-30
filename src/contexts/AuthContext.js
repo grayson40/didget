@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword } from "firebase/auth";
+import { collection, addDoc } from 'firebase/firestore';
 
 const AuthContext = React.createContext()
 
@@ -53,6 +54,23 @@ export function AuthProvider({ children }) {
       return updatePassword(auth.currentUser, password)
     }
 
+    /**
+     * Add a new document to /notes with the given note, assigning it a document ID automatically.
+     * @param {*} userEmail Email of the current user
+     * @param {*} userNote Note to be added
+     * @returns void
+     */
+    async function addNote(userEmail, userNote) {
+      try {
+        await addDoc(collection(db, "notes"), {
+          email: userEmail,
+          note: userNote
+        });
+      } catch (e) {
+        console.error(e.toString());
+      }
+    }
+
     //  Function to make user profile 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -69,7 +87,8 @@ export function AuthProvider({ children }) {
         login,
         signup,
         changeEmail,
-        changePassword
+        changePassword,
+        addNote
     }
     
     //  Return the encapsulated user info in an authentication provider
