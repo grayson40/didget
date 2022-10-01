@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import { Button, Collapse } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
+import NotesContent from './NotesContent';
 
 export default function Cards() {
 
@@ -21,8 +22,8 @@ export default function Cards() {
                     Schedule
                 </Button>
                 <Collapse in={open1}>
-                    <a href="/schedule">
-                        <div id="example-collapse-text">
+                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/schedule">
+                        <div>
                         Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
                         terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
                         labore wes anderson cred nesciunt sapiente ea proident.
@@ -54,8 +55,7 @@ export default function Cards() {
                         terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
                         labore wes anderson cred nesciunt sapiente ea proident.
                         </div>
-                    </a>
-                    
+                    </Card.Link>
                 </Collapse>
             </Card>
             <Card>
@@ -67,13 +67,13 @@ export default function Cards() {
                     Budget
                 </Button>
                 <Collapse in={open2}>
-                    <a href="/budget">
-                        <div id="example-collapse-text">
+                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/budget">
+                        <div>
                         Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
                         terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
                         labore wes anderson cred nesciunt sapiente ea proident.
                         </div>
-                    </a>
+                    </Card.Link>
                 </Collapse>
             </Card>
             <Card>
@@ -85,13 +85,11 @@ export default function Cards() {
                     Notes
                 </Button>
                 <Collapse in={open3}>
-                    <a href="/notes">
-                        <div id="example-collapse-text">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
+                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/notes">
+                        <div>
+                            <NotesContent/>
                         </div>
-                    </a>
+                    </Card.Link>
                 </Collapse>
             </Card>
         </Container>
