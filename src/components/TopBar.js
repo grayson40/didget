@@ -14,7 +14,7 @@ import {  Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { FaGrinSquint, FaBars } from 'react-icons/fa';
-import './styles.css';
+//import './styles.css';
 
 
 export default function TopBar({ name }) {
@@ -34,7 +34,7 @@ export default function TopBar({ name }) {
   return (
 
     //  Create a nav bar which is situated at the top of the given workspace
-    <Navbar bg="dark" variant="dark" fixed="top">
+    <Navbar bg="dark" variant="dark" fixed="top" height ="4vh">
         <div class = "container-fluid d-flex justify-content-start">
 
             {/* Top Bar should consist of a leftbound drop down */}
