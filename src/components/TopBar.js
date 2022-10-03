@@ -14,7 +14,7 @@ import {  Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { FaGrinSquint, FaBars } from 'react-icons/fa';
-//import './styles.css';
+//import './topbar.css';
 
 
 export default function TopBar({ name }) {
