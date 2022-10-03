@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { auth, db } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword } from "firebase/auth";
-import { collection, addDoc } from 'firebase/firestore';
+import { doc, collection, addDoc, query, getDocs, setDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 
 const AuthContext = React.createContext()
 
@@ -60,11 +61,33 @@ export function AuthProvider({ children }) {
      * @param {*} userNote Note to be added
      * @returns void
      */
-    async function addNote(userEmail, userNote) {
+    async function addNote(userNote) {
+      const q = query(collection(db, "users"));
+      const querySnapshot = await getDocs(q);
+      const queryData = querySnapshot.docs.map((detail) => ({
+        ...detail.data(),
+        id: detail.id,
+      }))
+      console.log(queryData)
+
+      const noteId = uuidv4();
+      const d = new Date();
+      const currentDate = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`
+
+      queryData.map(async (v) => {
+        await setDoc(doc(db, `users/${v.id}/notes`, noteId), {
+          uid: auth.currentUser.uid,
+          note: userNote,
+          date: currentDate
+        });
+      });
+    }
+
+    async function addUser() {
       try {
-        await addDoc(collection(db, "notes"), {
-          email: userEmail,
-          note: userNote
+        await addDoc(collection(db, "users"), {
+          email: auth.currentUser.email,
+          uid: auth.currentUser.uid
         });
       } catch (e) {
         console.error(e.toString());
@@ -88,7 +111,8 @@ export function AuthProvider({ children }) {
         signup,
         changeEmail,
         changePassword,
-        addNote
+        addNote,
+        addUser,
     }
     
     //  Return the encapsulated user info in an authentication provider
