@@ -1,17 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext';
-import { auth, db } from '../firebase';
-import { Button, Form, Container, Row, Col, Card, Alert } from 'react-bootstrap';
+import { db } from '../firebase';
+import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
 
 export default function NotesContent() {
-  const userEmail = auth.currentUser.email;
   const [error, setError] = useState('')
   const { addNote } = useAuth();
   const [notes, setNotes] = useState([]);
   const noteRef = useRef();
 
+  // Used to fetch users notes from firestore
   useEffect(() => {
     async function fetchData() {
       const q = query(collection(db, "users"));
@@ -40,6 +40,7 @@ export default function NotesContent() {
     fetchData();
   }, [])
 
+  // Creates and stores note with timestamp
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -60,6 +61,7 @@ export default function NotesContent() {
 
   return (
     <Container fluid>
+      {/* Render user notes */}
       {notes.map((noteRef) => {
         return (
           <Note key={noteRef.id} title={noteRef.note} date={noteRef.date} />
