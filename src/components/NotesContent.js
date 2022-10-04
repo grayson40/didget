@@ -4,6 +4,8 @@ import { db } from '../firebase';
 import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
+import { FaPlus } from 'react-icons/fa';
+import Fab from '@mui/material/Fab';
 
 export default function NotesContent() {
   const [error, setError] = useState('')
@@ -58,32 +60,39 @@ export default function NotesContent() {
       setError(err.toString())
     }
   }
-
   return (
-    <Container fluid>
-      {/* Render user notes */}
-      {notes.map((noteRef) => {
-        return (
-          <Note key={noteRef.id} title={noteRef.note} date={noteRef.date} />
-        )
-      })}
+    <>
+      <Container>
+        {/* Render user notes */}
+        {notes.map((noteRef) => {
+          return (
+            <Note key={noteRef.id} title={noteRef.note} date={noteRef.date} />
 
-      {/* Form to create a new note */}
-      <Card className='mt-3'>
-        <Card.Body>
-          <h2 className='text-center mb-4'>Add note</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form>
-            <Form.Group id='note'>
-              <Form.Control type='note' ref={noteRef} required />
-            </Form.Group>
-            <Button className='w-100 mt-3' onClick={handleSubmit}>
-              Add Note
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
+          )
+        })}
 
-    </Container>
+        {/* Form to create a new note */}
+        <Card className='mt-3'>
+          <Card.Body>
+            <h2 className='text-center mb-4'>Add note</h2>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Form>
+              <Form.Group id='note'>
+                <Form.Control type='note' ref={noteRef} required />
+              </Form.Group>
+              <Button className='w-100 mt-3' onClick={handleSubmit}>
+                Add Note
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
+
+        <Fab onClick={handleOpen} color="primary">
+          <FaPlus />
+        </Fab>
+
+      </Container>
+
+    </>
   )
 }
