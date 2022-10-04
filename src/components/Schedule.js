@@ -1,14 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import TopBar from './TopBar'
 import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
+import { Button, Collapse, Row, Col} from 'react-bootstrap'
 
 export default function Schedule() {
+
+    const [open1, setOpen1] = useState(false)
+
   return (
     <Container>
       <TopBar name='Schedule'/>
-      {/*Create a card for each class*/}
+      {/*Create a card for each class, likely to be replaced with its own component*/}
       <Card className='mb-4'>
         {/*Card Header is the name of the class*/}
         <Card.Header as="h5">Class 1 Name</Card.Header>
@@ -18,7 +21,32 @@ export default function Schedule() {
                     {/*Text of Card could be Professor name or whatever else we want*/}
                     <Card.Text>Put Professor name / other info here?</Card.Text>
                 {/*Tasks button brings up the tasks for each class*/}
-                <Button variant="primary">Tasks</Button>
+                <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+
+                    {/*Set Button to be collapsable*/}
+                    <Collapse in={open1}>
+                        {/*Creates new task card, likely to be replaced with its own component*/}
+                        <Card className='mb-2'>
+                            <Card.Body>
+                                <Row>
+                                    <Col sm={8}>Task 1</Col>
+                                    <Col sm={4}>Piss</Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Collapse>
+                    <Collapse in={open1}>
+                        {/*Creates new task card, likely to be replaced with its own component*/}
+                        <Card className='mb-2'>
+                            <Card.Body>
+                                <Row>
+                                    <Col sm={8}>Task 2</Col>
+                                    <Col sm={4}>Piss</Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Collapse>
+
             </Card.Body>
         </Card>
 
@@ -30,6 +58,7 @@ export default function Schedule() {
                 <Button variant="primary">Tasks</Button>
             </Card.Body>
         </Card>
+        
     </Container>
     
   )
