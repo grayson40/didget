@@ -17,7 +17,7 @@ label {
 }
 
 .dropdown{
-    height:6vh;
+    height:4vh;
     background: gold;
     display: flex;
     justify-content: space-around;
