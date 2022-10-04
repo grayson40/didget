@@ -1,13 +1,11 @@
 import React from 'react'
 import Container from 'react-bootstrap/Container';
 import TopBar from './TopBar';
-import NotesContent from './NotesContent';
 
-export default function Notes() {
+export default function Budget() {
     return (
         <Container>
-          <TopBar name='Notes'/>
-          <NotesContent/>
+            <TopBar name='Budget'/>
         </Container>
-      )
+    )
 }

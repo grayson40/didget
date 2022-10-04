@@ -1,0 +1,85 @@
+.fixed-top-2 {
+    margin-top: 6vh;
+    background-color: gray;
+}
+
+.dropdown-toggle::after{
+    border: none;
+    content: '\icon';
+}
+
+body {
+    padding-top: 100px;
+}
+
+label {
+    color:white;
+}
+
+.dropdown{
+    height:6vh;
+    background: gold;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.quickaccess, .profile{
+    position: relative;
+}
+
+.quickaccess ul, .profile ul{
+    position: absolute;
+    background: black;
+    margin-top: 10px;
+    width: 150px;
+    display: flex;
+    justify-content: space-around;
+    align-items: left;
+    flex-direction: column;
+    list-style: none;
+    border-radius: 5px;
+    transform: translateY(-10px);
+    transition: all 0.4s ease;
+    visibility: hidden;
+}
+
+.quickaccess ul{
+    height: 200px;
+}
+
+.profile ul{
+    height: 150px;
+}
+
+.quickaccess li, .profile li{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quickaccess li:hover, .profile li:hover{
+    background-color: goldenrod;
+}
+
+
+.dropdown button{
+    background: none;
+    border: none;
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.quickaccess a, .profile a{
+    color:white;
+    text-decoration: none;
+}
+
+
+.quickaccess a:focus + ul{
+    visibility: visible;
+}
