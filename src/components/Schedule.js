@@ -1,11 +1,12 @@
 import React from 'react'
-import Container from 'react-bootstrap/Container';
-import TopBar from './TopBar';
+import ScheduleContent from './ScheduleContent'
+import TopBar from './TopBar'
 
 export default function Schedule() {
-    return (
-        <Container>
-            <TopBar name='Schedule'/>
-        </Container>
-    )
+  return (
+    <>
+      <TopBar name={'Schedule'} />
+      <ScheduleContent />
+    </>
+  )
 }
