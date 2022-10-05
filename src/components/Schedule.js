@@ -20,6 +20,7 @@ export default function Schedule() {
                 <Col sm={8}>Class 1 Name</Col>
                 <Col xs={0}>
                     <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH/>} style={{textAlign: "right", height: '10px', bottom: '7px'}}>
+                        {/* onclick method for these two */}
                         <Dropdown.Item href="#/action-1">Edit</Dropdown.Item>
                         <Dropdown.Item href="#/action-2">Delete</Dropdown.Item>
                     </DropdownButton>
@@ -37,6 +38,7 @@ export default function Schedule() {
                     {/*Set Button to be collapsable*/}
                     <Collapse in={open1}>
                         {/*Creates new task card, likely to be replaced with its own component*/}
+                        {/* map over list of tasks */}
                         <Card className='mb-2'>
                             <Card.Body>
                                 <Row>
