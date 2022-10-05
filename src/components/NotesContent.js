@@ -6,12 +6,15 @@ import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
+import Popover from 'react-bootstrap/Popover';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 export default function NotesContent() {
   const [error, setError] = useState('')
   const { addNote } = useAuth();
   const [notes, setNotes] = useState([]);
   const noteRef = useRef();
+  const [open1, setOpen1] = useState(true)
 
   // Used to fetch users notes from firestore
   useEffect(() => {
@@ -87,9 +90,10 @@ export default function NotesContent() {
           </Card.Body>
         </Card>
 
-        <Fab onClick={handleOpen} color="primary">
-          <FaPlus />
-        </Fab>
+
+          <Fab sx={Fab.sx} onClick={handleClick} color="primary">
+            <FaPlus />
+          </Fab>
 
       </Container>
 
