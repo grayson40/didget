@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
@@ -26,16 +26,24 @@ export default function NotesContent() {
       queryData.map(async (v) => {
         const notes = query(collection(db, `users/${v.id}/notes`));
         const snapshot = await getDocs(notes);
-        var data = snapshot.docs.map((detail) => ({
+        const data = snapshot.docs.map((detail) => ({
           ...detail.data(),
           id: detail.id,
         }));
+        let noteList = []
+        data.forEach(function (element) {
+          if (element.uid === auth.currentUser.uid) {
+            const newNote = {
+              id: element.id,
+              title: element.note,
+              date: element.date,
+              uid: element.uid
+            }
+            noteList.push(newNote)
+          }
+        })
         setNotes(
-          data.map((noteRef) => ({
-            id: noteRef.id,
-            note: noteRef.note,
-            date: noteRef.date
-          }))
+          noteList
         );
       });
     }
@@ -60,15 +68,13 @@ export default function NotesContent() {
       setError(err.toString())
     }
   }
+
   return (
     <>
       <Container>
         {/* Render user notes */}
-        {notes.map((noteRef) => {
-          return (
-            <Note key={noteRef.id} title={noteRef.note} date={noteRef.date} />
-
-          )
+        {notes.map((note) => {
+          return <Note key={note.id} note={note} />
         })}
 
         {/* Form to create a new note */}
@@ -87,7 +93,7 @@ export default function NotesContent() {
           </Card.Body>
         </Card>
 
-        <Fab onClick={handleOpen} color="primary">
+        <Fab color="primary">
           <FaPlus />
         </Fab>
 
