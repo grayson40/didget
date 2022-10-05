@@ -1,6 +1,6 @@
 import React from 'react'
 import { Nav } from 'react-bootstrap';
-import './styles.css'
+import '../styles/topbar.css'
 
 export default function DateBar(){
     //  Create a variable that tracks the date currently being looked at
