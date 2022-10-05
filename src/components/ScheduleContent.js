@@ -74,6 +74,7 @@ export default function ScheduleContent() {
   // ]
 
   const addCourse = () => {
+    setError('')
     setCourses(
       [...courses, {name: name, meetDay: meetDay, meetTime: meetTime, professor: professor}]
     );
