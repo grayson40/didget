@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Course from './Course'
 import { Button, Card, Form, Container, Alert } from 'react-bootstrap';
-import { collection, getDocs, query } from 'firebase/firestore';
-import { auth, db } from '../firebase';
+// import { collection, getDocs, query } from 'firebase/firestore';
+// import { auth, db } from '../firebase';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
