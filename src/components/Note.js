@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 // import { Row, Col, Card, Button } from 'react-bootstrap';
 import {
   List,
@@ -6,7 +6,7 @@ import {
   ListItemText,
   Modal,
 } from '@material-ui/core';
-import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
+import { Button, Form, Card, Alert } from 'react-bootstrap';
 import { auth, db } from '../firebase'
 import { query, doc, collection, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { FaTrashAlt, FaPen} from "react-icons/fa"
