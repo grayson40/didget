@@ -3,7 +3,7 @@ import { Card, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'reac
 import Task from './Task';
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
-import { Form, Container, Alert } from 'react-bootstrap';
+import { Form, Alert } from 'react-bootstrap';
 
 
 export default function Course(props) {
@@ -28,6 +28,7 @@ export default function Course(props) {
 
   // TODO: add firebase functionality
   const editCourse = () => {
+    setError('')
     console.log(`${name} ${meetDay} ${meetTime} ${professor}`)
     setOpen(false)
   }
