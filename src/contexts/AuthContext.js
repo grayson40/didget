@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { auth, db } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword } from "firebase/auth";
-import { doc, collection, addDoc, query, getDocs, setDoc } from 'firebase/firestore';
-import { v4 as uuidv4 } from 'uuid';
+import { doc, collection, addDoc, query, getDocs } from 'firebase/firestore';
 
 const AuthContext = React.createContext()
 
@@ -57,30 +56,25 @@ export function AuthProvider({ children }) {
 
     /**
      * Add a new document to /notes with the given note, assigning it a document ID automatically.
-     * @param {*} userEmail Email of the current user
      * @param {*} userNote Note to be added
      * @returns void
      */
-    async function addNote(userNote) {
-      const q = query(collection(db, "users"));
-      const querySnapshot = await getDocs(q);
-      const queryData = querySnapshot.docs.map((detail) => ({
-        ...detail.data(),
-        id: detail.id,
-      }))
-      console.log(queryData)
-
-      const noteId = uuidv4();
-      const d = new Date();
-      const currentDate = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`
-
-      queryData.map(async (v) => {
-        await setDoc(doc(db, `users/${v.id}/notes`, noteId), {
-          uid: auth.currentUser.uid,
-          note: userNote,
-          date: currentDate
-        });
-      });
+    async function addNote(userNote, inDate) {
+      const userRef = await getDocs(
+        query(
+          collection(db, "users")
+        )
+      );
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const collectionRef = collection(db, `users/${user.id}/notes/`);
+          await addDoc(collectionRef, {
+            uid: auth.currentUser.uid,
+            note: userNote,
+            date: inDate
+          });
+        }
+      })
     }
 
     async function addUser() {
