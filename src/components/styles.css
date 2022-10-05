@@ -18,7 +18,7 @@ label {
 
 .dropdown{
     height:6vh;
-    background: gold;
+    background: rgb(75, 75, 182);
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -30,18 +30,17 @@ label {
 
 .quickaccess ul, .profile ul{
     position: absolute;
-    background: black;
+    align-items: center;
+    background: rgb(65, 64, 64);
     margin-top: 10px;
     width: 150px;
     display: flex;
     justify-content: space-around;
-    align-items: left;
     flex-direction: column;
     list-style: none;
     border-radius: 5px;
     transform: translateY(-10px);
     transition: all 0.4s ease;
-    visibility: hidden;
 }
 
 .quickaccess ul{
@@ -61,7 +60,7 @@ label {
 }
 
 .quickaccess li:hover, .profile li:hover{
-    background-color: goldenrod;
+    background-color: rgb(83, 219, 219);
 }
 
 
@@ -81,5 +80,4 @@ label {
 
 
 .quickaccess a:focus + ul{
-    visibility: visible;
 }
