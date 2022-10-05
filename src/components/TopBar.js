@@ -39,7 +39,7 @@ export default function TopBar({ name }) {
 
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle}>
+            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} className='topBarDropdown'>
               <Dropdown.Item href="/">Home</Dropdown.Item>
               <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
               <Dropdown.Item href="/budget">Budget</Dropdown.Item>
@@ -57,7 +57,7 @@ export default function TopBar({ name }) {
 
           {/* Top Bar should finally consist of a right drop down button */}
           {/* Could be replaced with a profile icon dropdownbutton setup */}
-          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button">
+          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" className='topBarDropdown'>
             <Dropdown.Item href="/settings">Settings</Dropdown.Item>
             <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
           </DropdownButton>

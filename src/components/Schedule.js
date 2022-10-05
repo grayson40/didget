@@ -19,7 +19,7 @@ export default function Schedule() {
             <Row>
                 <Col sm={8}>Class 1 Name</Col>
                 <Col xs={0}>
-                    <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH/>} style={{textAlign: "right"}}>
+                    <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH/>} style={{textAlign: "right", height: '10px', bottom: '7px'}}>
                         <Dropdown.Item href="#/action-1">Edit</Dropdown.Item>
                         <Dropdown.Item href="#/action-2">Delete</Dropdown.Item>
                     </DropdownButton>
