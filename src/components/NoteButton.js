@@ -1,12 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import { useAuth } from '../contexts/AuthContext';
 import { auth, db } from '../firebase';
-import Container from 'react-bootstrap/Container';
-import Note from './Note'
+import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import { collection, getDocs, query } from 'firebase/firestore';
+import { FaPlus } from 'react-icons/fa';
+import Fab from '@mui/material/Fab';
+import { Modal } from '@material-ui/core';
 
-export default function NotesContent() {
-  const [error, setError] = useState('')
+export default function NoteButton() {
+    const [error, setError] = useState('')
   const { addNote } = useAuth();
   const [notes, setNotes] = useState([]);
   const [open, setOpen] = useState(false);
@@ -78,16 +80,44 @@ export default function NotesContent() {
     setOpen(false);
   };
 
-  return (
-    <>
-      <Container>
-        {/* Render user notes */}
-        {notes.map((note) => (
-          <Note key={note.id} note={note} />
-        ))}
+    return(
+        /* Form to create a new note */
+        <Container>
+            <Modal open={open} onClose={handleClose}>
+                <Card style={
+                    {
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: '20%',
+                    width: "30%"
+                    }
+                }>
+                    <Card.Body>
+                    <h2 className='text-center mb-4'>Add note</h2>
+                    {error && <Alert variant="danger">{error}</Alert>}
+                    <Form>
+                        <Form.Group id='note'>
+                        <Form.Control type='note' ref={noteRef} required />
+                        </Form.Group>
+                        <Button className='w-100 mt-3' onClick={handleSubmit}>
+                        Add Note
+                        </Button>
+                    </Form>
+                    </Card.Body>
+                </Card>
+            </Modal>
 
-      </Container>
+            <Container style={{ 
+            justifyContent: 'flex-end', 
+            display: 'flex',
+            marginBottom: '40%',
+            marginRight: '5%',
+            width: '100%' }}>
+                <Fab color="primary" onClick={(e) => setOpen(true)}>
+                    <FaPlus />
+                </Fab>
+            </Container>
 
-    </>
-  )
+        </Container>
+    )
 }

@@ -12,7 +12,7 @@ export default function Cards() {
 
   return (
     <div>
-        <Container fluid style = {{ height: '600px'}}>
+        <Container fluid style = {{ width: '400px', height: '600px'}}>
             <Card>
                 <Button
                     onClick={() => setOpen1(!open1)}
@@ -87,6 +87,7 @@ export default function Cards() {
                 <Collapse in={open3}>
                     <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/notes">
                         <div>
+                            Stuff
                             <NotesContent/>
                         </div>
                     </Card.Link>
