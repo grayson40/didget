@@ -9,7 +9,7 @@ import {
 import { Button, Form, Card, Alert } from 'react-bootstrap';
 import { auth, db } from '../firebase'
 import { query, doc, collection, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
-import { FaTrashAlt, FaPen} from "react-icons/fa"
+import { FaTrashAlt, FaPen } from "react-icons/fa"
 
 export default function Note(props) {
   const [open, setOpen] = useState(false);
@@ -36,6 +36,7 @@ export default function Note(props) {
             await deleteDoc(docRef)
               .then(() => {
                 console.log('document deleted')
+                props.onUpdate()
               })
               .catch(error => {
                 setError(error.toString())
@@ -64,7 +65,14 @@ export default function Note(props) {
         notesRef.forEach(async (note) => {
           if (note.id === props.note.id) {
             const docRef = doc(db, `users/${user.id}/notes/${note.id}`)
-            await updateDoc(docRef, {note: input})
+            await updateDoc(docRef, { note: input })
+              .then(() => {
+                console.log('document updated')
+                props.onUpdate()
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
           }
         })
       }
@@ -82,26 +90,26 @@ export default function Note(props) {
       {/* popup update window */}
       <Modal open={open} onClose={handleClose}>
         <Card style={
-            {
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '20%',
-              width: "30%"
-            }
-          }>
-            <Card.Body>
-              <h2 className='text-center mb-4'>Update Note</h2>
-              {error && <Alert variant="danger">{error}</Alert>}
-              <Form>
-                <Form.Group id='note'>
-                  <Form.Control type='note' onChange={(e) => setInput(e.target.value)} />
-                </Form.Group>
-                <Button className='w-100 mt-3' onClick={updateNote}>
-                  Update
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
+          {
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '20%',
+            width: "30%"
+          }
+        }>
+          <Card.Body>
+            <h2 className='text-center mb-4'>Update Note</h2>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Form>
+              <Form.Group id='note'>
+                <Form.Control type='note' onChange={(e) => setInput(e.target.value)} />
+              </Form.Group>
+              <Button className='w-100 mt-3' onClick={updateNote}>
+                Update
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
       </Modal>
 
       <List>
