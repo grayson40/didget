@@ -45,8 +45,9 @@ export default function NotesContent() {
 
   // Used to fetch users notes from firestore
   useEffect(() => {
+    console.log('in effect')
     fetchData();
-  }, [notes])
+  }, [])
 
   // date
   const toDate = () => {
