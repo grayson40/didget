@@ -38,12 +38,14 @@ export default function NotesContent() {
         }
       })
     }
+    console.log('fetching data')
   }
 
   // Used to fetch users notes from firestore
   useEffect(() => {
+    console.log('in effect')
     fetchData();
-  }, [notes])
+  }, [])
 
   // date
   const toDate = () => {
@@ -83,7 +85,7 @@ export default function NotesContent() {
       <Container>
         {/* Render user notes */}
         {notes.map((note) => (
-          <Note key={note.id} note={note} />
+          <Note key={note.id} note={note} onUpdate={fetchData}/>
         ))}
 
       </Container>
