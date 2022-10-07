@@ -8,7 +8,7 @@ import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
 
-export default function NotesContent() {
+export default function NotesContent(props) {
   const [error, setError] = useState('')
   const { addNote } = useAuth();
   const [notes, setNotes] = useState([]);
@@ -88,7 +88,7 @@ export default function NotesContent() {
       <Container>
         {/* Render user notes */}
         {notes.map((note) => (
-          <Note key={note.id} note={note} onUpdate={fetchData}/>
+          <Note key={note.id} note={note} onUpdate={fetchData} />
         ))}
 
         {/* Form to create a new note */}
@@ -116,11 +116,11 @@ export default function NotesContent() {
           </Card>
         </Modal>
 
-        <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
+        {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
           <Fab color="primary" onClick={(e) => setOpen(true)}>
             <FaPlus />
           </Fab>
-        </Container>
+        </Container>}
 
       </Container>
 

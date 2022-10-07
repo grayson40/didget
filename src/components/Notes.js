@@ -7,7 +7,7 @@ export default function Notes() {
     return (
         <Container>
           <TopBar name='Notes'/>
-          <NotesContent/>
+          <NotesContent showButton={true}/>
         </Container>
       )
 }
