@@ -4,6 +4,10 @@ import { auth, db } from '../firebase';
 import Container from 'react-bootstrap/Container';
 import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
+import { Button, Form, Card, Alert } from 'react-bootstrap';
+import { FaPlus } from 'react-icons/fa';
+import Fab from '@mui/material/Fab';
+import { Modal } from '@material-ui/core';
 
 export default function NotesContent(props) {
   const [error, setError] = useState('')
