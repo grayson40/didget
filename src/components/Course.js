@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Card, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
 import Task from './Task';
+import { auth, db } from '../firebase'
+import { query, doc, collection, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
 import { Form, Alert } from 'react-bootstrap';
@@ -26,23 +28,81 @@ export default function Course(props) {
     }
   ]
 
-  // TODO: add firebase functionality
-  const editCourse = () => {
+  // updates a document in firestore db
+  const editCourse = async () => {
     setError('')
-    console.log(`${name} ${meetDay} ${meetTime} ${professor}`)
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const coursesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/courses`)
+          )
+        );
+        coursesRef.forEach(async (course) => {
+          if (course.id === props.course.id) {
+            const docRef = doc(db, `users/${user.id}/courses/${course.id}`)
+            await updateDoc(docRef, {
+              name: name !== '' ? name : props.course.name,
+              meetDay: meetDay !== '' ? meetDay : props.course.meetDay,
+              meetTime: meetTime !== '' ? meetTime : props.course.meetTime,
+              professor: professor !== '' ? professor : props.course.professor
+            })
+              .then(() => {
+                console.log('document updated')
+                props.onUpdate()
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+        })
+      }
+    })
     setOpen(false)
   }
 
-  // TODO: add firebase functionality
-  const deleteCourse = () => {
-    console.log(props.course.name)
+  // deletes a document in firestore db
+  const deleteCourse = async () => {
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const coursesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/courses`)
+          )
+        );
+        coursesRef.forEach(async (course) => {
+          if (course.id === props.course.id) {
+            const docRef = doc(db, `users/${user.id}/courses/${course.id}`)
+            await deleteDoc(docRef)
+              .then(() => {
+                console.log('document deleted')
+                props.onUpdate()
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+        })
+      }
+    })
   }
 
   // Modal close
   const handleClose = () => {
     setOpen(false);
   };
-
 
   return (
     <>
@@ -62,19 +122,19 @@ export default function Course(props) {
             <Form>
               <Form.Group id='name'>
                 <Form.Label>Course name</Form.Label>
-                <Form.Control type='name' onChange={(e) => setName(e.target.value)} />
+                <Form.Control type='name' placeholder={props.course.name} onChange={(e) => setName(e.target.value)} />
               </Form.Group>
               <Form.Group id='meet-day'>
                 <Form.Label>Meet Day</Form.Label>
-                <Form.Control type='meet-day' onChange={(e) => setMeetDay(e.target.value)} />
+                <Form.Control type='meet-day' placeholder={props.course.meetDay} onChange={(e) => setMeetDay(e.target.value)} />
               </Form.Group>
               <Form.Group id='meet-time'>
                 <Form.Label>Meet time</Form.Label>
-                <Form.Control type='meet-time' onChange={(e) => setMeetTime(e.target.value)} />
+                <Form.Control type='meet-time' placeholder={props.course.meetTime} onChange={(e) => setMeetTime(e.target.value)} />
               </Form.Group>
               <Form.Group id='professor'>
                 <Form.Label>Professor</Form.Label>
-                <Form.Control type='professor' onChange={(e) => setProfessor(e.target.value)} />
+                <Form.Control type='professor' placeholder={props.course.professor} onChange={(e) => setProfessor(e.target.value)} />
               </Form.Group>
               <Button className='w-100 mt-3' onClick={editCourse}>
                 Edit
