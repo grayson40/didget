@@ -8,7 +8,7 @@ import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
 
 
-export default function ScheduleContent() {
+export default function ScheduleContent(props) {
   const [courses, setCourses] = useState([])
   const [error, setError] = useState('')
   const [open, setOpen] = useState(false)
@@ -126,11 +126,11 @@ export default function ScheduleContent() {
       {courses.map((course) => (
         <Course key={course.name} course={course} onUpdate={fetchData}/>
       ))}
-      <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
+      {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
         <Fab color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus />
         </Fab>
-      </Container>
+      </Container>}
     </Container>
 
   )
