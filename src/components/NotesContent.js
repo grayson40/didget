@@ -82,7 +82,7 @@ export default function NotesContent() {
 
   return (
     <>
-      <Container>
+      <Container fluid style = {{ width: '400px'}}>
         {/* Render user notes */}
         {notes.map((note) => (
           <Note key={note.id} note={note} onUpdate={fetchData}/>

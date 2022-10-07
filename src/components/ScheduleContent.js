@@ -87,7 +87,7 @@ export default function ScheduleContent() {
   };
 
   return (
-    <Container>
+    <Container style={{width: '400px'}}>
       {/* popup add window */}
       <Modal open={open} onClose={handleClose}>
         <Card style={

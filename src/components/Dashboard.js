@@ -7,8 +7,7 @@ import DateBar from './DateBar';
 export default function Dashboard() {
   return (
     <Container style={{
-      maxwidth: '100%',
-      display: 'flex-center'
+      maxwidth: '100%'
     }}>
       <DateBar/>
       <TopBar name='Didget'/>
