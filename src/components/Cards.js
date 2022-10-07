@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import { Button, Collapse } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
+import ScheduleContent from './ScheduleContent';
 
 export default function Cards() {
 
@@ -24,36 +25,7 @@ export default function Cards() {
                 <Collapse in={open1}>
                     <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/schedule">
                         <div>
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
+                          <ScheduleContent showButton={false} />
                         </div>
                     </Card.Link>
                 </Collapse>
