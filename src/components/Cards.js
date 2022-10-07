@@ -25,7 +25,7 @@ export default function Cards() {
                 <Collapse in={open1}>
                     <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/schedule">
                         <div>
-                            <ScheduleContent/>
+                          <ScheduleContent showButton={false} />
                         </div>
                     </Card.Link>
                 </Collapse>
@@ -59,7 +59,7 @@ export default function Cards() {
                 <Collapse in={open3}>
                     <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/notes">
                         <div>
-                            <NotesContent/>
+                            <NotesContent showButton={false}/>
                         </div>
                     </Card.Link>
                 </Collapse>

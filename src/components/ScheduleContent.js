@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Course from './Course'
 import { Button, Card, Form, Container, Alert } from 'react-bootstrap';
-// import { collection, getDocs, query } from 'firebase/firestore';
-// import { auth, db } from '../firebase';
+import { collection, getDocs, query, addDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
 
 
-export default function ScheduleContent() {
+export default function ScheduleContent(props) {
   const [courses, setCourses] = useState([])
   const [error, setError] = useState('')
   const [open, setOpen] = useState(false)
@@ -17,67 +17,63 @@ export default function ScheduleContent() {
   const [meetTime, setMeetTime] = useState('')
   const [professor, setProfessor] = useState('')
 
-  // // Fetch courses from database
-  // async function fetchData() {
-  //   if (auth.currentUser) {
-  //     const usersRef = await getDocs(
-  //       query(
-  //         collection(db, 'users')
-  //       )
-  //     );
-  //     // Iterate through the documents fetched
-  //     usersRef.forEach(async (user) => {
-  //       if (user.data().uid === auth.currentUser.uid) {
-  //         const coursesRef = await getDocs(
-  //           query(
-  //             collection(db, `users/${user.id}/courses`)
-  //           )
-  //         );
-  //         setCourses(
-  //           coursesRef.docs.map((course) => ({
-  //             id: course.id,
-  //             name: course.data().name,
-  //             meetTime: course.data().meetTime,
-  //             meetDay: course.data().meetDay,
-  //             professor: course.data().professor
-  //           }))
-  //         )
-  //       }
-  //     })
-  //   }
-  // }
+  // Fetch courses from database
+  async function fetchData() {
+    if (auth.currentUser) {
+      const usersRef = await getDocs(
+        query(
+          collection(db, 'users')
+        )
+      );
+      // Iterate through the documents fetched
+      usersRef.forEach(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const coursesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/courses`)
+            )
+          );
+          setCourses(
+            coursesRef.docs.map((course) => ({
+              id: course.id,
+              name: course.data().name,
+              meetTime: course.data().meetTime,
+              meetDay: course.data().meetDay,
+              professor: course.data().professor
+            }))
+          )
+        }
+      })
+    }
+    console.log('fetching course data')
+  }
 
-  // // Used to fetch users notes from firestore
-  // useEffect(() => {
-  //   fetchData();
-  // }, [])
+  // Used to fetch users notes from firestore
+  useEffect(() => {
+    fetchData();
+  }, [])
 
-  // const courses = [
-  //   {
-  //     name: 'course 1',
-  //     meetDay: 'M/W/F',
-  //     meetTime: '10:00 am - 11:30 am',
-  //     professor: 'spongebob'
-  //   },
-  //   {
-  //     name: 'course 2',
-  //     meetDay: 'T/Th',
-  //     meetTime: '10:00 am - 11:30 am',
-  //     professor: 'patrick'
-  //   },
-  //   {
-  //     name: 'course 3',
-  //     meetDay: 'T/Th',
-  //     meetTime: '2:00 pm - 3:30 pm',
-  //     professor: 'squidward'
-  //   }
-  // ]
-
-  const addCourse = () => {
+  const addCourse = async () => {
     setError('')
-    setCourses(
-      [...courses, {name: name, meetDay: meetDay, meetTime: meetTime, professor: professor}]
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
     );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const collectionRef = collection(db, `users/${user.id}/courses/`);
+        await addDoc(collectionRef, {
+          name: name,
+          meetDay: meetDay,
+          meetTime: meetTime,
+          professor: professor
+        });
+        setCourses(
+          [...courses, { name: name, meetDay: meetDay, meetTime: meetTime, professor: professor }]
+        );
+      }
+    })
     handleClose();
   }
 
@@ -128,13 +124,13 @@ export default function ScheduleContent() {
 
       {/* Map over list of courses */}
       {courses.map((course) => (
-        <Course key={course.name} course={course} />
+        <Course key={course.name} course={course} onUpdate={fetchData}/>
       ))}
-      <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
+      {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
         <Fab color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus />
         </Fab>
-      </Container>
+      </Container>}
     </Container>
 
   )

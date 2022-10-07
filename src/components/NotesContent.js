@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
 
-export default function NotesContent() {
+export default function NotesContent(props) {
   const [error, setError] = useState('')
   const { addNote } = useAuth();
   const [notes, setNotes] = useState([]);
@@ -85,8 +85,39 @@ export default function NotesContent() {
       <Container fluid style = {{ width: '400px'}}>
         {/* Render user notes */}
         {notes.map((note) => (
-          <Note key={note.id} note={note} onUpdate={fetchData}/>
+          <Note key={note.id} note={note} onUpdate={fetchData} />
         ))}
+
+        {/* Form to create a new note */}
+        <Modal open={open} onClose={handleClose}>
+          <Card style={
+            {
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              marginTop: '20%',
+              width: "30%"
+            }
+          }>
+            <Card.Body>
+              <h2 className='text-center mb-4'>Add note</h2>
+              {error && <Alert variant="danger">{error}</Alert>}
+              <Form>
+                <Form.Group id='note'>
+                  <Form.Control type='note' ref={noteRef} required />
+                </Form.Group>
+                <Button className='w-100 mt-3' onClick={handleSubmit}>
+                  Add Note
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Modal>
+
+        {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
+          <Fab color="primary" onClick={(e) => setOpen(true)}>
+            <FaPlus />
+          </Fab>
+        </Container>}
 
       </Container>
 

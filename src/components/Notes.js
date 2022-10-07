@@ -7,9 +7,8 @@ import NoteButton from './NoteButton';
 export default function Notes() {
     return (
         <Container>
-          <TopBar name='Didget - Notes'/>
-          <NotesContent/>
-          <NoteButton/>
+          <TopBar name='Notes'/>
+          <NotesContent showButton={true}/>
         </Container>
       )
 }

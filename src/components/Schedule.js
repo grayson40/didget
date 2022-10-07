@@ -6,7 +6,7 @@ export default function Schedule() {
   return (
     <>
       <TopBar name={'Schedule'} />
-      <ScheduleContent />
+      <ScheduleContent showButton={true}/>
     </>
   )
 }
