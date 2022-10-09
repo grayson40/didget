@@ -10,11 +10,12 @@ import Settings from './Settings';
 import Schedule from './Schedule';
 import Budget from './Budget';
 import Notes from './Notes';
+import TaskPage from './TaskPage';
 
 function App() {
   return (
     
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh"}}>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "70vh"}}>
       <div className="w-100" style={{ maxWidth: '400px'}}>
         <Router>
           <AuthProvider>
@@ -25,6 +26,7 @@ function App() {
               <Route exact path="/schedule" element={<PrivateRoute> <Schedule/> </PrivateRoute>}/>
               <Route exact path="/budget" element={<PrivateRoute> <Budget/> </PrivateRoute>}/>
               <Route exact path="/notes" element={<PrivateRoute> <Notes/> </PrivateRoute>}/>
+              <Route exact path="/tasks" element={<PrivateRoute> <TaskPage/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
             </Routes>
