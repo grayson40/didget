@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Container, Row, Col, Form} from 'react-bootstrap'
+import {Container} from 'react-bootstrap'
 import TopBar from './TopBar'
 import TaskContent from './TaskContent'
 

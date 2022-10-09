@@ -129,8 +129,8 @@ export default function ScheduleContent(props) {
         ))}
       </Container>
       {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-          <Fab color="primary" onClick={(e) => setOpen(true)}>
-            <FaPlus />
+          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+            <FaPlus size={"30px"}/>
           </Fab>
         </Container>}
     </Container>
