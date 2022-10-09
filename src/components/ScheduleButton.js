@@ -107,16 +107,11 @@ export default function NoteButton() {
                 </Card>
             </Modal>
 
-            <Container style={{ 
-            justifyContent: 'flex-end', 
-            display: 'flex',
-            marginBottom: '40%',
-            marginRight: '5%',
-            width: '100%' }}>
+            <div class = "w-100 container-fluid fixed-bottom justify-content-end">
                 <Fab color="primary" onClick={(e) => setOpen(true)}>
                     <FaPlus />
                 </Fab>
-            </Container>
+            </div>
 
         </Container>
     )
