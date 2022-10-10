@@ -23,11 +23,9 @@ export default function Cards() {
                     Schedule
                 </Button>
                 <Collapse in={open1}>
-                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/schedule">
-                        <div>
-                          <ScheduleContent showButton={false} />
-                        </div>
-                    </Card.Link>
+                    <div>
+                      <ScheduleContent showButton={false} />
+                    </div>
                 </Collapse>
             </Card>
             <Card>
@@ -39,13 +37,11 @@ export default function Cards() {
                     Budget
                 </Button>
                 <Collapse in={open2}>
-                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/budget">
-                        <div>
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        </div>
-                    </Card.Link>
+                    <div>
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                    labore wes anderson cred nesciunt sapiente ea proident.
+                    </div>
                 </Collapse>
             </Card>
             <Card>
@@ -57,11 +53,9 @@ export default function Cards() {
                     Notes
                 </Button>
                 <Collapse in={open3}>
-                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/notes">
-                        <div>
-                            <NotesContent showButton={false}/>
-                        </div>
-                    </Card.Link>
+                    <div>
+                        <NotesContent showButton={false}/>
+                    </div>
                 </Collapse>
             </Card>
         </Container>
