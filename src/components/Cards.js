@@ -14,11 +14,12 @@ export default function Cards() {
   return (
     <div>
         <Container fluid style = {{ height: '600px'}}>
-            <Card>
+            <Card className="mb-3">
                 <Button
                     onClick={() => setOpen1(!open1)}
                     aria-controls="example-collapse-text"
                     aria-expanded={open1}
+                    className="mb-2"
                 >
                     Schedule
                 </Button>
@@ -28,7 +29,7 @@ export default function Cards() {
                     </div>
                 </Collapse>
             </Card>
-            <Card>
+            <Card className="mb-3">
                 <Button
                     onClick={() => setOpen2(!open2)}
                     aria-controls="example-collapse-text"
@@ -44,7 +45,7 @@ export default function Cards() {
                     </div>
                 </Collapse>
             </Card>
-            <Card>
+            <Card className="mb-3">
                 <Button
                     onClick={() => setOpen3(!open3)}
                     aria-controls="example-collapse-text"
