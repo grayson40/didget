@@ -160,10 +160,10 @@ export default function Course(props) {
         <Card.Body>
           <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
           <Card.Text>{props.course.professor}</Card.Text>
-          <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
 
           {/*Set Button to be collapsable*/}
-          <Collapse in={open1}>
+          {props.showButton && <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>}
+          {props.showButton && <Collapse in={open1}>
             {/* map over list of tasks */}
             <div>
               {
@@ -172,7 +172,7 @@ export default function Course(props) {
                 ))
               }
             </div>
-          </Collapse>
+          </Collapse>}
         </Card.Body>
       </Card>
     </>

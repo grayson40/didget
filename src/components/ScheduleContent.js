@@ -125,7 +125,7 @@ export default function ScheduleContent(props) {
 
         {/* Map over list of courses */}
         {courses.map((course) => (
-          <Course key={course.name} course={course} onUpdate={fetchData}/>
+          <Course key={course.name} showButton = {props.showButton} course={course} onUpdate={fetchData}/>
         ))}
       </Container>
       {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
