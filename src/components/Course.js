@@ -6,7 +6,7 @@ import { query, doc, collection, deleteDoc, getDocs, updateDoc } from 'firebase/
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
 import { Form, Alert } from 'react-bootstrap';
-
+import TaskPage from './TaskPage';
 
 export default function Course(props) {
   const [open1, setOpen1] = useState(false);
@@ -16,18 +16,7 @@ export default function Course(props) {
   const [meetTime, setMeetTime] = useState('')
   const [professor, setProfessor] = useState('')
   const [error, setError] = useState('')
-
-  const tasks = [
-    {
-      number: '1',
-      task: 'bool'
-    },
-    {
-      number: '2',
-      task: 'piss'
-    }
-  ]
-
+  
   // updates a document in firestore db
   const editCourse = async () => {
     setError('')
@@ -158,35 +147,21 @@ export default function Course(props) {
           </Row>
         </Card.Header>
         <Card.Body>
-          {
-            props.onHomePage
-              ?
-              <>
-                <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
-                <Card.Text>{props.course.professor}</Card.Text>
-                <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+          <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
+          <Card.Text>{props.course.professor}</Card.Text>
 
-                {/*Set Button to be collapsable*/}
-                <Collapse in={open1}>
-                  {/* map over list of tasks */}
-                  <div>
-                    {
-                      tasks.map((task) => (
-                        <Task key={task.task} task={task} />
-                      ))
-                    }
-                  </div>
-                </Collapse>
-              </>
-              :
-              <div>
-                {
-                  tasks.map((task) => (
-                    <Task key={task.task} task={task} />
-                  ))
-                }
-              </div>
-          }
+          {/*Set Button to be collapsable*/}
+          {props.showButton && <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>}
+          {props.showButton && <Collapse in={open1}>
+            {/* map over list of tasks */}
+            <div>
+              {
+                tasks.map((task) => (
+                  <Task key={task.task} task={task} />
+                ))
+              }
+            </div>
+          </Collapse>}
         </Card.Body>
       </Card>
     </>

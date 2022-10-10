@@ -1,16 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import { useAuth } from '../contexts/AuthContext';
 import { auth, db } from '../firebase';
-import Container from 'react-bootstrap/Container';
-import Note from './Note'
+import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
 import { collection, getDocs, query } from 'firebase/firestore';
-import { Button, Form, Card, Alert } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
 
-export default function NotesContent(props) {
-  const [error, setError] = useState('')
+export default function NoteButton() {
+    const [error, setError] = useState('')
   const { addNote } = useAuth();
   const [notes, setNotes] = useState([]);
   const [open, setOpen] = useState(false);
@@ -42,12 +40,10 @@ export default function NotesContent(props) {
         }
       })
     }
-    console.log('fetching data')
   }
 
   // Used to fetch users notes from firestore
   useEffect(() => {
-    console.log('in effect')
     fetchData();
   }, [])
 
@@ -84,44 +80,39 @@ export default function NotesContent(props) {
     setOpen(false);
   };
 
-  return (
-    <Container>
-      <Container fluid style = {{ width: '400px'}}>
-        {/* Render user notes */}
-        {notes.map((note) => (
-          <Note key={note.id} note={note} onUpdate={fetchData} />
-        ))}
+    return(
+        /* Form to create a new note */
+        <Container>
+            <Modal open={open} onClose={handleClose}>
+                <Card style={
+                    {
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: '20%',
+                    width: "30%"
+                    }
+                }>
+                    <Card.Body>
+                    <h2 className='text-center mb-4'>Add note</h2>
+                    {error && <Alert variant="danger">{error}</Alert>}
+                    <Form>
+                        <Form.Group id='note'>
+                        <Form.Control type='note' ref={noteRef} required />
+                        </Form.Group>
+                        <Button className='w-100 mt-3' onClick={handleSubmit}>
+                        Add Note
+                        </Button>
+                    </Form>
+                    </Card.Body>
+                </Card>
+            </Modal>
 
-        {/* Form to create a new note */}
-        <Modal open={open} onClose={handleClose}>
-          <Card style={
-            {
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '20%',
-              width: "30%"
-            }
-          }>
-            <Card.Body>
-              <h2 className='text-center mb-4'>Add note</h2>
-              {error && <Alert variant="danger">{error}</Alert>}
-              <Form>
-                <Form.Group id='note'>
-                  <Form.Control type='note' ref={noteRef} required />
-                </Form.Group>
-                <Button className='w-100 mt-3' onClick={handleSubmit}>
-                  Add Note
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Modal> 
-      </Container>
-      {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex', fixed: "bottom" }}>
-          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-            <FaPlus size={"30px"}/>
-          </Fab>
-        </Container>}
-    </Container>
-  )
+            <div class = "w-100 container-fluid fixed-bottom justify-content-end">
+                <Fab color="primary" onClick={(e) => setOpen(true)}>
+                    <FaPlus />
+                </Fab>
+            </div>
+
+        </Container>
+    )
 }
