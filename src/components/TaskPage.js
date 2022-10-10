@@ -4,11 +4,11 @@ import TopBar from './TopBar'
 import TaskContent from './TaskContent'
 
 
-export default function TaskPage() {
+export default function TaskPage(props) {
     return (
         <Container>
             <TopBar name="Tasks" />
-            <TaskContent/>
+            <TaskContent showButton={true}/>
         </Container>
     )
 }

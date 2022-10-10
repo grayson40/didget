@@ -4,7 +4,7 @@ import { Button, Collapse } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
-import TaskPage from './TaskPage';
+import TaskContent from './TaskContent';
 
 export default function Cards() {
 
@@ -27,7 +27,7 @@ export default function Cards() {
                 <Collapse in={open1}>
                     <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/tasks">
                         <div>
-                          <TaskPage id = "today" showButton={false} />
+                          <TaskContent showButton={false} />
                         </div>
                     </Card.Link>
                 </Collapse>

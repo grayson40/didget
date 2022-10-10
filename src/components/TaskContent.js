@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, Container, Row, Col, Form} from 'react-bootstrap'
 
-export default function TaskContent() {
+export default function TaskContent(props) {
 
     return (
         <Container fixed = "top" fluid style = {{ width: '400px', marginTop: "5%"}}>
@@ -44,7 +44,7 @@ export default function TaskContent() {
                 </Card>
 
                 {/*Card for Due This Week*/}
-                <Card className="mb-4">
+                {props.showButton && <Card className="mb-4">
                     <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due This Week</Card.Header>
                     <Card.Body>
                         {/*Card for each task*/}
@@ -59,10 +59,10 @@ export default function TaskContent() {
                             </Card.Body>
                         </Card>
                     </Card.Body>
-                </Card>
+                </Card>}
 
                 {/*Card for Due This Month*/}
-                <Card className="mb-4">
+                {props.showButton && <Card className="mb-4">
                     <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due This Month</Card.Header>
                     <Card.Body>
                         {/*Card for each task*/}
@@ -77,7 +77,7 @@ export default function TaskContent() {
                             </Card.Body>
                         </Card>
                     </Card.Body>
-                </Card>
+                </Card>}
         </Container>
     )
 }
