@@ -44,6 +44,7 @@ export default function TopBar({ name }) {
               <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
               <Dropdown.Item href="/budget">Budget</Dropdown.Item>
               <Dropdown.Item href="/notes">Notes</Dropdown.Item>
+              <Dropdown.Item href="/tasks">Tasks</Dropdown.Item>
           </DropdownButton>
         </div>
         <div class = "container-fluid d-flex justify-content-center">
