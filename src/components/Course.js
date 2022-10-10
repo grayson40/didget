@@ -158,21 +158,35 @@ export default function Course(props) {
           </Row>
         </Card.Header>
         <Card.Body>
-          <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
-          <Card.Text>{props.course.professor}</Card.Text>
-          <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+          {
+            props.onHomePage
+              ?
+              <>
+                <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
+                <Card.Text>{props.course.professor}</Card.Text>
+                <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
 
-          {/*Set Button to be collapsable*/}
-          <Collapse in={open1}>
-            {/* map over list of tasks */}
-            <div>
-              {
-                tasks.map((task) => (
-                  <Task key={task.task} task={task} />
-                ))
-              }
-            </div>
-          </Collapse>
+                {/*Set Button to be collapsable*/}
+                <Collapse in={open1}>
+                  {/* map over list of tasks */}
+                  <div>
+                    {
+                      tasks.map((task) => (
+                        <Task key={task.task} task={task} />
+                      ))
+                    }
+                  </div>
+                </Collapse>
+              </>
+              :
+              <div>
+                {
+                  tasks.map((task) => (
+                    <Task key={task.task} task={task} />
+                  ))
+                }
+              </div>
+          }
         </Card.Body>
       </Card>
     </>
