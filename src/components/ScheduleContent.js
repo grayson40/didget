@@ -124,7 +124,7 @@ export default function ScheduleContent(props) {
 
       {/* Map over list of courses */}
       {courses.map((course) => (
-        <Course key={course.name} course={course} onUpdate={fetchData}/>
+        <Course key={course.name} course={course} onUpdate={fetchData} onHomePage={props.showButton}/>
       ))}
       {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
         <Fab color="primary" onClick={(e) => setOpen(true)}>
