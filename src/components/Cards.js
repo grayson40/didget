@@ -4,12 +4,11 @@ import { Button, Collapse } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
-import TaskContent from './TaskContent';
 
 export default function Cards() {
 
     const [open1, setOpen1] = useState(true)
-    const [open2, setOpen2] = useState(true)
+    // const [open2, setOpen2] = useState(true)
     const [open3, setOpen3] = useState(true)
     const [open4, setOpen4] = useState(true)
 
@@ -26,11 +25,9 @@ export default function Cards() {
                     Tasks
                 </Button>
                 <Collapse in={open1}>
-                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/schedule">
-                        <div>
-                          <ScheduleContent showButton={false} />
-                        </div>
-                    </Card.Link>
+                    <div>
+                      <ScheduleContent showButton={false} />
+                    </div>
                 </Collapse>
             </Card>
             <Card className="mb-3">
@@ -42,13 +39,11 @@ export default function Cards() {
                     Budget
                 </Button>
                 <Collapse in={open3}>
-                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/budget">
-                        <div>
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                        terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                        labore wes anderson cred nesciunt sapiente ea proident.
-                        </div>
-                    </Card.Link>
+                    <div>
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+                    labore wes anderson cred nesciunt sapiente ea proident.
+                    </div>
                 </Collapse>
             </Card>
             <Card className="mb-3">
@@ -60,11 +55,9 @@ export default function Cards() {
                     Notes
                 </Button>
                 <Collapse in={open4}>
-                    <Card.Link style={{textDecoration: 'none', color: 'black'}} href="/notes">
-                        <div>
-                            <NotesContent showButton={false}/>
-                        </div>
-                    </Card.Link>
+                    <div>
+                        <NotesContent showButton={false}/>
+                    </div>
                 </Collapse>
             </Card>
         </Container>
