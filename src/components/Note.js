@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 // import { Row, Col, Card, Button } from 'react-bootstrap';
 import {
   List,
@@ -15,6 +15,7 @@ export default function Note(props) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('')
   const [input, setInput] = useState('')
+  const [note, setNote] = useState('')
 
   const deleteNote = async () => {
     const usersRef = await getDocs(
@@ -49,35 +50,38 @@ export default function Note(props) {
 
   // update note from firebase
   const updateNote = async () => {
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-      )
-    );
-    // Iterate through the documents fetched
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const notesRef = await getDocs(
-          query(
-            collection(db, `users/${user.id}/notes`)
-          )
-        );
-        notesRef.forEach(async (note) => {
-          if (note.id === props.note.id) {
-            const docRef = doc(db, `users/${user.id}/notes/${note.id}`)
-            await updateDoc(docRef, { note: input })
-              .then(() => {
-                console.log('document updated')
-                props.onUpdate()
-              })
-              .catch(error => {
-                setError(error.toString())
-              })
-          }
-        })
-      }
-    })
-    setOpen(false);
+    if (input !== '') {
+      const usersRef = await getDocs(
+        query(
+          collection(db, 'users')
+        )
+      );
+      // Iterate through the documents fetched
+      usersRef.forEach(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const notesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/notes`)
+            )
+          );
+          notesRef.forEach(async (note) => {
+            if (note.id === props.note.id) {
+              const docRef = doc(db, `users/${user.id}/notes/${note.id}`)
+              await updateDoc(docRef, { note: input })
+                .then(() => {
+                  console.log('document updated')
+                  // props.onUpdate()
+                })
+                .catch(error => {
+                  setError(error.toString())
+                })
+            }
+          })
+        }
+      })
+      setNote(input)
+      setOpen(false);
+    }
   };
 
   // Modal close
@@ -85,6 +89,11 @@ export default function Note(props) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    setNote(props.note.note);
+    console.log('in effect')
+  }, [])
+  
   return (
     <>
       {/* popup update window */}
@@ -102,7 +111,7 @@ export default function Note(props) {
             {error && <Alert variant="danger">{error}</Alert>}
             <Form>
               <Form.Group id='note'>
-                <Form.Control type='note' onChange={(e) => setInput(e.target.value)} />
+                <Form.Control type='note' onChange={(e) => setInput(e.target.value)} placeholder={note}/>
               </Form.Group>
               <Button className='w-100 mt-3' onClick={updateNote}>
                 Update
@@ -114,7 +123,7 @@ export default function Note(props) {
 
       <List>
         <ListItem button>
-          <ListItemText primary={props.note.note} secondary={props.note.date} />
+          <ListItemText primary={note} secondary={props.note.date} />
           <Button
             variant="contained"
             color="primary"
