@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { Card, Row, Col, Form } from 'react-bootstrap'
 import { updateDoc, doc, collection, getDocs, query } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -14,27 +14,27 @@ export default function Task(props) {
       pRef.style.setProperty('text-decoration', 'line-through');
     }
 
-    setCheck(!check);
-
     const usersRef = await getDocs(
       query(
         collection(db, 'users')
-      )
-    );
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const docRef = doc(db, `users/${user.id}/tasks/${props.task.id}`)
-        await updateDoc(docRef, { isChecked: !props.task.isChecked })
-          .then(() => {
-            console.log('document updated')
-          })
-          .catch(error => {
-            console.log(error.toString())
-          })
-      }
-    })
-    props.onUpdate();
+        )
+        );
+        usersRef.forEach(async (user) => {
+          if (user.data().uid === auth.currentUser.uid) {
+            const docRef = doc(db, `users/${user.id}/tasks/${props.task.id}`)
+            await updateDoc(docRef, { isChecked: !props.task.isChecked })
+            .then(() => {
+              console.log('document updated')
+            })
+            .catch(error => {
+              console.log(error.toString())
+            })
+          }
+        })
+    setCheck(!check);
   }
+
+  
 
   return (
     <Card className='mb-2'>
