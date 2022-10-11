@@ -1,12 +1,12 @@
 import React from 'react'
 import TopBar from './TopBar'
-import TaskPage from './TaskPage'
+import TaskContent from './TaskContent'
 
 export default function Tasks(props) {
   return (
     <>
       <TopBar name="Tasks" />
-      <TaskPage inCourse={props.inCourse}/>
+      <TaskContent inCourse={props.inCourse}/>
     </>
   )
 }
