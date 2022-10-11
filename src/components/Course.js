@@ -21,7 +21,6 @@ export default function Course(props) {
     setMeetDay(props.course.meetDay);
     setMeetTime(props.course.meetTime);
     setProfessor(props.course.professor);
-    console.log('in effect')
   }, [])
 
   // updates a document in firestore db

@@ -51,6 +51,7 @@ export default function ScheduleContent(props) {
   // Used to fetch users notes from firestore
   useEffect(() => {
     fetchData();
+    console.log("in schedule effect")
   }, [])
 
   const addCourse = async () => {

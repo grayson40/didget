@@ -91,7 +91,6 @@ export default function Note(props) {
 
   useEffect(() => {
     setNote(props.note.note);
-    console.log('in effect')
   }, [])
   
   return (

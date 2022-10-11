@@ -42,12 +42,12 @@ export default function NotesContent(props) {
         }
       })
     }
-    console.log('fetching data')
+    console.log('fetching note data')
   }
 
   // Used to fetch users notes from firestore
   useEffect(() => {
-    console.log('in effect')
+    console.log('in note effect')
     fetchData();
   }, [])
 
