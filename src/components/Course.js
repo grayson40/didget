@@ -177,7 +177,7 @@ export default function Course(props) {
           {props.showButton && <Collapse in={open1}>
             {/* map over list of tasks */}
             <div>
-              <TaskContent inCourse={props.showButton} />
+              <TaskContent courseId={props.course.id} inCourse={props.showButton} />
             </div>
           </Collapse>}
         </Card.Body>

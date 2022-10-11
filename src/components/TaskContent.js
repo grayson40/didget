@@ -3,7 +3,7 @@ import { Card, Container, Modal, Form, Button } from 'react-bootstrap'
 import Task from './Task'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, query, addDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 export default function TaskContent(props) {
@@ -38,7 +38,8 @@ export default function TaskContent(props) {
                 id: task.id,
                 name: task.data().name,
                 deadline: task.data().deadline,
-                isChecked: task.data().isChecked
+                isChecked: task.data().isChecked,
+                course_id: task.data().course_id
               }))
             )
           }
@@ -47,33 +48,38 @@ export default function TaskContent(props) {
       console.log('fetching task data')
     }
 
-    // const getCourseId = async () => {
-
-    // }
 
     const addTask = async () => {
-      // // setError('')
-      // const userRef = await getDocs(
-      //   query(
-      //     collection(db, "users")
-      //   )
-      // );
-      // userRef.docs.map(async (user) => {
-      //   if (user.data().uid === auth.currentUser.uid) {
-      //     const collectionRef = collection(db, `users/${user.id}/tasks/`);
-      //     const courseId = getCourseId()
-      //     await addDoc(collectionRef, {
-      //       name: name, 
-      //       deadline: deadline, 
-      //       isChecked: false, 
-      //       course_id: courseId
-      //     });
-      //     setTasks(
-      //       [...tasks, { name: name, deadline: deadline, isChecked: false, course_id: courseId}]
-      //     );
-      //   }
-      // })
-      console.log(`${name} ${course} ${deadline}`)
+      const userRef = await getDocs(
+        query(
+          collection(db, "users")
+        )
+      );
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const collectionRef = collection(db, `users/${user.id}/tasks/`);
+          let courseId = ''
+          const coursesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/courses/`)
+            )
+          );
+          coursesRef.docs.forEach((_course) => {
+            if (_course.data().name.toLowerCase() === course.toLowerCase()) {
+              courseId = _course.id;
+            }
+          })
+          await addDoc(collectionRef, {
+            name: name, 
+            deadline: deadline, 
+            isChecked: false, 
+            course_id: courseId
+          });
+          setTasks(
+            [...tasks, { name: name, deadline: deadline, isChecked: false, course_id: courseId}]
+          );
+        }
+      })
       handleClose();
     }
 
@@ -124,12 +130,18 @@ export default function TaskContent(props) {
       return parseInt(arr[0]) === currentMonth && parseInt(arr[1]) === currentDay;
     }  
 
+    const isCourseTask = (value) => {
+      const courseId = value.course_id;
+
+      return courseId === props.courseId
+    }
+
     return (
         <>
 
           {
             props.inCourse
-              ? tasks.map((task) => (
+              ? tasks.filter(isCourseTask).map((task) => (
                 <Task key={task.id} task={task} />
               ))
               :
@@ -168,40 +180,31 @@ export default function TaskContent(props) {
                 </Card>
 
                 {/* popup add window */}
-                <Modal open={open} onClose={handleClose}>
-                  <Card style={
-                    {
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      marginTop: '10%',
-                      width: "25%"
-                    }
-                  }>
-                    <Card.Body>
-                      <h2 className='text-center mb-4'>Add Task</h2>
-                      <Form>
-                        <Form.Group id='task'>
-                          <Form.Label>Task</Form.Label>
-                          <Form.Control type='task' onChange={(e) => setName(e.target.value)} />
-                        </Form.Group>
-                        <Form.Group id='course'>
-                          <Form.Label>Course</Form.Label>
-                          <Form.Control type='course' onChange={(e) => setCourse(e.target.value)} />
-                        </Form.Group>
-                        <Form.Group id='deadline'>
-                          <Form.Label>Deadline</Form.Label>
-                          <Form.Control type='deadline' onChange={(e) => setDeadline(e.target.value)} />
-                        </Form.Group>
-                        <Button className='w-100 mt-3' onClick={addTask}>
-                          Add
-                        </Button>
-                      </Form>
-                    </Card.Body>
-                  </Card>
+                <Modal show={open} onClose={handleClose} onHide={handleClose}>
+                  <Modal.Body>
+                    <h2 className='text-center mb-4'>Add Task</h2>
+                    <Form>
+                      <Form.Group id='task'>
+                        <Form.Label>Task</Form.Label>
+                        <Form.Control type='task' onChange={(e) => setName(e.target.value)} />
+                      </Form.Group>
+                      <Form.Group id='course'>
+                        <Form.Label>Course</Form.Label>
+                        <Form.Control type='course' onChange={(e) => setCourse(e.target.value)} />
+                      </Form.Group>
+                      <Form.Group id='deadline'>
+                        <Form.Label>Deadline</Form.Label>
+                        <Form.Control type='deadline' onChange={(e) => setDeadline(e.target.value)} />
+                      </Form.Group>
+                      <Button className='w-100 mt-3' onClick={addTask}>
+                        Add
+                      </Button>
+                    </Form>
+                  </Modal.Body>
                 </Modal>
 
                 <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-                  <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+                  <Fab size={"80px"} color="primary" onClick={(e) => setOpen(!open)}>
                     <FaPlus size={"30px"} />
                   </Fab>
                 </Container>

@@ -7,13 +7,12 @@ export default function Task(props) {
   const [check, setCheck] = useState(props.task.isChecked)
 
   const handleCheck = async () => {
-    const pRef = document.getElementById(props.task.id)
-    if (pRef.style.textDecoration) {
-      pRef.style.removeProperty('text-decoration');
-    } else {
-      pRef.style.setProperty('text-decoration', 'line-through');
-    }
-
+    // const pRef = document.getElementById(props.task.id)
+    // if (pRef.style.textDecoration) {
+    //   pRef.style.removeProperty('text-decoration');
+    // } else {
+    //   pRef.style.setProperty('text-decoration', 'line-through');
+    // }
     const usersRef = await getDocs(
       query(
         collection(db, 'users')
@@ -34,8 +33,6 @@ export default function Task(props) {
     setCheck(!check);
   }
 
-  
-
   return (
     <Card className='mb-2'>
       <Card.Body>
@@ -52,7 +49,7 @@ export default function Task(props) {
               : <>
                   <Col sm={1}><Form.Check onChange={handleCheck} aria-label="option 1" /></Col>
                   <Col sm={7}>
-                    <p id={props.task.id}>{props.task.name}</p>
+                    <p id={props.task.id}>{props.task.name} {props.courseId}</p>
                   </Col>
                 </>
           }
