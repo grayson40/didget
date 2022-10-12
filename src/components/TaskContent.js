@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Container, Modal, Form, Button } from 'react-bootstrap'
+import { Card, Container, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Task from './Task'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
@@ -12,6 +12,7 @@ export default function TaskContent(props) {
     const [name, setName] = useState('')
     const [deadline, setDeadline] = useState('')
     const [course, setCourse] = useState('')
+    const [error, setError] = useState('')
 
 
     const d = new Date();
@@ -50,37 +51,42 @@ export default function TaskContent(props) {
 
 
     const addTask = async () => {
-      const userRef = await getDocs(
-        query(
-          collection(db, "users")
-        )
-      );
-      userRef.docs.map(async (user) => {
-        if (user.data().uid === auth.currentUser.uid) {
-          const collectionRef = collection(db, `users/${user.id}/tasks/`);
-          let courseId = ''
-          const coursesRef = await getDocs(
-            query(
-              collection(db, `users/${user.id}/courses/`)
-            )
-          );
-          coursesRef.docs.forEach((_course) => {
-            if (_course.data().name.toLowerCase() === course.toLowerCase()) {
-              courseId = _course.id;
-            }
-          })
-          await addDoc(collectionRef, {
-            name: name, 
-            deadline: deadline, 
-            isChecked: false, 
-            course_id: courseId
-          });
-          setTasks(
-            [...tasks, { name: name, deadline: deadline, isChecked: false, course_id: courseId}]
-          );
-        }
-      })
-      handleClose();
+      if (name !== '' && deadline !== '' && course !== '') {
+        const userRef = await getDocs(
+          query(
+            collection(db, "users")
+          )
+        );
+        userRef.docs.map(async (user) => {
+          if (user.data().uid === auth.currentUser.uid) {
+            let courseId = ''
+            const coursesRef = await getDocs(
+              query(
+                collection(db, `users/${user.id}/courses/`)
+                )
+                );
+                coursesRef.docs.forEach((_course) => {
+                  if (_course.data().name.toLowerCase() === course.toLowerCase()) {
+                    courseId = _course.id;
+                  }
+                })
+              const collectionRef = collection(db, `users/${user.id}/tasks/`);
+                await addDoc(collectionRef, {
+              name: name, 
+              deadline: deadline, 
+              isChecked: false, 
+              course_id: courseId
+            });
+            setTasks(
+              [...tasks, { name: name, deadline: deadline, isChecked: false, course_id: courseId}]
+            );
+          }
+        })
+        handleClose();
+      }
+      else {
+        setError('Error: no fields can be blank');
+      }
     }
 
     // Used to fetch users notes from firestore
@@ -144,7 +150,7 @@ export default function TaskContent(props) {
               ? tasks.filter(isCourseTask).map((task) => (
                 <Task key={task.id} task={task} />
               ))
-              :
+              : 
               <>
                 {/*Card for Due Today*/}
                 <Card className="mb-4">
@@ -183,6 +189,7 @@ export default function TaskContent(props) {
                 <Modal show={open} onClose={handleClose} onHide={handleClose}>
                   <Modal.Body>
                     <h2 className='text-center mb-4'>Add Task</h2>
+                    {error && <Alert variant="danger">{error}</Alert>}
                     <Form>
                       <Form.Group id='task'>
                         <Form.Label>Task</Form.Label>
