@@ -10,12 +10,13 @@ import Settings from './Settings';
 import Schedule from './Schedule';
 import Budget from './Budget';
 import Notes from './Notes';
+import Tasks from './Tasks';
 
 function App() {
   return (
     
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh"}}>
-      <div className="w-100" style={{ maxWidth: '400px'}}>
+      <div className="w-100" style={{ maxWidth: '100%'}}>
         <Router>
           <AuthProvider>
             <Routes>
@@ -25,6 +26,7 @@ function App() {
               <Route exact path="/schedule" element={<PrivateRoute> <Schedule/> </PrivateRoute>}/>
               <Route exact path="/budget" element={<PrivateRoute> <Budget/> </PrivateRoute>}/>
               <Route exact path="/notes" element={<PrivateRoute> <Notes/> </PrivateRoute>}/>
+              <Route exact path="/tasks" element={<PrivateRoute> <Tasks/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
             </Routes>

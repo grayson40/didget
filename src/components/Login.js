@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { formatError, useAuth } from '../contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
+import Container from 'react-bootstrap/Container';
 
 export default function Login() {
     const emailRef = useRef()
@@ -28,7 +29,7 @@ export default function Login() {
     }
 
   return (
-    <>
+    <Container fluid style = {{ width: '400px', height: '600px'}}>
         <Card>
             <Card.Body>
                 <h2 className="text-center mb-4">Log In</h2>
@@ -52,6 +53,6 @@ export default function Login() {
         <div className="w-100 text-center mt-2">
             Need an Account? <Link to='/signup'>Sign Up</Link>
         </div>
-    </>
+    </Container>
   )
 }

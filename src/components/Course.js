@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
-import Task from './Task';
 import { auth, db } from '../firebase'
 import { query, doc, collection, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
 import { Form, Alert } from 'react-bootstrap';
-
+import TaskContent from './TaskContent'
 
 export default function Course(props) {
   const [open1, setOpen1] = useState(false);
@@ -17,16 +16,12 @@ export default function Course(props) {
   const [professor, setProfessor] = useState('')
   const [error, setError] = useState('')
 
-  const tasks = [
-    {
-      number: '1',
-      task: 'bool'
-    },
-    {
-      number: '2',
-      task: 'piss'
-    }
-  ]
+  useEffect(() => {
+    setName(props.course.name);
+    setMeetDay(props.course.meetDay);
+    setMeetTime(props.course.meetTime);
+    setProfessor(props.course.professor);
+  }, [])
 
   // updates a document in firestore db
   const editCourse = async () => {
@@ -55,7 +50,7 @@ export default function Course(props) {
             })
               .then(() => {
                 console.log('document updated')
-                props.onUpdate()
+                // props.onUpdate()
               })
               .catch(error => {
                 setError(error.toString())
@@ -122,19 +117,35 @@ export default function Course(props) {
             <Form>
               <Form.Group id='name'>
                 <Form.Label>Course name</Form.Label>
-                <Form.Control type='name' placeholder={props.course.name} onChange={(e) => setName(e.target.value)} />
+                <Form.Control type='name' placeholder={name} onChange={(e) => {
+                  if (e.target.value !== '') { 
+                    setName(e.target.value)
+                  }
+                }}/>
               </Form.Group>
               <Form.Group id='meet-day'>
                 <Form.Label>Meet Day</Form.Label>
-                <Form.Control type='meet-day' placeholder={props.course.meetDay} onChange={(e) => setMeetDay(e.target.value)} />
+                <Form.Control type='meet-day' placeholder={meetDay} onChange={(e) => {
+                  if (e.target.value !== '') { 
+                    setMeetDay(e.target.value)
+                  }
+                }} />
               </Form.Group>
               <Form.Group id='meet-time'>
                 <Form.Label>Meet time</Form.Label>
-                <Form.Control type='meet-time' placeholder={props.course.meetTime} onChange={(e) => setMeetTime(e.target.value)} />
+                <Form.Control type='meet-time' placeholder={meetTime} onChange={(e) => {
+                  if (e.target.value !== '') { 
+                    setMeetTime(e.target.value)
+                  }
+                }} />
               </Form.Group>
               <Form.Group id='professor'>
                 <Form.Label>Professor</Form.Label>
-                <Form.Control type='professor' placeholder={props.course.professor} onChange={(e) => setProfessor(e.target.value)} />
+                <Form.Control type='professor' placeholder={professor} onChange={(e) => {
+                  if (e.target.value !== '') { 
+                    setProfessor(e.target.value)
+                  }
+                }} />
               </Form.Group>
               <Button className='w-100 mt-3' onClick={editCourse}>
                 Edit
@@ -147,7 +158,7 @@ export default function Course(props) {
       <Card className='mb-4'>
         <Card.Header as="h5">
           <Row>
-            <Col sm={8}>{props.course.name}</Col>
+            <Col sm={8}>{name}</Col>
             <Col xs={0}>
               <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
                 {/* onclick method for these two */}
@@ -158,21 +169,17 @@ export default function Course(props) {
           </Row>
         </Card.Header>
         <Card.Body>
-          <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
-          <Card.Text>{props.course.professor}</Card.Text>
-          <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+          <Card.Title>{`${meetDay} ${meetTime}`}</Card.Title>
+          <Card.Text>{professor}</Card.Text>
 
           {/*Set Button to be collapsable*/}
-          <Collapse in={open1}>
+          {props.showButton && <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>}
+          {props.showButton && <Collapse in={open1}>
             {/* map over list of tasks */}
             <div>
-              {
-                tasks.map((task) => (
-                  <Task key={task.task} task={task} />
-                ))
-              }
+              <TaskContent courseId={props.course.id} inCourse={props.showButton} />
             </div>
-          </Collapse>
+          </Collapse>}
         </Card.Body>
       </Card>
     </>

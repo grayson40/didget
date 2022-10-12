@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Course from './Course'
 import { Button, Card, Form, Container, Alert } from 'react-bootstrap';
-import { collection, getDocs, query, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, addDoc} from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
@@ -51,6 +51,7 @@ export default function ScheduleContent(props) {
   // Used to fetch users notes from firestore
   useEffect(() => {
     fetchData();
+    console.log("in schedule effect")
   }, [])
 
   const addCourse = async () => {
@@ -84,53 +85,56 @@ export default function ScheduleContent(props) {
 
   return (
     <Container>
-      {/* popup add window */}
-      <Modal open={open} onClose={handleClose}>
-        <Card style={
-          {
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            marginTop: '10%',
-            width: "25%"
-          }
-        }>
-          <Card.Body>
-            <h2 className='text-center mb-4'>Add Course</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-            <Form>
-              <Form.Group id='name'>
-                <Form.Label>Course name</Form.Label>
-                <Form.Control type='name' onChange={(e) => setName(e.target.value)} />
-              </Form.Group>
-              <Form.Group id='meet-day'>
-                <Form.Label>Meet Day</Form.Label>
-                <Form.Control type='meet-day' onChange={(e) => setMeetDay(e.target.value)} />
-              </Form.Group>
-              <Form.Group id='meet-time'>
-                <Form.Label>Meet time</Form.Label>
-                <Form.Control type='meet-time' onChange={(e) => setMeetTime(e.target.value)} />
-              </Form.Group>
-              <Form.Group id='professor'>
-                <Form.Label>Professor</Form.Label>
-                <Form.Control type='professor' onChange={(e) => setProfessor(e.target.value)} />
-              </Form.Group>
-              <Button className='w-100 mt-3' onClick={addCourse}>
-                Add
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Modal>
+      <Container style={{width: '400px'}}>
+        {/* popup add window */}
+        <Modal open={open} onClose={handleClose}>
+          <Card style={
+            {
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              marginTop: '10%',
+              width: "25%"
+            }
+          }>
+            <Card.Body>
+              <h2 className='text-center mb-4'>Add Course</h2>
+              {error && <Alert variant="danger">{error}</Alert>}
+              <Form>
+                <Form.Group id='name'>
+                  <Form.Label>Course name</Form.Label>
+                  <Form.Control type='name' onChange={(e) => setName(e.target.value)} />
+                </Form.Group>
+                <Form.Group id='meet-day'>
+                  <Form.Label>Meet Day</Form.Label>
+                  <Form.Control type='meet-day' onChange={(e) => setMeetDay(e.target.value)} />
+                </Form.Group>
+                <Form.Group id='meet-time'>
+                  <Form.Label>Meet time</Form.Label>
+                  <Form.Control type='meet-time' onChange={(e) => setMeetTime(e.target.value)} />
+                </Form.Group>
+                <Form.Group id='professor'>
+                  <Form.Label>Professor</Form.Label>
+                  <Form.Control type='professor' onChange={(e) => setProfessor(e.target.value)} />
+                </Form.Group>
+                <Button className='w-100 mt-3' onClick={addCourse}>
+                  Add
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Modal>
 
-      {/* Map over list of courses */}
-      {courses.map((course) => (
-        <Course key={course.name} course={course} onUpdate={fetchData}/>
-      ))}
-      {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
-        <Fab color="primary" onClick={(e) => setOpen(true)}>
-          <FaPlus />
-        </Fab>
-      </Container>}
+        {/* Map over list of courses */}
+        {courses.map((course) => (
+          <Course key={course.id} showButton = {props.showButton} course={course} onUpdate={fetchData}/>
+        ))}
+
+      </Container>
+      {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+            <FaPlus size={"30px"}/>
+          </Fab>
+        </Container>}
     </Container>
 
   )
