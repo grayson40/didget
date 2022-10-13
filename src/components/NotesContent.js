@@ -89,7 +89,7 @@ export default function NotesContent(props) {
       <Container fluid style = {{ width: '400px'}}>
         {/* Render user notes */}
         {notes.map((note) => (
-          <Note key={note.id} note={note} onUpdate={fetchData} />
+          <Note key={note.id} note={note} inCard={props.showButton} onUpdate={fetchData} />
         ))}
 
         {/* Form to create a new note */}

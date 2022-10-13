@@ -92,7 +92,7 @@ export default function Note(props) {
   useEffect(() => {
     setNote(props.note.note);
   }, [])
-  
+
   return (
     <>
       {/* popup update window */}
@@ -110,7 +110,7 @@ export default function Note(props) {
             {error && <Alert variant="danger">{error}</Alert>}
             <Form>
               <Form.Group id='note'>
-                <Form.Control type='note' onChange={(e) => setInput(e.target.value)} placeholder={note}/>
+                <Form.Control type='note' onChange={(e) => setInput(e.target.value)} placeholder={note} />
               </Form.Group>
               <Button className='w-100 mt-3' onClick={updateNote}>
                 Update
@@ -123,23 +123,27 @@ export default function Note(props) {
       <List>
         <ListItem button>
           <ListItemText primary={note} secondary={props.note.date} />
-          <Button
-            variant="contained"
-            color="primary"
-            size="medium"
-            onClick={(e) => setOpen(true)}
-          >
-            <FaPen />
-          </Button>
-          <span className="space"></span>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="medium"
-            onClick={deleteNote}
-          >
-            <FaTrashAlt color='gray' />
-          </Button>
+          {props.inCard &&
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                size="medium"
+                onClick={(e) => setOpen(true)}
+              >
+                <FaPen />
+              </Button>
+              <span className="space"></span>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="medium"
+                onClick={deleteNote}
+              >
+                <FaTrashAlt color='gray' />
+              </Button>
+            </>
+          }
         </ListItem>
       </List>
     </>
