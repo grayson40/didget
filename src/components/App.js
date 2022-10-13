@@ -12,6 +12,7 @@ import Budget from './Budget';
 import Notes from './Notes';
 import Tasks from './Tasks';
 import Financial from './Financial';
+import Expenses from './Expenses';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Route exact path="/notes" element={<PrivateRoute> <Notes/> </PrivateRoute>}/>
               <Route exact path="/tasks" element={<PrivateRoute> <Tasks/> </PrivateRoute>}/>
               <Route exact path="/financial" element={<PrivateRoute> <Financial/> </PrivateRoute>}/>
+              <Route exact path="/expenses" element={<PrivateRoute> <Expenses/> </PrivateRoute>}/>
               <Route path = "/signup" element={<Signup/>}/>
               <Route path = "/login" element={<Login/>}/>
             </Routes>

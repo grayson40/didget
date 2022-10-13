@@ -48,6 +48,7 @@ export default function TopBar({ name }) {
               <Dropdown.Divider/>
               <Dropdown.Item href="/financial">Financial</Dropdown.Item>
               <Dropdown.Item href="/budget">Budget</Dropdown.Item>
+              <Dropdown.Item href="/expenses">Expenses</Dropdown.Item>
           </DropdownButton>
         </div>
         <div class = "container-fluid d-flex justify-content-center">
