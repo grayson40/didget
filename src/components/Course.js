@@ -118,15 +118,15 @@ export default function Course(props) {
               <Form.Group id='name'>
                 <Form.Label>Course name</Form.Label>
                 <Form.Control type='name' placeholder={name} onChange={(e) => {
-                  if (e.target.value !== '') { 
+                  if (e.target.value !== '') {
                     setName(e.target.value)
                   }
-                }}/>
+                }} />
               </Form.Group>
               <Form.Group id='meet-day'>
                 <Form.Label>Meet Day</Form.Label>
                 <Form.Control type='meet-day' placeholder={meetDay} onChange={(e) => {
-                  if (e.target.value !== '') { 
+                  if (e.target.value !== '') {
                     setMeetDay(e.target.value)
                   }
                 }} />
@@ -134,7 +134,7 @@ export default function Course(props) {
               <Form.Group id='meet-time'>
                 <Form.Label>Meet time</Form.Label>
                 <Form.Control type='meet-time' placeholder={meetTime} onChange={(e) => {
-                  if (e.target.value !== '') { 
+                  if (e.target.value !== '') {
                     setMeetTime(e.target.value)
                   }
                 }} />
@@ -142,7 +142,7 @@ export default function Course(props) {
               <Form.Group id='professor'>
                 <Form.Label>Professor</Form.Label>
                 <Form.Control type='professor' placeholder={professor} onChange={(e) => {
-                  if (e.target.value !== '') { 
+                  if (e.target.value !== '') {
                     setProfessor(e.target.value)
                   }
                 }} />
@@ -160,26 +160,37 @@ export default function Course(props) {
           <Row>
             <Col sm={8}>{name}</Col>
             <Col xs={0}>
-              <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
-                {/* onclick method for these two */}
-                <Dropdown.Item onClick={(e) => setOpen(true)}>Edit</Dropdown.Item>
-                <Dropdown.Item onClick={deleteCourse}>Delete</Dropdown.Item>
-              </DropdownButton>
+              {props.showButton &&
+                <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
+                  {/* onclick method for these two */}
+                  <Dropdown.Item onClick={(e) => setOpen(true)}>Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={deleteCourse}>Delete</Dropdown.Item>
+                </DropdownButton>
+              }
             </Col>
           </Row>
         </Card.Header>
         <Card.Body>
-          <Card.Title>{`${meetDay} ${meetTime}`}</Card.Title>
-          <Card.Text>{professor}</Card.Text>
+        {props.showButton 
+          ?
+          <>
+            <Card.Title>{`${meetDay} ${meetTime}`}</Card.Title>
+            <Card.Text>{professor}</Card.Text>
 
-          {/*Set Button to be collapsable*/}
-          {props.showButton && <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>}
-          {props.showButton && <Collapse in={open1}>
-            {/* map over list of tasks */}
-            <div>
-              <TaskContent courseId={props.course.id} inCourse={props.showButton} />
-            </div>
-          </Collapse>}
+            {/*Set Button to be collapsable*/}
+            <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+            <Collapse in={open1}>
+              {/* map over list of tasks */}
+              <div>
+                <TaskContent courseId={props.course.id} inCourse={props.showButton} />
+              </div>
+            </Collapse>
+          </>
+          :
+          <>
+            <TaskContent courseId={props.course.id} inCourse={true} />
+          </>
+        }
         </Card.Body>
       </Card>
     </>
