@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
-import { Button, Collapse } from 'react-bootstrap';
+import { DropdownButton, Button, Collapse } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
+import { PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function Cards() {
 
@@ -11,6 +12,30 @@ export default function Cards() {
     // const [open2, setOpen2] = useState(true)
     const [open3, setOpen3] = useState(true)
     const [open4, setOpen4] = useState(true)
+
+    // Sample data
+const dataGroc = [
+    {name: 'Walmart', value: 400},
+    {name: 'Target', value: 700},
+    {name: 'Publix', value: 200},
+    {name: 'HomeDepot', value: 400}
+  ];
+
+  const dataEnt = [
+    {name: 'Movies', value: 60},
+    {name: 'Games', value: 80},
+    {name: 'Music', value: 20},
+    {name: 'Streaming', value: 30}
+  ];
+
+  let data = dataGroc;
+
+  const colors = [
+    'blue',
+    'red',
+    'green',
+    'orange'
+  ];
 
   return (
     <div>
@@ -36,13 +61,23 @@ export default function Cards() {
                     aria-controls="example-collapse-text"
                     aria-expanded={open3}
                 >
-                    Budget
+                    Financial
                 </Button>
                 <Collapse in={open3}>
-                    <div>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                    terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
-                    labore wes anderson cred nesciunt sapiente ea proident.
+                    <div class="container-fluid justify-content-center align-content-center" height={500}>
+                        <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title="Budget"className='topBarDropdown'>
+                            
+                        </DropdownButton>
+                        <PieChart width={440} height={250}>
+                            <Pie data={data} cx="50%" cy="50%" outerRadius={70} label>
+                            {
+                                data.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={colors[index]}/>
+                                ))
+                            }
+                            </Pie>
+                            <Legend/>
+                        </PieChart>
                     </div>
                 </Collapse>
             </Card>
