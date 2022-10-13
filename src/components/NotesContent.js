@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext';
 import { auth, db } from '../firebase';
-import { Button, Form, Container, Card, Alert } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import Note from './Note'
 import { collection, getDocs, query } from 'firebase/firestore';
+import { Button, Form, Card, Alert } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
@@ -41,12 +42,12 @@ export default function NotesContent(props) {
         }
       })
     }
-    console.log('fetching data')
+    console.log('fetching note data')
   }
 
   // Used to fetch users notes from firestore
   useEffect(() => {
-    console.log('in effect')
+    console.log('in note effect')
     fetchData();
   }, [])
 
@@ -84,8 +85,8 @@ export default function NotesContent(props) {
   };
 
   return (
-    <>
-      <Container>
+    <Container>
+      <Container fluid style = {{ width: '400px'}}>
         {/* Render user notes */}
         {notes.map((note) => (
           <Note key={note.id} note={note} onUpdate={fetchData} />
@@ -114,16 +115,13 @@ export default function NotesContent(props) {
               </Form>
             </Card.Body>
           </Card>
-        </Modal>
-
-        {props.showButton && <Container style={{ justifyContent: 'flex-end', display: 'flex' }}>
-          <Fab color="primary" onClick={(e) => setOpen(true)}>
-            <FaPlus />
+        </Modal> 
+      </Container>
+      {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex', fixed: "bottom" }}>
+          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+            <FaPlus size={"30px"}/>
           </Fab>
         </Container>}
-
-      </Container>
-
-    </>
+    </Container>
   )
 }
