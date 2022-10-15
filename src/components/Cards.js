@@ -15,26 +15,19 @@ export default function Cards() {
 
     // Sample data
 const dataGroc = [
-    {name: 'Walmart', value: 400},
-    {name: 'Target', value: 700},
-    {name: 'Publix', value: 200},
-    {name: 'HomeDepot', value: 400}
-  ];
-
-  const dataEnt = [
-    {name: 'Movies', value: 60},
-    {name: 'Games', value: 80},
-    {name: 'Music', value: 20},
-    {name: 'Streaming', value: 30}
+    {name: 'Travel', value: 400},
+    {name: 'Insurance', value: 700},
+    {name: 'Entertainment', value: 200},
+    {name: 'Food', value: 400}
   ];
 
   let data = dataGroc;
 
   const colors = [
-    'blue',
-    'red',
-    'green',
-    'orange'
+    '#FFA07A',
+    '#93DB70',
+    '#CC99CC',
+    '#79CDCD'
   ];
 
   // Render Cards
@@ -69,6 +62,7 @@ const dataGroc = [
                         <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title="Budget"className='topBarDropdown'>
                             
                         </DropdownButton>
+                        {/* Create a pie chart to hold the data of each individual category */}
                         <PieChart width={400} height={250}>
                             <Pie data={data} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
                             {
