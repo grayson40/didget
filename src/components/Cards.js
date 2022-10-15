@@ -69,15 +69,15 @@ const dataGroc = [
                         <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title="Budget"className='topBarDropdown'>
                             
                         </DropdownButton>
-                        <PieChart width={440} height={250}>
-                            <Pie data={data} cx="50%" cy="50%" outerRadius={70} label>
+                        <PieChart width={400} height={250}>
+                            <Pie data={data} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
                             {
                                 data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={colors[index]}/>
                                 ))
                             }
                             </Pie>
-                            <Legend/>
+                            <Legend layout='vertical' verticalAlign='middle' align='right'/>
                         </PieChart>
                     </div>
                 </Collapse>
