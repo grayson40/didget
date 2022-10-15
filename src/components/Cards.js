@@ -34,7 +34,7 @@ const dataGroc = [
   return (
     <div>
         <Container fixed = "top" fluid style = {{ width: '450px', marginTop: "5%"}}>
-            <Card>
+            <Card className="mb-3">
                 <Button
                     onClick={() => setOpen1(!open1)}
                     aria-controls="example-collapse-text"
