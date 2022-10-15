@@ -37,6 +37,7 @@ const dataGroc = [
     'orange'
   ];
 
+  // Render Cards
   return (
     <div>
         <Container fixed = "top" fluid style = {{ width: '450px', marginTop: "5%"}}>
