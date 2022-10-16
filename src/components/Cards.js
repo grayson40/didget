@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
-import { DropdownButton, Button, Collapse } from 'react-bootstrap';
+import { DropdownButton, Button, Collapse, Row, Col } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
@@ -73,6 +73,33 @@ const dataGroc = [
                             </Pie>
                             <Legend layout='vertical' verticalAlign='middle' align='right'/>
                         </PieChart>
+                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
+                            <Card.Body>
+                                <Row>
+                                    <Col sm={4} className="border-end">Name</Col>
+                                    <Col sm={4} className="border-end">Total</Col>
+                                    <Col sm={4}>Date</Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
+                            <Card.Body>
+                                <Row>
+                                    <Col sm={4} className="border-end">Name</Col>
+                                    <Col sm={4} className="border-end">Total</Col>
+                                    <Col sm={4}>Date</Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
+                            <Card.Body>
+                                <Row>
+                                    <Col sm={4} className="border-end">Name</Col>
+                                    <Col sm={4} className="border-end">Total</Col>
+                                    <Col sm={4}>Date</Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
                     </div>
                 </Collapse>
             </Card>
