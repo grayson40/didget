@@ -51,7 +51,7 @@ export default function TopBar() {
           {/* Top Bar should also consist of an app title */}
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-center">
-              <Navbar.Brand href="/">Didget</Navbar.Brand>
+              <Navbar.Brand href="/">Didget: Pocket Teller</Navbar.Brand>
           </Navbar.Collapse>
         </div>
         <div class = "container-fluid d-flex justify-content-end">
