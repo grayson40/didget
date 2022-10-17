@@ -117,7 +117,7 @@ export default function NotesContent(props) {
           </Card>
         </Modal> 
       </Container>
-      {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex', fixed: "bottom" }}>
+      {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
           <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
             <FaPlus size={"30px"}/>
           </Fab>
