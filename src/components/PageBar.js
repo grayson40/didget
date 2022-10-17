@@ -8,7 +8,9 @@ export default function PageBar({ name }){
         <Nav class = "navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
             <div class = "container-fluid p-2 justify-content-center">
                     {/* Display page name */}
-                    <Navbar.Brand>{ name }</Navbar.Brand>
+                    <Navbar.Brand style = {{ color: 'white', height: '25px' }}>
+                        <div style = {{ position: 'fixed-center'}}> { name } </div>
+                    </Navbar.Brand>
             </div>
         </Nav>
     );
