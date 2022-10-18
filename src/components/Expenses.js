@@ -8,7 +8,6 @@ import PageBar from './PageBar'
 
 
 export default function Expenses(props) {
-    const [open, setOpen] = useState(false)
 
     return (
         <Container>
