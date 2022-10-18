@@ -144,7 +144,7 @@ export default function TaskContent(props) {
 
     return (
       <Container>
-        <Container fluid style = {{ width: '500px', marginTop: '5%'}}>
+        <Container fluid style = {{ width: '400px', marginTop: '5%'}}>
 
           {
             props.inCourse
