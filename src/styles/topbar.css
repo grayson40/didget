@@ -83,3 +83,16 @@ body {
 .quickaccess a:focus + ul{
     visibility: visible;
 }
+
+.dropdown button:hover {
+    background-color: gold !important;
+}
+
+.dropdown button::after {
+    content: none;
+}
+
+/* .card Button {
+    background-color: gold !important;
+    border: black;
+} */

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Course from './Course'
 import { Button, Card, Form, Container, Alert } from 'react-bootstrap';
-import { collection, getDocs, query, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, addDoc} from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
@@ -51,6 +51,7 @@ export default function ScheduleContent(props) {
   // Used to fetch users notes from firestore
   useEffect(() => {
     fetchData();
+    console.log("in schedule effect")
   }, [])
 
   const addCourse = async () => {
@@ -125,8 +126,9 @@ export default function ScheduleContent(props) {
 
         {/* Map over list of courses */}
         {courses.map((course) => (
-          <Course key={course.name} showButton = {props.showButton} course={course} onUpdate={fetchData}/>
+          <Course key={course.id} showButton = {props.showButton} course={course} onUpdate={fetchData}/>
         ))}
+
       </Container>
       {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
           <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>

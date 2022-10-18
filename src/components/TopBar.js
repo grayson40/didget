@@ -41,10 +41,14 @@ export default function TopBar() {
             {/* To be replaced with a hamburger dropdown button */}
             <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} className='topBarDropdown'>
               <Dropdown.Item href="/">Home</Dropdown.Item>
+              <Dropdown.Divider/>
               <Dropdown.Item href="/tasks">Tasks</Dropdown.Item>
               <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
-              <Dropdown.Item href="/budget">Budget</Dropdown.Item>
               <Dropdown.Item href="/notes">Notes</Dropdown.Item>
+              <Dropdown.Divider/>
+              <Dropdown.Item href="/financial">Financial</Dropdown.Item>
+              <Dropdown.Item href="/budget">Budget</Dropdown.Item>
+              <Dropdown.Item href="/expenses">Expenses</Dropdown.Item>
           </DropdownButton>
         </div>
         <div class = "container-fluid d-flex justify-content-center">
