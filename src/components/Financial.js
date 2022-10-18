@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Container, Card, Button, Collapse } from 'react-bootstrap'
 import TopBar from './TopBar'
+import PageBar from './PageBar'
 
 export default function Financial() {
 
@@ -11,8 +12,9 @@ export default function Financial() {
 
     return (
         <div>
-            <TopBar name = "Financial"/>
-            <Container fixed="top" fluid style={{ width: '450px', marginTop: "5%" }}>
+            <PageBar name="Financial"/>
+            <TopBar/>
+            <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
                 <Card className="mb-3">
                     <Button
                         onClick={() => setOpen1(!open1)}
