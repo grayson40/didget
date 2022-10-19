@@ -143,7 +143,8 @@ export default function TaskContent(props) {
     }
 
     return (
-        <>
+      <Container>
+        <Container fluid style = {{ width: '400px', marginTop: '5%'}}>
 
           {
             props.inCourse
@@ -209,15 +210,14 @@ export default function TaskContent(props) {
                     </Form>
                   </Modal.Body>
                 </Modal>
-
-                <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-                  <Fab size={"80px"} color="primary" onClick={(e) => setOpen(!open)}>
-                    <FaPlus size={"30px"} />
-                  </Fab>
-                </Container>
               </>
           }
-
-        </>
+        </Container>
+                {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+                  <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+                    <FaPlus size={"30px"}/>
+                  </Fab>
+                </Container>}
+      </Container>
     )
 }

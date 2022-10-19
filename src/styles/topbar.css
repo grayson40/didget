@@ -1,5 +1,5 @@
 .fixed-top-2 {
-    margin-top: 6vh;
+    margin-top: 55px;
     background-color: gray;
 }
 
@@ -17,7 +17,7 @@ body {
 } */
 
 .topBarDropdown{
-    height:4vh;
+    height:35px;
     background: gold;
     display: flex;
     justify-content: space-around;
