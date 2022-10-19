@@ -17,7 +17,7 @@ import { FaGrinSquint, FaBars } from 'react-icons/fa';
 //import './topbar.css';
 
 
-export default function TopBar({ name }) {
+export default function TopBar() {
 
   /**
    * Signs out the current user
@@ -42,8 +42,8 @@ export default function TopBar({ name }) {
             <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} className='topBarDropdown'>
               <Dropdown.Item href="/">Home</Dropdown.Item>
               <Dropdown.Divider/>
-              <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
               <Dropdown.Item href="/tasks">Tasks</Dropdown.Item>
+              <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
               <Dropdown.Item href="/notes">Notes</Dropdown.Item>
               <Dropdown.Divider/>
               <Dropdown.Item href="/financial">Financial</Dropdown.Item>
@@ -55,7 +55,7 @@ export default function TopBar({ name }) {
           {/* Top Bar should also consist of an app title */}
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-center">
-              <Navbar.Brand href="/">{ name }</Navbar.Brand>
+              <Navbar.Brand href="/">Didget: Pocket Teller</Navbar.Brand>
           </Navbar.Collapse>
         </div>
         <div class = "container-fluid d-flex justify-content-end">

@@ -9,8 +9,8 @@ export default function DateBar(){
     return(
         <Nav class = "navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
             <div class = "container-fluid p-2 justify-content-center">
-                {/* Create a datepicker on the datebar */}
-                <input type="date" id={today.toLocaleDateString()} name="date-field"/>
+                    {/* Create a datepicker on the datebar */}
+                    <input type="date" id={today.toLocaleDateString()} name="date-field"/>
             </div>
         </Nav>
     );

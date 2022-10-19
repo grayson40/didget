@@ -10,7 +10,7 @@ export default function Dashboard() {
       maxwidth: '100%'
     }}>
       <DateBar/>
-      <TopBar name='Didget'/>
+      <TopBar/>
       <Cards/>
     </Container>
   )
