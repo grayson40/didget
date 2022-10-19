@@ -143,81 +143,80 @@ export default function TaskContent(props) {
     }
 
     return (
-      <Container>
-        <Container fluid style = {{ width: '400px', marginTop: '5%'}}>
+      <>
 
-          {
-            props.inCourse
-              ? tasks.filter(isCourseTask).map((task) => (
-                <Task key={task.id} task={task} showButtons={props.inCourse}/>
-              ))
-              : 
-              <>
-                {/*Card for Due Today*/}
-                <Card className="mb-4">
-                  <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due Today</Card.Header>
-                  <Card.Body>
-                    {/*Card for each task*/}
-                    {tasks.filter(isToday).map((task) => (
-                      <Task key={task.id} task={task} showButtons={props.inCourse} onUpdate={fetchData}/>
-                    ))}
-                  </Card.Body>
-                </Card>
+      {
+        props.inCourse
+          ? tasks.filter(isCourseTask).map((task) => (
+            <Task key={task.id} task={task} />
+          ))
+          : 
+          <>
+          <Container fluid style = {{ width: '600px', marginTop: '5%'}}>
+              {/*Card for Due Today*/}
+              <Card className="mb-4">
+                <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due Today</Card.Header>
+                <Card.Body>
+                  {/*Card for each task*/}
+                  {tasks.filter(isToday).map((task) => (
+                    <Task key={task.id} task={task} />
+                  ))}
+                </Card.Body>
+              </Card>
+              {/*Card for Due This Week*/}
+              <Card className="mb-4">
+                <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due This Week</Card.Header>
+                <Card.Body>
+                  {/*Card for each task*/}
+                  {tasks.filter(isInWeek).map((task) => (
+                    <Task key={task.id} task={task} />
+                  ))}
+                </Card.Body>
+              </Card>
+              {/*Card for Due This Month*/}
+              <Card className="mb-4">
+                <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due This Month</Card.Header>
+                <Card.Body>
+                  {/*Card for each task*/}
+                  {tasks.filter(isInMonth).map((task) => (
+                    <Task key={task.id} task={task} />
+                  ))}
+                </Card.Body>
+              </Card>
+            </Container>
+            {/* popup add window */}
+            <Modal show={open} onClose={handleClose} onHide={handleClose}>
+              <Modal.Body>
+                <h2 className='text-center mb-4'>Add Task</h2>
+                {error && <Alert variant="danger">{error}</Alert>}
+                <Form>
+                  <Form.Group id='task'>
+                    <Form.Label>Task</Form.Label>
+                    <Form.Control type='task' onChange={(e) => setName(e.target.value)} />
+                  </Form.Group>
+                  <Form.Group id='course'>
+                    <Form.Label>Course</Form.Label>
+                    <Form.Control type='course' onChange={(e) => setCourse(e.target.value)} />
+                  </Form.Group>
+                  <Form.Group id='deadline'>
+                    <Form.Label>Deadline</Form.Label>
+                    <Form.Control type='deadline' onChange={(e) => setDeadline(e.target.value)} />
+                  </Form.Group>
+                  <Button className='w-100 mt-3' onClick={addTask}>
+                    Add
+                  </Button>
+                </Form>
+              </Modal.Body>
+            </Modal>
 
-                {/*Card for Due This Week*/}
-                <Card className="mb-4">
-                  <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due This Week</Card.Header>
-                  <Card.Body>
-                    {/*Card for each task*/}
-                    {tasks.filter(isInWeek).map((task) => (
-                      <Task key={task.id} task={task} showButtons={props.inCourse} onUpdate={fetchData}/>
-                    ))}
-                  </Card.Body>
-                </Card>
+            <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+              <Fab size={"80px"} color="primary" onClick={(e) => setOpen(!open)}>
+                <FaPlus size={"30px"} />
+              </Fab>
+            </Container>
+          </>
+      }
 
-                {/*Card for Due This Month*/}
-                <Card className="mb-4">
-                  <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due This Month</Card.Header>
-                  <Card.Body>
-                    {/*Card for each task*/}
-                    {tasks.filter(isInMonth).map((task) => (
-                      <Task key={task.id} task={task} showButtons={props.inCourse} onUpdate={fetchData}/>
-                    ))}
-                  </Card.Body>
-                </Card>
-
-                {/* popup add window */}
-                <Modal show={open} onClose={handleClose} onHide={handleClose}>
-                  <Modal.Body>
-                    <h2 className='text-center mb-4'>Add Task</h2>
-                    {error && <Alert variant="danger">{error}</Alert>}
-                    <Form>
-                      <Form.Group id='task'>
-                        <Form.Label>Task</Form.Label>
-                        <Form.Control type='task' onChange={(e) => setName(e.target.value)} />
-                      </Form.Group>
-                      <Form.Group id='course'>
-                        <Form.Label>Course</Form.Label>
-                        <Form.Control type='course' onChange={(e) => setCourse(e.target.value)} />
-                      </Form.Group>
-                      <Form.Group id='deadline'>
-                        <Form.Label>Deadline</Form.Label>
-                        <Form.Control type='deadline' onChange={(e) => setDeadline(e.target.value)} />
-                      </Form.Group>
-                      <Button className='w-100 mt-3' onClick={addTask}>
-                        Add
-                      </Button>
-                    </Form>
-                  </Modal.Body>
-                </Modal>
-              </>
-          }
-        </Container>
-                {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-                  <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-                    <FaPlus size={"30px"}/>
-                  </Fab>
-                </Container>}
-      </Container>
+    </>
     )
 }
