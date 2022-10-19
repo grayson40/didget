@@ -166,7 +166,7 @@ export default function Task(props) {
             }
             <Col sm={2}>{deadline}</Col>
             {
-              !props.showButtons &&
+              props.showButtons &&
               <Col sm={2}>
                 <Button
                   variant="contained"
