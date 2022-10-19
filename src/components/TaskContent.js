@@ -149,7 +149,7 @@ export default function TaskContent(props) {
           {
             props.inCourse
               ? tasks.filter(isCourseTask).map((task) => (
-                <Task key={task.id} task={task} />
+                <Task key={task.id} task={task} showButtons={props.inCourse}/>
               ))
               : 
               <>
@@ -159,7 +159,7 @@ export default function TaskContent(props) {
                   <Card.Body>
                     {/*Card for each task*/}
                     {tasks.filter(isToday).map((task) => (
-                      <Task key={task.id} task={task} />
+                      <Task key={task.id} task={task} showButtons={props.inCourse} onUpdate={fetchData}/>
                     ))}
                   </Card.Body>
                 </Card>
@@ -170,7 +170,7 @@ export default function TaskContent(props) {
                   <Card.Body>
                     {/*Card for each task*/}
                     {tasks.filter(isInWeek).map((task) => (
-                      <Task key={task.id} task={task} />
+                      <Task key={task.id} task={task} showButtons={props.inCourse} onUpdate={fetchData}/>
                     ))}
                   </Card.Body>
                 </Card>
@@ -181,7 +181,7 @@ export default function TaskContent(props) {
                   <Card.Body>
                     {/*Card for each task*/}
                     {tasks.filter(isInMonth).map((task) => (
-                      <Task key={task.id} task={task} />
+                      <Task key={task.id} task={task} showButtons={props.inCourse} onUpdate={fetchData}/>
                     ))}
                   </Card.Body>
                 </Card>
