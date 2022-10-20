@@ -65,7 +65,7 @@ export default function Cards() {
   // Render Cards
   return (
     <div>
-        <Container fixed = "top" fluid style = {{ width: '450px', marginTop: "5%"}}>
+        <Container fixed = "top" fluid style = {{ width: '550px', marginTop: "5%"}}>
             <Card className="mb-3">
                 <Button
                     onClick={() => setOpen1(!open1)}

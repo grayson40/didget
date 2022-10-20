@@ -13,8 +13,8 @@ export default function DateBar(){
     return(
         <Nav class = "navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
             <div class = "container-fluid p-2 justify-content-center">
-                {/* Create a datepicker on the datebar */}
-                <input type="date" id='datevalue' name="date-field" onSelect={console.log("Success")}/>
+                    {/* Create a datepicker on the datebar */}
+                    <input type="date" id={today.toLocaleDateString()} name="date-field"/>
             </div>
             {/* Create a script that takes the value from the datepicker */}
             <script>
