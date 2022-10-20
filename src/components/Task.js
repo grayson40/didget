@@ -1,112 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Row, Col, Form, Button, Modal } from 'react-bootstrap'
-import { updateDoc, doc, collection, getDocs, query, deleteDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase';
 import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 export default function Task(props) {
   const [name, setName] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [check, setCheck] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     console.log('in task effect')
     setName(props.task.name);
     setDeadline(props.task.deadline);
-    setCheck(props.task.isChecked);
   }, [])
 
-  const handleCheck = async () => {
-    // const pRef = document.getElementById(props.task.id)
-    // if (pRef.style.textDecoration) {
-    //   pRef.style.removeProperty('text-decoration');
-    // } else {
-    //   pRef.style.setProperty('text-decoration', 'line-through');
-    // }
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-      )
-    );
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const docRef = doc(db, `users/${user.id}/tasks/${props.task.id}`)
-        await updateDoc(docRef, { isChecked: !props.task.isChecked })
-          .then(() => {
-            console.log('document updated')
-          })
-          .catch(error => {
-            console.log(error.toString())
-          })
-      }
-    })
-    setCheck(!check);
-  }
-
-  const deleteTask = async () => {
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-      )
-    );
-    // Iterate through the documents fetched
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const tasksRef = await getDocs(
-          query(
-            collection(db, `users/${user.id}/tasks`)
-          )
-        );
-        tasksRef.forEach(async (task) => {
-          if (task.id === props.task.id) {
-            const docRef = doc(db, `users/${user.id}/tasks/${task.id}`)
-            await deleteDoc(docRef)
-              .then(() => {
-                console.log('document deleted')
-                props.onUpdate()
-              })
-              .catch(error => {
-                console.log(error.toString())
-              })
-          }
-        })
-      }
-    })
-  }
-
-  const updateTask = async () => {
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-      )
-    );
-    // Iterate through the documents fetched
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const taskRef = await getDocs(
-          query(
-            collection(db, `users/${user.id}/tasks`)
-          )
-        );
-        taskRef.forEach(async (task) => {
-          if (task.id === props.task.id) {
-            const docRef = doc(db, `users/${user.id}/tasks/${task.id}`)
-            await updateDoc(docRef, {
-              name: name !== '' ? name : props.task.name,
-              deadline: deadline !== '' ? deadline : props.task.deadline,
-            })
-              .then(() => {
-                console.log('document updated')
-                // props.onUpdate()
-              })
-              .catch(error => {
-                console.log(error.toString())
-              })
-          }
-        })
-      }
-    })
+  const handleUpdate = () => {
+    props.onUpdate(props.task.id, name, deadline)
     handleClose()
   }
 
@@ -138,7 +46,7 @@ export default function Task(props) {
                   }
                 }}/>
             </Form.Group>
-            <Button className='w-100 mt-3' onClick={updateTask}>
+            <Button className='w-100 mt-3' onClick={handleUpdate}>
               Update
             </Button>
           </Form>
@@ -150,21 +58,23 @@ export default function Task(props) {
           <Row>
             {/*Button to check off tasks*/}
             {
-              check
+              props.task.isChecked
                 ? <>
-                  <Col sm={1}><Form.Check defaultChecked onChange={handleCheck} aria-label="option 1" /></Col>
+                  <Col sm={1}><Form.Check defaultChecked onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
                   <Col sm={7}>
                     <p className="text-decoration-line-through" id={props.task.id}>{name}</p>
                   </Col>
                 </>
                 : <>
-                  <Col sm={1}><Form.Check onChange={handleCheck} aria-label="option 1" /></Col>
+                  <Col sm={1}><Form.Check onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
                   <Col sm={7}>
                     <p id={props.task.id}>{props.task.name} {props.courseId}</p>
                   </Col>
                 </>
             }
-            <Col sm={2}>{deadline}</Col>
+            <Col sm={2}>
+            <p id={props.task.id}>{deadline}</p>
+            </Col>
             {
               props.showButtons &&
               <Col sm={2}>
@@ -181,7 +91,7 @@ export default function Task(props) {
                   variant="contained"
                   color="secondary"
                   size="medium"
-                  onClick={deleteTask}
+                  onClick={(e) => {props.onDelete(props.task.id)}}
                 >
                   <FaTrashAlt color='gray' />
                 </Button>
