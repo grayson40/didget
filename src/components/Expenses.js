@@ -72,8 +72,8 @@ export default function Expenses(props) {
                 <option value="acadmeic">Academic</option>
                 <option value="entertainment">Entertainment</option>
                 <option value="groceries">Groceries</option>
-                <option value="housing">Housing</option>
                 <option value="insurance">Insurance</option>
+                <option value="rent">Rent</option>
                 <option value="restaurants">Restaurants</option>
               </select>
             </Form.Group>
