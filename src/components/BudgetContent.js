@@ -53,7 +53,6 @@ export default function BudgetContent() {
           <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
-              <Col className="border-end">Spent</Col>
               <Col>Limit</Col>
             </Row>
           </Card.Header>
@@ -67,15 +66,14 @@ export default function BudgetContent() {
                 <Card.Body>
                   <Row className="mb-2">
                     <Col className="border-end">{item.name}</Col>
-                    <Col className="border-end">${item.value}</Col>
                     <Col>${item.limit}</Col>
                   </Row>
                   <Row>
                     <Col>
                       {/*Compares current amount to limit, turns red if over and green if under limit*/}
                       {left(item.limit, item.value) >= 0 
-                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`${item.limit - item.value} Left`}/>
-                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`${item.value - item.limit} Over`}/>
+                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.limit} Spent`}/>
                       }
                     </Col>
                   </Row>
