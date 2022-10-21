@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Container, Card, Row, Col, Image, Modal, Form, Button } from 'react-bootstrap'
+import { Container, Card, Row, Col, Image, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Fab from '@mui/material/Fab'
 import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import TopBar from './TopBar'
@@ -11,6 +11,9 @@ export default function Expenses(props) {
   const [expenses, setExpenses] = useState([])
   const [name, setName] = useState('')
   const [total, setTotal] = useState(0)
+  const [category, setCategory] = useState('')
+  const [error, setError] = useState('')
+  const date = new Date();
 
   // Modal close
   const handleClose = () => {
@@ -18,16 +21,24 @@ export default function Expenses(props) {
   };
 
   const addExpense = () => {
-    const date = new Date();
-    const newExpense = {
-      id: uuidv4(),
-      name: name,
-      total: total,
-      date: date.toLocaleDateString(),
-    };
-    const newExpenses = [...expenses, newExpense];
-    setExpenses(newExpenses);
-    handleClose()
+    if (category === '') {
+      setError('Error: Category cannot be empty')
+    } else if (name === '') {
+      setError('Error: Name cannot be empty')
+    } else if (total === '') {
+      setError('Error: Total cannot be empty')
+    } else {
+      const newExpense = {
+        id: uuidv4(),
+        category: category,
+        name: name,
+        total: total,
+        date: date.toLocaleDateString(),
+      };
+      const newExpenses = [...expenses, newExpense];
+      setExpenses(newExpenses);
+      handleClose()
+    }
   };
 
   const deleteExpense = (id) => {
@@ -46,12 +57,16 @@ export default function Expenses(props) {
           <Form>
             <Form.Group id='name'>
               <Form.Label>Name</Form.Label>
-              <Form.Control type='task' onChange={(e) => setName(e.target.value)} />
+              <Form.Control onChange={(e) => setName(e.target.value)} />
+            </Form.Group>
+            <Form.Group id='total'>
+              <Form.Label>Total</Form.Label>
+              <Form.Control onChange={(e) => setTotal(e.target.value)} />
             </Form.Group>
             <Form.Group id='category'>
               <Form.Label>Category</Form.Label>
               <select className="form-control" name="city" onChange={(e) => {
-                console.log(e.currentTarget.value)
+                setCategory(e.target.value)
               }}>
                 <option selected>Select Category</option>
                 <option value="acadmeic">Academic</option>
@@ -62,10 +77,11 @@ export default function Expenses(props) {
                 <option value="restaurants">Restaurants</option>
               </select>
             </Form.Group>
-            <Form.Group id='total'>
-              <Form.Label>Total</Form.Label>
-              <Form.Control type='course' onChange={(e) => setTotal(e.target.value)} />
+            <Form.Group id='date'>
+              <Form.Label>Date</Form.Label>
+              <Form.Control placeholder={date.toLocaleDateString()} onChange={(e) => setTotal(e.target.value)} />
             </Form.Group>
+            {error && <Alert className='mt-3' variant="danger">{error}</Alert>}
             <Button className='w-100 mt-3' onClick={addExpense}>
               Add
             </Button>
