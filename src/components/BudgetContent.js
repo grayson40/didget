@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Row, Col, Card } from 'react-bootstrap'
+import { Container, Row, Col, Card, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
 import { PieChart, Pie, Cell, Legend } from 'recharts';
@@ -7,10 +7,10 @@ import { PieChart, Pie, Cell, Legend } from 'recharts';
 export default function BudgetContent() {
   // Sample data
   const dataGroc = [
-    { name: 'Travel', value: 400 },
-    { name: 'Insurance', value: 700 },
-    { name: 'Entertainment', value: 200 },
-    { name: 'Food', value: 400 }
+    { name: 'Travel', value: 400, limit: 500 },
+    { name: 'Insurance', value: 700, limit: 1000},
+    { name: 'Entertainment', value: 200, limit: 500 },
+    { name: 'Food', value: 400, limit: 500 }
   ];
 
   const colors = [
@@ -20,9 +20,19 @@ export default function BudgetContent() {
     '#79CDCD'
   ];
 
+  
+  //Calulates the total amount of money left (spending limit - amount spent)
+  function left(limit, spent) {
+    return limit - spent
+  }
+  //Calculates the percentage for the progress bar ((total spent/spending limit)*100)
+  function progressPercent(limit, spent) {
+    return (spent/limit)*100
+  }
+
   return (
     <>
-      <Container style={{ width: '400px' }}>
+      <Container style={{ width: '500px' }}>
         <PieChart width={400} height={250}>
           <Pie data={dataGroc} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
             {
@@ -34,16 +44,17 @@ export default function BudgetContent() {
           <Legend layout='vertical' verticalAlign='middle' align='right' />
         </PieChart>
 
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Budget
           </Card.Header>
         </Card>
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
-              <Col>Amount</Col>
+              <Col className="border-end">Spent</Col>
+              <Col>Limit</Col>
             </Row>
           </Card.Header>
         </Card>
@@ -52,11 +63,21 @@ export default function BudgetContent() {
         {
           dataGroc.map((item) => (
             <>
-              <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+              <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
                 <Card.Body>
-                  <Row>
+                  <Row className="mb-2">
                     <Col className="border-end">{item.name}</Col>
-                    <Col>${item.value}</Col>
+                    <Col className="border-end">${item.value}</Col>
+                    <Col>${item.limit}</Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      {/*Compares current amount to limit, turns red if over and green if under limit*/}
+                      {left(item.limit, item.value) >= 0 
+                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`${item.limit - item.value} Left`}/>
+                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`${item.value - item.limit} Over`}/>
+                      }
+                    </Col>
                   </Row>
                 </Card.Body>
               </Card>
