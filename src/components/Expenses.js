@@ -20,6 +20,7 @@ export default function Expenses(props) {
   // Modal close
   const handleClose = () => {
     setOpen(false);
+    setError('')
   };
 
   const addExpense = () => {
@@ -41,6 +42,10 @@ export default function Expenses(props) {
       setExpenses(newExpenses);
       handleClose()
     }
+    setName('');
+    setCategory('');
+    setTotal(0);
+    setDate('');
   };
 
   const deleteExpense = (id) => {
