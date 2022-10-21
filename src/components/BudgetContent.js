@@ -2,7 +2,8 @@ import React from 'react'
 import { Container, Row, Col, Card } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
+import { Legend, ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
+import { limit } from 'firebase/firestore';
 
 export default function BudgetContent() {
    //    Use sample data for the different categories of bar graph
@@ -67,6 +68,7 @@ export default function BudgetContent() {
             </Bar>
             <XAxis type="number" hide />
             <YAxis type="category" width={150} padding={{ left: 20 }} dataKey="name"/>
+            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
           </BarChart>
         </Container>
         

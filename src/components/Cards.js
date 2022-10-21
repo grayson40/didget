@@ -8,18 +8,18 @@
 
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
-import { DropdownButton, Button, Collapse, Row, Col } from 'react-bootstrap';
+import { Button, Collapse, Row, Col } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
-import { PieChart, Pie, Cell, Legend, BarChart, Bar, YAxis, XAxis } from 'recharts';
+import { ReferenceLine, PieChart, Pie, Cell, Legend, BarChart, Bar, YAxis, XAxis } from 'recharts';
 
 export default function Cards() {
 
-    const [open1, setOpen1] = useState(true)
+    const [open1, setOpen1] = useState(true);
     // const [open2, setOpen2] = useState(true)
-    const [open3, setOpen3] = useState(true)
-    const [open4, setOpen4] = useState(true)
+    const [open3, setOpen3] = useState(true);
+    const [open4, setOpen4] = useState(true);
 
   //    Use sample data for the different categories of bar graph
   const data = [
@@ -118,6 +118,7 @@ export default function Cards() {
                             </Bar>
                             <XAxis type="number" hide />
                             <YAxis type="category" width={150} padding={{ left: 20 }} dataKey="name"/>
+                            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
                         </BarChart>
                         <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
                             <Card.Body>
