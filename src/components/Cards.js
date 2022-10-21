@@ -102,7 +102,7 @@ export default function Cards() {
                             </Pie>
                             <Legend layout='vertical' verticalAlign='middle' align='right'/>
                         </PieChart>
-                        {/*  */}
+                        {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
                         <BarChart data={data} layout="vertical" width={400} height={250} >
                             <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
                             {
