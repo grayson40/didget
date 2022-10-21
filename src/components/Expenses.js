@@ -48,6 +48,20 @@ export default function Expenses(props) {
               <Form.Label>Name</Form.Label>
               <Form.Control type='task' onChange={(e) => setName(e.target.value)} />
             </Form.Group>
+            <Form.Group id='category'>
+              <Form.Label>Category</Form.Label>
+              <select className="form-control" name="city" onChange={(e) => {
+                console.log(e.currentTarget.value)
+              }}>
+                <option selected>Select Category</option>
+                <option value="acadmeic">Academic</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="groceries">Groceries</option>
+                <option value="housing">Housing</option>
+                <option value="insurance">Insurance</option>
+                <option value="restaurants">Restaurants</option>
+              </select>
+            </Form.Group>
             <Form.Group id='total'>
               <Form.Label>Total</Form.Label>
               <Form.Control type='course' onChange={(e) => setTotal(e.target.value)} />
@@ -86,7 +100,7 @@ export default function Expenses(props) {
                   <Col sm={4} className="border-end">{expense.name}</Col>
                   <Col sm={4} className="border-end">${expense.total}</Col>
                   <Col sm={4}>
-                    {expense.date} 
+                    {expense.date}
                     <Button
                       variant="contained"
                       color="secondary"
