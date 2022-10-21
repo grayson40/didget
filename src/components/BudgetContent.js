@@ -80,7 +80,7 @@ export default function BudgetContent() {
           <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
-              <Col className="border-end">Limit</Col>
+              <Col className="border-end">Amount</Col>
               <Col>Percentage</Col>
             </Row>
           </Card.Header>
@@ -93,11 +93,14 @@ export default function BudgetContent() {
               <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
                 <Card.Body>
                   <Row>
+                    {/* Create a column for each category's title, value, and percent */}
                     <Col className="border-end">{item.name}</Col>
                     <Col className="border-end">${item.value}</Col>
                     <Col>{item.expense}%</Col>
                   </Row>
+                  {/* Create a progress bar that tracks the percentage */}
                   <progress value ={item.expense} max="100" style={{ width: '400px' }}/>
+                  <label>amount left: $XX.XX</label>
                 </Card.Body>
               </Card>
             </>
