@@ -27,7 +27,7 @@ function App() {
   return (
 
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "70vh", maxWidth: "100%" }} id={theme}>
+      <Container className="d-flex align-items-center justify-content-center" style={{ maxWidth: "100%", minHeight: "100vh" }} id={theme}>
         <div className="w-100" style={{ maxWidth: '100%' }}>
           <Router>
             <AuthProvider>

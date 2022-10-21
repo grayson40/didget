@@ -34,7 +34,7 @@ const dataGroc = [
   return (
     <div>
         <Container fixed = "top" fluid style = {{ width: '550px', marginTop: "5%"}}>
-            <Card className="mb-3">
+            <Card className="mb-3 dashboardCard">
                 <Button
                     onClick={() => setOpen1(!open1)}
                     aria-controls="example-collapse-text"
@@ -49,7 +49,7 @@ const dataGroc = [
                     </div>
                 </Collapse>
             </Card>
-            <Card className="mb-3">
+            <Card className="mb-3 dashboardCard">
                 <Button
                     onClick={() => setOpen3(!open3)}
                     aria-controls="example-collapse-text"
@@ -103,7 +103,7 @@ const dataGroc = [
                     </div>
                 </Collapse>
             </Card>
-            <Card className="mb-3">
+            <Card className="mb-3 dashboardCard">
                 <Button
                     onClick={() => setOpen4(!open4)}
                     aria-controls="example-collapse-text"

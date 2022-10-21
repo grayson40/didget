@@ -1,5 +1,5 @@
 #light {
-    background-color: aqua;
+    background-color: white;
 }
 
 #dark {
@@ -9,12 +9,20 @@
 #dark button {
     background-color: gold !important;
     border-color: gold;
+    color: black;
 }
 
 #dark .card {
     background-color: rgb(105, 98, 98);
     color: white;
+}
+
+#dark .dashboardCard {
+    background-color: rgb(105, 98, 98);
+    color: white;
+    outline-style: groove;
     outline-color: black !important;
+    outline-width: 2px;
 }
 
 #dark .card header {
