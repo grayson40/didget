@@ -1,3 +1,26 @@
+#light {
+    background-color: aqua;
+}
+
+#dark {
+    background-color: rgb(105, 98, 98);
+}
+
+#dark button {
+    background-color: gold !important;
+    border-color: gold;
+}
+
+#dark .card {
+    background-color: rgb(105, 98, 98);
+    color: white;
+    outline-color: black !important;
+}
+
+#dark .card header {
+    background-color: black;  
+}
+
 .fixed-top-2 {
     margin-top: 55px;
     background-color: gray;
