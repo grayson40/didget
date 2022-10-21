@@ -6,18 +6,21 @@ import TopBar from './TopBar'
 import PageBar from './PageBar'
 import { uuidv4 } from '@firebase/util'
 
+const d = new Date();
+
 export default function Expenses(props) {
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([])
   const [name, setName] = useState('')
   const [total, setTotal] = useState(0)
   const [category, setCategory] = useState('')
+  const [date, setDate] = useState(d.toLocaleDateString())
   const [error, setError] = useState('')
-  const date = new Date();
 
   // Modal close
   const handleClose = () => {
     setOpen(false);
+    setError('')
   };
 
   const addExpense = () => {
@@ -33,12 +36,16 @@ export default function Expenses(props) {
         category: category,
         name: name,
         total: total,
-        date: date.toLocaleDateString(),
+        date: date
       };
       const newExpenses = [...expenses, newExpense];
       setExpenses(newExpenses);
       handleClose()
     }
+    setName('');
+    setCategory('');
+    setTotal(0);
+    setDate('');
   };
 
   const deleteExpense = (id) => {
@@ -79,7 +86,7 @@ export default function Expenses(props) {
             </Form.Group>
             <Form.Group id='date'>
               <Form.Label>Date</Form.Label>
-              <Form.Control placeholder={date.toLocaleDateString()} onChange={(e) => setTotal(e.target.value)} />
+              <Form.Control placeholder={d.toLocaleDateString()} onChange={(e) => setDate(e.target.value)} />
             </Form.Group>
             {error && <Alert className='mt-3' variant="danger">{error}</Alert>}
             <Button className='w-100 mt-3' onClick={addExpense}>
