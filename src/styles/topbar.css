@@ -12,6 +12,17 @@
     color: black;
 }
 
+#dark ul {
+    outline-style: dotted;
+    outline-width: 2px;
+    outline-color: black;
+    color: white
+}
+
+#dark ul p {
+    color: white;
+}
+
 #dark .card {
     background-color: rgb(105, 98, 98);
     color: white;
