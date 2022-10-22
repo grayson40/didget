@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, Legend } from 'recharts';
 export default function BudgetContent() {
   // Sample data
   const dataGroc = [
-    { name: 'Travel', value: 400, limit: 500 },
+    { name: 'Travel', value: 1000, limit: 500 },
     { name: 'Insurance', value: 700, limit: 1000},
     { name: 'Entertainment', value: 200, limit: 500 },
     { name: 'Food', value: 400, limit: 500 }
@@ -73,7 +73,7 @@ export default function BudgetContent() {
                       {/*Compares current amount to limit, turns red if over and green if under limit*/}
                       {left(item.limit, item.value) >= 0 
                         ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
-                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.limit} Spent`}/>
+                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
                       }
                     </Col>
                   </Row>
