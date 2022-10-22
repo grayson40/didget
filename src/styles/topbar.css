@@ -12,14 +12,14 @@
     color: black;
 }
 
-#dark ul {
+#dark .ulNote {
     outline-style: dotted;
     outline-width: 2px;
     outline-color: black;
     color: white
 }
 
-#dark ul p {
+#dark .ulNote p {
     color: white;
 }
 

@@ -120,7 +120,7 @@ export default function Note(props) {
         </Card>
       </Modal>
 
-      <List className= "mb-3">
+      <List className= "mb-3 ulNote">
         <ListItem button>
           <ListItemText primary={note} secondary={props.note.date} />
           {props.inCard &&
