@@ -1,61 +1,106 @@
-import React, {  useState } from 'react'
-import { Card, Row, Col, Form } from 'react-bootstrap'
-import { updateDoc, doc, collection, getDocs, query } from 'firebase/firestore';
-import { auth, db } from '../firebase';
+import React, { useState, useEffect } from 'react'
+import { Card, Row, Col, Form, Button, Modal } from 'react-bootstrap'
+import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 export default function Task(props) {
-  const [check, setCheck] = useState(props.task.isChecked)
+  const [name, setName] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [open, setOpen] = useState(false);
 
-  const handleCheck = async () => {
-    // const pRef = document.getElementById(props.task.id)
-    // if (pRef.style.textDecoration) {
-    //   pRef.style.removeProperty('text-decoration');
-    // } else {
-    //   pRef.style.setProperty('text-decoration', 'line-through');
-    // }
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-        )
-        );
-        usersRef.forEach(async (user) => {
-          if (user.data().uid === auth.currentUser.uid) {
-            const docRef = doc(db, `users/${user.id}/tasks/${props.task.id}`)
-            await updateDoc(docRef, { isChecked: !props.task.isChecked })
-            .then(() => {
-              console.log('document updated')
-            })
-            .catch(error => {
-              console.log(error.toString())
-            })
-          }
-        })
-    setCheck(!check);
+  useEffect(() => {
+    console.log('in task effect')
+    setName(props.task.name);
+    setDeadline(props.task.deadline);
+  }, [])
+
+  const handleUpdate = () => {
+    props.onUpdate(props.task.id, name, deadline)
+    handleClose()
   }
 
+  // Modal close
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <Card className='mb-2'>
-      <Card.Body>
-        <Row>
-          {/*Button to check off tasks*/}
-          {
-            check
-              ? <>
-                  <Col sm={1}><Form.Check defaultChecked onChange={handleCheck} aria-label="option 1" /></Col>
+    <>
+      {/* popup update window */}
+      <Modal show={open} onClose={handleClose} onHide={handleClose}>
+        <Modal.Body>
+          <h2 className='text-center mb-4'>Update Task</h2>
+          <Form>
+            <Form.Group id='task'>
+              <Form.Label>Task</Form.Label>
+              <Form.Control type='task' placeholder={name} onChange={(e) => {
+                  if (e.target.value !== '') {
+                    setName(e.target.value)
+                  }
+                }} />
+            </Form.Group>
+            <Form.Group id='deadline'>
+              <Form.Label>Deadline</Form.Label>
+              <Form.Control type='deadline' placeholder={deadline} onChange={(e) => {
+                  if (e.target.value !== '') {
+                    setDeadline(e.target.value)
+                  }
+                }}/>
+            </Form.Group>
+            <Button className='w-100 mt-3' onClick={handleUpdate}>
+              Update
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      <Card className='mb-2'>
+        <Card.Body>
+          <Row>
+            {/*Button to check off tasks*/}
+            {
+              props.task.isChecked
+                ? <>
+                  <Col sm={1}><Form.Check defaultChecked onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
                   <Col sm={7}>
-                    <p className="text-decoration-line-through" id={props.task.id}>{props.task.name}</p>
+                    <p className="text-decoration-line-through" id={props.task.id}>{name}</p>
                   </Col>
                 </>
-              : <>
-                  <Col sm={1}><Form.Check onChange={handleCheck} aria-label="option 1" /></Col>
+                : <>
+                  <Col sm={1}><Form.Check onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
                   <Col sm={7}>
                     <p id={props.task.id}>{props.task.name} {props.courseId}</p>
                   </Col>
                 </>
-          }
-          <Col sm={4}>{props.task.deadline}</Col>
-        </Row>
-      </Card.Body>
-    </Card>
+            }
+            <Col sm={2}>
+            <p id={props.task.id}>{deadline}</p>
+            </Col>
+            {
+              props.showButtons &&
+              <Col sm={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="medium"
+                  onClick={(e) => setOpen(true)}
+                >
+                  <FaPen />
+                </Button>
+                <span className="space"></span>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="medium"
+                  onClick={(e) => {props.onDelete(props.task.id)}}
+                >
+                  <FaTrashAlt color='gray' />
+                </Button>
+              </Col>
+            }
+          </Row>
+        </Card.Body>
+      </Card>
+
+    </>
   )
 }
