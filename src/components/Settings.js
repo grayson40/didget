@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react"
-import { Form, Button, Card, Alert } from "react-bootstrap"
+import { Form, Button, Card, Alert, Container } from "react-bootstrap"
 import { useAuth } from "../contexts/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
 
@@ -47,7 +47,7 @@ export default function Settings() {
   }
 
   return (
-    <>
+    <Container fixed = "top" fluid style = {{ width: '550px'}}>
       <Card>
         <Card.Body>
           <h2 className="text-center mb-4">Update Profile</h2>
@@ -87,6 +87,6 @@ export default function Settings() {
       <div className="w-100 text-center mt-2">
         <Link to="/">Cancel</Link>
       </div>
-    </>
+    </Container>
   )
 }
