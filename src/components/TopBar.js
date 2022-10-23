@@ -59,7 +59,6 @@ export default function TopBar() {
           </Navbar.Collapse>
         </div>
         <div class = "container-fluid d-flex justify-content-end">
-
           {/* Top Bar should finally consist of a right drop down button */}
           {/* Could be replaced with a profile icon dropdownbutton setup */}
           <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" className='topBarDropdown'>

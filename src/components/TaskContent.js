@@ -3,163 +3,283 @@ import { Card, Container, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Task from './Task'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { collection, getDocs, query, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 export default function TaskContent(props) {
-    const [open, setOpen] = useState(false);
-    const [tasks, setTasks] = useState([]);
-    const [name, setName] = useState('')
-    const [deadline, setDeadline] = useState('')
-    const [course, setCourse] = useState('')
-    const [error, setError] = useState('')
+  const [open, setOpen] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [name, setName] = useState('')
+  const [deadline, setDeadline] = useState('')
+  const [course, setCourse] = useState('')
+  const [error, setError] = useState('')
 
 
-    const d = new Date();
-    const currentMonth = parseInt(d.getMonth() + 1);
-    const currentDay = parseInt(d.getDate());
+  const d = new Date();
+  const currentMonth = parseInt(d.getMonth() + 1);
+  const currentDay = parseInt(d.getDate());
 
-    async function fetchData() {
-      if (auth.currentUser) {
-        const usersRef = await getDocs(
-          query(
-            collection(db, 'users')
-          )
-        );
-        // Iterate through the documents fetched
-        usersRef.forEach(async (user) => {
-          if (user.data().uid === auth.currentUser.uid) {
-            const taskRef = await getDocs(
-              query(
-                collection(db, `users/${user.id}/tasks`)
-              )
-            );
-            setTasks(
-              taskRef.docs.map((task) => ({
-                id: task.id,
-                name: task.data().name,
-                deadline: task.data().deadline,
-                isChecked: task.data().isChecked,
-                course_id: task.data().course_id
-              }))
+  async function fetchData() {
+    if (auth.currentUser) {
+      const usersRef = await getDocs(
+        query(
+          collection(db, 'users')
+        )
+      );
+      // Iterate through the documents fetched
+      usersRef.forEach(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const taskRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/tasks`)
             )
-          }
-        })
-      }
-      console.log('fetching task data')
+          );
+          setTasks(
+            taskRef.docs.map((task) => ({
+              id: task.id,
+              name: task.data().name,
+              deadline: task.data().deadline,
+              isChecked: task.data().isChecked,
+              course_id: task.data().course_id
+            }))
+          )
+        }
+      })
     }
+    console.log('fetching task data')
+  }
 
 
-    const addTask = async () => {
-      if (name !== '' && deadline !== '' && course !== '') {
-        const userRef = await getDocs(
+  const addTask = async () => {
+    if (name !== '' && deadline !== '' && course !== '') {
+      const userRef = await getDocs(
+        query(
+          collection(db, "users")
+        )
+      );
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          let courseId = ''
+          const coursesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/courses/`)
+            )
+          );
+          coursesRef.docs.forEach((_course) => {
+            if (_course.data().name.toLowerCase() === course.toLowerCase()) {
+              courseId = _course.id;
+            }
+          })
+
+          const newTask = {
+            name: name,
+            deadline: deadline,
+            isChecked: false,
+            course_id: courseId
+          };
+          const newTasks = [...tasks, newTask];
+          setTasks(newTasks);
+
+          const collectionRef = collection(db, `users/${user.id}/tasks/`);
+          await addDoc(collectionRef, newTask);
+        }
+      })
+      handleClose();
+    }
+    else {
+      setError('Error: no fields can be blank');
+    }
+  }
+
+  const deleteTask = async (id) => {
+    // Delete task on page
+    const newTasks = tasks.filter((task) => task.id !== id);
+    setTasks(newTasks);
+
+    // Delete task in DB
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const tasksRef = await getDocs(
           query(
-            collection(db, "users")
+            collection(db, `users/${user.id}/tasks`)
           )
         );
-        userRef.docs.map(async (user) => {
-          if (user.data().uid === auth.currentUser.uid) {
-            let courseId = ''
-            const coursesRef = await getDocs(
-              query(
-                collection(db, `users/${user.id}/courses/`)
-                )
-                );
-                coursesRef.docs.forEach((_course) => {
-                  if (_course.data().name.toLowerCase() === course.toLowerCase()) {
-                    courseId = _course.id;
-                  }
-                })
-              const collectionRef = collection(db, `users/${user.id}/tasks/`);
-                await addDoc(collectionRef, {
-              name: name, 
-              deadline: deadline, 
-              isChecked: false, 
-              course_id: courseId
-            });
-            setTasks(
-              [...tasks, { name: name, deadline: deadline, isChecked: false, course_id: courseId}]
-            );
+        tasksRef.forEach(async (task) => {
+          if (task.id === id) {
+            const docRef = doc(db, `users/${user.id}/tasks/${task.id}`)
+            await deleteDoc(docRef)
+              .then(() => {
+                console.log(`document ${id} deleted`)
+              })
+              .catch(error => {
+                console.log(error.toString())
+              })
           }
         })
-        handleClose();
       }
-      else {
-        setError('Error: no fields can be blank');
+    })
+  }
+
+  const updateTask = async (id, name, deadline) => {
+    // Update task on page
+    let newTasks = []
+    tasks.map((task) => {
+      if (task.id === id) {
+        task.name = name;
+        task.deadline = deadline;
       }
-    }
+      newTasks.push(task)
+      return newTasks
+    });
+    setTasks(newTasks)
+    handleClose()
 
-    // Used to fetch users notes from firestore
-    useEffect(() => {
-      console.log('in task page effect')
-      fetchData();
-    }, [])
+    // Update task in DB
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const taskRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/tasks`)
+          )
+        );
+        taskRef.forEach(async (task) => {
+          if (task.id === id) {
+            const docRef = doc(db, `users/${user.id}/tasks/${task.id}`)
+            await updateDoc(docRef, {
+              name: name !== '' ? name : props.task.name,
+              deadline: deadline !== '' ? deadline : props.task.deadline,
+            })
+              .then(() => {
+                console.log(`document ${id} updated`)
+              })
+              .catch(error => {
+                console.log(error.toString())
+              })
+          }
+        })
+      }
+    })
+  }
+
+  const handleCheck = async (id, checked) => {
+    console.log(`handling check of ${id}`)
+    // Update task on page
+    let newTasks = []
+    tasks.map((task) => {
+      if (task.id === id) {
+        task.isChecked = !task.isChecked;
+      }
+      newTasks.push(task)
+      return newTasks
+    });
+    console.log(newTasks)
+    setTasks(newTasks)
+    handleClose()
+
+    // Update task in DB
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const docRef = doc(db, `users/${user.id}/tasks/${id}`)
+        await updateDoc(docRef, { isChecked: !checked })
+          .then(() => {
+            console.log('document updated')
+          })
+          .catch(error => {
+            console.log(error.toString())
+          })
+      }
+    })
+  }
+
+  // Used to fetch users notes from firestore
+  useEffect(() => {
+    console.log('in task page effect')
+    fetchData();
+  }, [])
 
 
-    // Modal close
-    const handleClose = () => {
-      setOpen(false);
-    };
+  // Modal close
+  const handleClose = () => {
+    setError('')
+    setOpen(false);
+  };
 
-    // // date
-    // const toDate = () => {
-    //   const date = new Date();
-    //   const today = `${date.getMonth() + 1}/${date.getDate()}`;
-    //   return today;
-    // };
+  // // date
+  // const toDate = () => {
+  //   const date = new Date();
+  //   const today = `${date.getMonth() + 1}/${date.getDate()}`;
+  //   return today;
+  // };
 
-    // Returns true if deadline is in current month
-    const isInMonth = (value) => {
-      const date = value.deadline
-      const arr = date.split("/")
+  // Returns true if deadline is in current month
+  const isInMonth = (value) => {
+    const date = value.deadline
+    const arr = date.split("/")
 
-      return parseInt(arr[0]) === currentMonth;
-    }
+    return parseInt(arr[0]) === currentMonth;
+  }
 
-    // Returns true if deadlione is in current week
-    const isInWeek = (value) => {
-      const date = value.deadline
-      const arr = date.split("/")
-      const day = d.getDay();
+  // Returns true if deadlione is in current week
+  const isInWeek = (value) => {
+    const date = value.deadline
+    const arr = date.split("/")
+    const day = d.getDay();
 
-      const weekStart = currentDay - day;
-      const weekEnd = currentDay + 7 - day;
+    const weekStart = currentDay - day;
+    const weekEnd = currentDay + 7 - day;
 
-      return parseInt(arr[0]) === currentMonth && parseInt(arr[1]) >= weekStart && parseInt(arr[1]) <=weekEnd
-    }
+    return parseInt(arr[0]) === currentMonth && parseInt(arr[1]) >= weekStart && parseInt(arr[1]) <= weekEnd
+  }
 
-    // Returns true if deadline is current day
-    const isToday = (value) => {
-      const date = value.deadline
-      const arr = date.split("/")
+  // Returns true if deadline is current day
+  const isToday = (value) => {
+    const date = value.deadline
+    const arr = date.split("/")
 
-      return parseInt(arr[0]) === currentMonth && parseInt(arr[1]) === currentDay;
-    }  
+    return parseInt(arr[0]) === currentMonth && parseInt(arr[1]) === currentDay;
+  }
 
-    const isCourseTask = (value) => {
-      const courseId = value.course_id;
+  const isCourseTask = (value) => {
+    const courseId = value.course_id;
 
-      return courseId === props.courseId
-    }
+    return courseId === props.courseId
+  }
 
-    return (
-      <>
+  return (
+    <>
 
       {
         props.inCourse
           ? tasks.filter(isCourseTask).map((task) => (
-            <Task key={task.id} task={task} showButtons={false}/>
+            <Task key={task.id} task={task} showButtons={false} showCheck={false} onCheck={handleCheck}/>
           ))
-          : 
+          :
           <>
-          <Container fluid style = {{ width: '600px', marginTop: '5%'}}>
+            <Container fluid style={{ width: '600px', marginTop: '5%' }}>
               {/*Card for Due Today*/}
               <Card className="mb-4">
                 <Card.Header style={{ fontWeight: "bold", textAlign: "center", fontSize: "20px" }}>Due Today</Card.Header>
                 <Card.Body>
                   {/*Card for each task*/}
                   {tasks.filter(isToday).map((task) => (
-                    <Task key={task.id} task={task} showButtons={true} onUpdate={fetchData}/>
+                    <Task key={task.id} task={task} showButtons={true} onDelete={deleteTask} onUpdate={updateTask} onCheck={handleCheck} />
                   ))}
                 </Card.Body>
               </Card>
@@ -169,7 +289,7 @@ export default function TaskContent(props) {
                 <Card.Body>
                   {/*Card for each task*/}
                   {tasks.filter(isInWeek).map((task) => (
-                    <Task key={task.id} task={task} showButtons={true} onUpdate={fetchData}/>
+                    <Task key={task.id} task={task} showButtons={true} onDelete={deleteTask} onUpdate={updateTask} onCheck={handleCheck} />
                   ))}
                 </Card.Body>
               </Card>
@@ -179,7 +299,7 @@ export default function TaskContent(props) {
                 <Card.Body>
                   {/*Card for each task*/}
                   {tasks.filter(isInMonth).map((task) => (
-                    <Task key={task.id} task={task} showButtons={true} onUpdate={fetchData}/>
+                    <Task key={task.id} task={task} showButtons={true} onDelete={deleteTask} onUpdate={updateTask} onCheck={handleCheck} />
                   ))}
                 </Card.Body>
               </Card>
@@ -218,5 +338,5 @@ export default function TaskContent(props) {
       }
 
     </>
-    )
+  )
 }

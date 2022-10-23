@@ -14,10 +14,10 @@ export default function BudgetContent() {
 
   // Sample data
   const dataGroc = [
-    { name: 'Travel', value: 400 },
-    { name: 'Insurance', value: 700 },
-    { name: 'Entertainment', value: 200 },
-    { name: 'Food', value: 400 }
+    { name: 'Travel', value: 1000, limit: 500 },
+    { name: 'Insurance', value: 700, limit: 1000},
+    { name: 'Entertainment', value: 200, limit: 500 },
+    { name: 'Food', value: 400, limit: 500 }
   ];
 
   const colors = [
@@ -26,6 +26,16 @@ export default function BudgetContent() {
     '#CC99CC',
     '#79CDCD'
   ];
+
+  
+  //Calulates the total amount of money left (spending limit - amount spent)
+  function left(limit, spent) {
+    return limit - spent
+  }
+  //Calculates the percentage for the progress bar ((total spent/spending limit)*100)
+  function progressPercent(limit, spent) {
+    return (spent/limit)*100
+  }
 
   return (
     <>
@@ -76,16 +86,16 @@ export default function BudgetContent() {
           <Legend layout='vertical' verticalAlign='middle' align='right' />
         </PieChart>
 
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Budget
           </Card.Header>
         </Card>
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
-              <Col>Amount</Col>
+              <Col>Limit</Col>
             </Row>
           </Card.Header>
         </Card>
@@ -94,11 +104,20 @@ export default function BudgetContent() {
         {
           dataGroc.map((item) => (
             <>
-              <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+              <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
                 <Card.Body>
-                  <Row>
+                  <Row className="mb-2">
                     <Col className="border-end">{item.name}</Col>
-                    <Col>${item.value}</Col>
+                    <Col>${item.limit}</Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      {/*Compares current amount to limit, turns red if over and green if under limit*/}
+                      {left(item.limit, item.value) >= 0 
+                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                      }
+                    </Col>
                   </Row>
                 </Card.Body>
               </Card>
