@@ -48,11 +48,35 @@ export default function BudgetContent() {
               <Col sm={8}>
                 <Form.Group id='categories'>
                   <Form.Label>Category</Form.Label>
-                  <Form.Control type='category'/>
+                  <select className="form-control" name="city">
+                    <option selected>Select Category</option>
+                    <option value="acadmeic">Academic</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="groceries">Groceries</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="rent">Rent</option>
+                    <option value="restaurants">Restaurants</option>
+                  </select>
                   <Form.Label>Category</Form.Label>
-                  <Form.Control type='category'/>
+                  <select className="form-control" name="city">
+                    <option selected>Select Category</option>
+                    <option value="acadmeic">Academic</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="groceries">Groceries</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="rent">Rent</option>
+                    <option value="restaurants">Restaurants</option>
+                  </select>
                   <Form.Label>Category</Form.Label>
-                  <Form.Control type='category'/>
+                  <select className="form-control" name="city">
+                    <option selected>Select Category</option>
+                    <option value="acadmeic">Academic</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="groceries">Groceries</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="rent">Rent</option>
+                    <option value="restaurants">Restaurants</option>
+                  </select>
                 </Form.Group>
               </Col>
               <Col sm={4}>

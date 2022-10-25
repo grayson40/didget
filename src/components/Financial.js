@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Container, Card, Button, Collapse } from 'react-bootstrap'
 import TopBar from './TopBar'
 import PageBar from './PageBar'
+import BudgetContent from './BudgetContent'
+import Expenses from './Expenses'
 
 export default function Financial() {
 
@@ -14,7 +16,7 @@ export default function Financial() {
         <div>
             <PageBar name="Financial"/>
             <TopBar/>
-            <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
+            <Container fixed="top" fluid style={{ width: '650px', marginTop: "5%" }}>
                 <Card className="mb-3">
                     <Button
                         onClick={() => setOpen1(!open1)}
@@ -26,7 +28,7 @@ export default function Financial() {
                     </Button>
                     <Collapse in={open1}>
                         <div>
-                            Budget Content
+                            <BudgetContent/>
                         </div>
                     </Collapse>
                 </Card>
@@ -40,7 +42,7 @@ export default function Financial() {
                     </Button>
                     <Collapse in={open3}>
                         <div>
-                            Expenses Content
+                            <Expenses/>
                         </div>
                     </Collapse>
                 </Card>
