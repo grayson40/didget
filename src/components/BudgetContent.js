@@ -38,7 +38,7 @@ export default function BudgetContent() {
   }
 
   return (
-    <>
+    <Container fluid style = {{ position: 'center', width: '500px', marginTop: '5%'}}>
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>
           <h2 className='text-center mb-4'>Add Budget</h2>
@@ -97,7 +97,6 @@ export default function BudgetContent() {
         </Modal.Body>
       </Modal>
 
-
       <Container style={{ width: '400px' }}>
         <PieChart width={400} height={250}>
           <Pie data={dataGroc} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
@@ -155,6 +154,6 @@ export default function BudgetContent() {
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-    </>
+    </Container>
   )
 }
