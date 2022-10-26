@@ -2,8 +2,7 @@ import React from 'react'
 import { Container, Row, Col, Card, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { Legend, ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
-import { limit } from 'firebase/firestore';
+import {  ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
 
 export default function BudgetContent() {
    //    Use sample data for the different categories of bar graph
@@ -17,7 +16,7 @@ export default function BudgetContent() {
   ];
 
   //  Use an array to hold the amount left, which is just the limit - value of a piece of data
-  var amountLeft = [
+  /*var amountLeft = [
     (data[0].limit-data[0].value).toFixed(2),
     (data[1].limit-data[1].value).toFixed(2),
     (data[2].limit-data[2].value).toFixed(2),
@@ -25,6 +24,7 @@ export default function BudgetContent() {
     (data[4].limit-data[4].value).toFixed(2),
     (data[5].limit-data[5].value).toFixed(2)
   ]
+  */
 
 
   //    Use constants to hold colors for categories
