@@ -1,97 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { Card, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
-import { auth, db } from '../firebase'
-import { query, doc, collection, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
-import { Form, Alert } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import TaskContent from './TaskContent'
 
 export default function Course(props) {
   const [open1, setOpen1] = useState(false);
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState('')
-  const [meetDay, setMeetDay] = useState('')
-  const [meetTime, setMeetTime] = useState('')
-  const [professor, setProfessor] = useState('')
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    setName(props.course.name);
-    setMeetDay(props.course.meetDay);
-    setMeetTime(props.course.meetTime);
-    setProfessor(props.course.professor);
-  }, [])
-
-  // updates a document in firestore db
-  const editCourse = async () => {
-    setError('')
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-      )
-    );
-    // Iterate through the documents fetched
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const coursesRef = await getDocs(
-          query(
-            collection(db, `users/${user.id}/courses`)
-          )
-        );
-        coursesRef.forEach(async (course) => {
-          if (course.id === props.course.id) {
-            const docRef = doc(db, `users/${user.id}/courses/${course.id}`)
-            await updateDoc(docRef, {
-              name: name !== '' ? name : props.course.name,
-              meetDay: meetDay !== '' ? meetDay : props.course.meetDay,
-              meetTime: meetTime !== '' ? meetTime : props.course.meetTime,
-              professor: professor !== '' ? professor : props.course.professor
-            })
-              .then(() => {
-                console.log('document updated')
-                // props.onUpdate()
-              })
-              .catch(error => {
-                setError(error.toString())
-              })
-          }
-        })
-      }
-    })
-    setOpen(false)
-  }
-
-  // deletes a document in firestore db
-  const deleteCourse = async () => {
-    const usersRef = await getDocs(
-      query(
-        collection(db, 'users')
-      )
-    );
-    // Iterate through the documents fetched
-    usersRef.forEach(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const coursesRef = await getDocs(
-          query(
-            collection(db, `users/${user.id}/courses`)
-          )
-        );
-        coursesRef.forEach(async (course) => {
-          if (course.id === props.course.id) {
-            const docRef = doc(db, `users/${user.id}/courses/${course.id}`)
-            await deleteDoc(docRef)
-              .then(() => {
-                console.log('document deleted')
-                props.onUpdate()
-              })
-              .catch(error => {
-                setError(error.toString())
-              })
-          }
-        })
-      }
-    })
+  const name = useRef();
+  const meetDay = useRef();
+  const meetTime = useRef();
+  const professor = useRef();
+  
+  const handleUpdate = () => {
+    const course = {
+      courseId: props.course.courseId,
+      name: name.current.value === '' ? props.course.name : name.current.value,
+      meetDay: meetDay.current.value === '' ? props.course.meetDay : meetDay.current.value,
+      meetTime: meetTime.current.value === '' ? props.course.meetTime : meetTime.current.value,
+      professor: professor.current.value === '' ? props.course.professor : professor.current.value,
+    }
+    props.onUpdate(course, props.course.courseId)
+    handleClose()
   }
 
   // Modal close
@@ -113,41 +44,25 @@ export default function Course(props) {
         }>
           <Card.Body>
             <h2 className='text-center mb-4'>Edit Course</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
+            {/* {error && <Alert variant="danger">{error}</Alert>} */}
             <Form>
               <Form.Group id='name'>
                 <Form.Label>Course name</Form.Label>
-                <Form.Control type='name' placeholder={name} onChange={(e) => {
-                  if (e.target.value !== '') {
-                    setName(e.target.value)
-                  }
-                }} />
+                <Form.Control type='name' placeholder={props.course.name} ref={name} />
               </Form.Group>
               <Form.Group id='meet-day'>
                 <Form.Label>Meet Day</Form.Label>
-                <Form.Control type='meet-day' placeholder={meetDay} onChange={(e) => {
-                  if (e.target.value !== '') {
-                    setMeetDay(e.target.value)
-                  }
-                }} />
+                <Form.Control type='meet-day' placeholder={props.course.meetDay} ref={meetDay} />
               </Form.Group>
               <Form.Group id='meet-time'>
                 <Form.Label>Meet time</Form.Label>
-                <Form.Control type='meet-time' placeholder={meetTime} onChange={(e) => {
-                  if (e.target.value !== '') {
-                    setMeetTime(e.target.value)
-                  }
-                }} />
+                <Form.Control type='meet-time' placeholder={props.course.meetTime} ref={meetTime} />
               </Form.Group>
               <Form.Group id='professor'>
                 <Form.Label>Professor</Form.Label>
-                <Form.Control type='professor' placeholder={professor} onChange={(e) => {
-                  if (e.target.value !== '') {
-                    setProfessor(e.target.value)
-                  }
-                }} />
+                <Form.Control type='professor' placeholder={props.course.professor} ref={professor} />
               </Form.Group>
-              <Button className='w-100 mt-3' onClick={editCourse}>
+              <Button className='w-100 mt-3' onClick={handleUpdate}>
                 Edit
               </Button>
             </Form>
@@ -158,13 +73,13 @@ export default function Course(props) {
       <Card className='mb-4'>
         <Card.Header as="h5">
           <Row>
-            <Col sm={8}>{name}</Col>
+            <Col sm={8}>{props.course.name}</Col>
             <Col xs={0}>
               {props.showButton &&
                 <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
                   {/* onclick method for these two */}
                   <Dropdown.Item onClick={(e) => setOpen(true)}>Edit</Dropdown.Item>
-                  <Dropdown.Item onClick={deleteCourse}>Delete</Dropdown.Item>
+                  <Dropdown.Item onClick={(e) => {props.onDelete(props.course.courseId)}}>Delete</Dropdown.Item>
                 </DropdownButton>
               }
             </Col>
@@ -174,21 +89,21 @@ export default function Course(props) {
         {props.showButton 
           ?
           <>
-            <Card.Title>{`${meetDay} ${meetTime}`}</Card.Title>
-            <Card.Text>{professor}</Card.Text>
+            <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
+            <Card.Text>{props.course.professor}</Card.Text>
 
             {/*Set Button to be collapsable*/}
             <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
             <Collapse in={open1}>
               {/* map over list of tasks */}
               <div>
-                <TaskContent courseId={props.course.id} inCourse={props.showButton} />
+                <TaskContent courseId={props.course.courseId} inCourse={props.showButton} />
               </div>
             </Collapse>
           </>
           :
           <>
-            <TaskContent courseId={props.course.id} inCourse={true} />
+            <TaskContent courseId={props.course.courseId} inCourse={true} />
           </>
         }
         </Card.Body>
