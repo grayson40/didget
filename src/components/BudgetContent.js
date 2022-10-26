@@ -2,112 +2,86 @@ import React, { useState } from 'react'
 import { Container, Card, Row, Col, Modal, Form, Button, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { PieChart, Pie, Cell, Legend } from 'recharts';
+import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
 
 export default function BudgetContent() {
-  const [open, setOpen] = useState(false);
-
-  // Modal close
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  // Sample data
-  const dataGroc = [
-    { name: 'Travel', value: 1000, limit: 500 },
-    { name: 'Insurance', value: 700, limit: 1000},
-    { name: 'Entertainment', value: 200, limit: 500 },
-    { name: 'Food', value: 400, limit: 500 }
+  //    Use sample data for the different categories of bar graph
+  const data = [
+    { name: 'Rent', symbol: '🏠', value: 600.00, expense: 100, limit: 600, max: 100 },
+    { name: 'Groceries', symbol: '🛒', value: 138.25, expense: 40, limit: 200, max: 100 },
+    { name: 'Food', symbol: '🍔', value: 45.65, expense: 60, limit: 100, max: 100 },
+    { name: 'Insurance', symbol: '📋', value: 200.00, expense: 100, limit: 200, max: 100 },
+    { name: 'Academic', symbol: '📚', value: 18.99, expense: 25, limit: 60, max: 100 },
+    { name: 'Entertainment', symbol: '🍿', value: 75.00, expense: 75, limit: 100, max: 100 }
   ];
 
-  const colors = [
-    '#FFA07A',
-    '#93DB70',
-    '#CC99CC',
-    '#79CDCD'
+  //  Use an array to hold the amount left, which is just the limit - value of a piece of data
+  /*var amountLeft = [
+    (data[0].limit-data[0].value).toFixed(2),
+    (data[1].limit-data[1].value).toFixed(2),
+    (data[2].limit-data[2].value).toFixed(2),
+    (data[3].limit-data[3].value).toFixed(2),
+    (data[4].limit-data[4].value).toFixed(2),
+    (data[5].limit-data[5].value).toFixed(2)
+  ]
+  */
+
+
+  //    Use constants to hold colors for categories
+  const expenseColors = [
+    '#AED6F1',
+    '#A2D9CE',
+    '#F9E79F',
+    '#E59866',
+    '#F5B7B1',
+    '#D2B4DE'
   ];
 
-  
+  const limitColors = [
+    '#5DADE2',
+    '#45B39D',
+    '#F4D03F',
+    '#D35400',
+    '#EC7063',
+    '#A569BD'
+  ];
+
+
   //Calulates the total amount of money left (spending limit - amount spent)
   function left(limit, spent) {
     return limit - spent
   }
   //Calculates the percentage for the progress bar ((total spent/spending limit)*100)
   function progressPercent(limit, spent) {
-    return (spent/limit)*100
+    return (spent / limit) * 100
   }
 
   return (
-    <Container fluid style = {{ position: 'center', width: '500px', marginTop: '5%'}}>
-      <Modal show={open} onClose={handleClose} onHide={handleClose}>
-        <Modal.Body>
-          <h2 className='text-center mb-4'>Add Budget</h2>
-          {/* {error && <Alert variant="danger">{error}</Alert>} */}
-          <Form>
-            <Row>
-              <Col sm={8}>
-                <Form.Group id='categories'>
-                  <Form.Label>Category</Form.Label>
-                  <select className="form-control" name="city">
-                    <option selected>Select Category</option>
-                    <option value="acadmeic">Academic</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="rent">Rent</option>
-                    <option value="restaurants">Restaurants</option>
-                  </select>
-                  <Form.Label>Category</Form.Label>
-                  <select className="form-control" name="city">
-                    <option selected>Select Category</option>
-                    <option value="acadmeic">Academic</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="rent">Rent</option>
-                    <option value="restaurants">Restaurants</option>
-                  </select>
-                  <Form.Label>Category</Form.Label>
-                  <select className="form-control" name="city">
-                    <option selected>Select Category</option>
-                    <option value="acadmeic">Academic</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="rent">Rent</option>
-                    <option value="restaurants">Restaurants</option>
-                  </select>
-                </Form.Group>
-              </Col>
-              <Col sm={4}>
-                <Form.Group id='limit'>
-                  <Form.Label>Limit</Form.Label>
-                  <Form.Control type='value'/>
-                  <Form.Label>Limit</Form.Label>
-                  <Form.Control type='value'/>
-                  <Form.Label>Limit</Form.Label>
-                  <Form.Control type='value'/>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Button className='w-100 mt-3'>
-              Add
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
+    <>
+      <Container style={{ top: "5%", justifyContent: "flex-center", width: '530px' }}>
+        {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
+        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
+          <BarChart data={data} layout="vertical" width={600} height={250} >
+            <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+              {
+                data.map((entry, index) => (
+                  <Cell key={'expense'} fill={expenseColors[index]} />
+                ))
+              }
+            </Bar>
+            <Bar dataKey="max" barSize={10}>
+              {
+                data.map((entry, index) => (
+                  <Cell key={'limit'} fill={limitColors[index]} />
+                ))
+              }
+            </Bar>
+            <XAxis type="number" reversed />
+            <YAxis type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+          </BarChart>
+        </Container>
 
-      <Container style={{ width: '400px' }}>
-        <PieChart width={400} height={250}>
-          <Pie data={dataGroc} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
-            {
-              dataGroc.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index]} />
-              ))
-            }
-          </Pie>
-          <Legend layout='vertical' verticalAlign='middle' align='right' />
-        </PieChart>
 
         <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
@@ -125,20 +99,20 @@ export default function BudgetContent() {
 
         {/*Cards with Name, Total, Category, and Date*/}
         {
-          dataGroc.map((item) => (
+          data.map((item, index) => (
             <>
               <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
                 <Card.Body>
                   <Row className="mb-2">
                     <Col className="border-end">{item.name}</Col>
-                    <Col>${item.limit}</Col>
+                    <Col>${item.value}</Col>
                   </Row>
                   <Row>
                     <Col>
                       {/*Compares current amount to limit, turns red if over and green if under limit*/}
-                      {left(item.limit, item.value) >= 0 
-                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
-                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                      {left(item.limit, item.value) >= 0
+                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`} />
+                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`} />
                       }
                     </Col>
                   </Row>
@@ -154,6 +128,6 @@ export default function BudgetContent() {
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-    </Container>
+    </>
   )
 }

@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
      * @param {*} userNote Note to be added
      * @returns void
      */
-    async function addNote(userNote, inDate) {
+    async function addNote(note) {
       const userRef = await getDocs(
         query(
           collection(db, "users")
@@ -68,11 +68,7 @@ export function AuthProvider({ children }) {
       userRef.docs.map(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
           const collectionRef = collection(db, `users/${user.id}/notes/`);
-          await addDoc(collectionRef, {
-            uid: auth.currentUser.uid,
-            note: userNote,
-            date: inDate
-          });
+          await addDoc(collectionRef, note);
         }
       })
     }

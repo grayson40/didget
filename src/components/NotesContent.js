@@ -3,11 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { auth, db } from '../firebase';
 import Container from 'react-bootstrap/Container';
 import Note from './Note'
-import { collection, getDocs, query } from 'firebase/firestore';
+import { doc, collection, getDocs, query, deleteDoc, updateDoc } from 'firebase/firestore';
 import { Button, Form, Card, Alert } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import Fab from '@mui/material/Fab';
 import { Modal } from '@material-ui/core';
+import { uuidv4 } from '@firebase/util'
 
 export default function NotesContent(props) {
   const [error, setError] = useState('')
@@ -34,8 +35,8 @@ export default function NotesContent(props) {
           setNotes(
             notesRef.docs.map((note) => ({
               id: note.id,
+              noteId: note.data().noteId,
               note: note.data().note,
-              uid: note.data().uid,
               date: note.data().date
             }))
           )
@@ -43,6 +44,105 @@ export default function NotesContent(props) {
       })
     }
     console.log('fetching note data')
+  }
+
+  const handleAdd = async () => {
+    // Add note to screen
+    const newNote = {
+      noteId: uuidv4(),
+      note: noteRef.current.value,
+      date: toDate()
+    };
+    const newNotes = [...notes, newNote];
+    setNotes(newNotes);
+    handleClose()
+
+    // Add note to firebase
+    try {
+      setError('')
+      await addNote(newNote)
+    }
+    catch (err) {
+      // Format and set error thrown by Firebase Auth API
+      console.log(error.toString())
+      setError(err.toString())
+    }
+  }
+
+  const deleteNote = async (id) => {
+    // Delete note from screen
+    console.log(`deleting ${id}`)
+    const newNotes = notes.filter((note) => note.noteId !== id);
+    setNotes(newNotes);
+
+    // Delete note in firebase
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const notesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/notes`)
+          )
+        );
+        notesRef.forEach(async (note) => {
+          if (note.data().noteId === id) {
+            const docRef = doc(db, `users/${user.id}/notes/${note.id}`)
+            await deleteDoc(docRef)
+              .then(() => {
+                console.log('document deleted')
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+        })
+      }
+    })
+  }
+
+  const updateNote = async (input, id) => {
+    // Update on screen
+    console.log(`updating ${id} ${input}`)
+    notes.forEach((note) => {
+      if (note.noteId === id) {
+        note.note = input
+      }
+    });
+    setNotes(notes);
+
+    // Update in firebase
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const notesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/notes`)
+          )
+        );
+        notesRef.forEach(async (note) => {
+          if (note.data().noteId === id) {
+            const docRef = doc(db, `users/${user.id}/notes/${note.id}`)
+            await updateDoc(docRef, { note: input })
+              .then(() => {
+                console.log('document updated')
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+        })
+      }
+    })
   }
 
   // Used to fetch users notes from firestore
@@ -58,27 +158,6 @@ export default function NotesContent(props) {
     return today;
   };
 
-  const handleSubmit = async (e) => {
-    if (noteRef.current.value === '') {
-      e.preventDefault();
-    }
-    else {
-      e.preventDefault();
-      try {
-        setError('')
-        await addNote(noteRef.current.value, toDate())
-        setNotes([...notes, { note: noteRef.current.value, date: toDate() }])
-        noteRef.current.value = '';
-      }
-      catch (err) {
-        // Format and set error thrown by Firebase Auth API
-        console.log(error.toString())
-        setError(err.toString())
-      }
-    }
-    setOpen(false);
-  }
-
   // Modal close
   const handleClose = () => {
     setOpen(false);
@@ -86,10 +165,10 @@ export default function NotesContent(props) {
 
   return (
     <Container>
-      <Container fluid style = {{ width: '500px', marginTop: '5%'}}>
+      <Container fluid style={{ width: '500px', marginTop: '5%' }}>
         {/* Render user notes */}
         {notes.map((note) => (
-          <Note key={note.id} note={note} inCard={props.showButton} onUpdate={fetchData} />
+          <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
         ))}
 
         {/* Form to create a new note */}
@@ -109,19 +188,19 @@ export default function NotesContent(props) {
                 <Form.Group id='note'>
                   <Form.Control type='note' ref={noteRef} required />
                 </Form.Group>
-                <Button className='w-100 mt-3' onClick={handleSubmit}>
+                <Button className='w-100 mt-3' onClick={handleAdd}>
                   Add Note
                 </Button>
               </Form>
             </Card.Body>
           </Card>
-        </Modal> 
+        </Modal>
       </Container>
       {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-            <FaPlus size={"30px"}/>
-          </Fab>
-        </Container>}
+        <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+          <FaPlus size={"30px"} />
+        </Fab>
+      </Container>}
     </Container>
   )
 }
