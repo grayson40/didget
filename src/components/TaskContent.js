@@ -3,7 +3,15 @@ import { Card, Container, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Task from './Task'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { collection, getDocs, query, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { 
+  collection, 
+  getDocs, 
+  query, 
+  addDoc, 
+  doc, 
+  updateDoc, 
+  deleteDoc 
+} from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 export default function TaskContent(props) {
@@ -67,7 +75,7 @@ export default function TaskContent(props) {
           );
           coursesRef.docs.forEach((_course) => {
             if (_course.data().name.toLowerCase() === course.toLowerCase()) {
-              courseId = _course.id;
+              courseId = _course.data().courseId;
             }
           })
 
@@ -258,7 +266,6 @@ export default function TaskContent(props) {
 
   const isCourseTask = (value) => {
     const courseId = value.course_id;
-
     return courseId === props.courseId
   }
 
