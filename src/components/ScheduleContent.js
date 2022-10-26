@@ -84,7 +84,7 @@ export default function ScheduleContent(props) {
   };
 
   return (
-    <Container>
+    <>
       <Container style={{width: '500px', marginTop: '5%'}}>
         {/* popup add window */}
         <Modal open={open} onClose={handleClose}>
@@ -135,7 +135,7 @@ export default function ScheduleContent(props) {
             <FaPlus size={"30px"}/>
           </Fab>
         </Container>}
-    </Container>
+    </>
 
   )
 }
