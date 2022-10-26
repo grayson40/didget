@@ -5,6 +5,7 @@ import { FaPlus } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
 
 export default function BudgetContent() {
+  const [open, setOpen] = useState(false);
   //    Use sample data for the different categories of bar graph
   const data = [
     { name: 'Rent', symbol: '🏠', value: 600.00, expense: 100, limit: 600, max: 100 },
@@ -14,18 +15,6 @@ export default function BudgetContent() {
     { name: 'Academic', symbol: '📚', value: 18.99, expense: 25, limit: 60, max: 100 },
     { name: 'Entertainment', symbol: '🍿', value: 75.00, expense: 75, limit: 100, max: 100 }
   ];
-
-  //  Use an array to hold the amount left, which is just the limit - value of a piece of data
-  /*var amountLeft = [
-    (data[0].limit-data[0].value).toFixed(2),
-    (data[1].limit-data[1].value).toFixed(2),
-    (data[2].limit-data[2].value).toFixed(2),
-    (data[3].limit-data[3].value).toFixed(2),
-    (data[4].limit-data[4].value).toFixed(2),
-    (data[5].limit-data[5].value).toFixed(2)
-  ]
-  */
-
 
   //    Use constants to hold colors for categories
   const expenseColors = [
@@ -56,6 +45,10 @@ export default function BudgetContent() {
     return (spent / limit) * 100
   }
 
+  const handleClose = () => {
+    setOpen(false);
+  }
+
   return (
     <>
       <Container style={{ top: "5%", justifyContent: "flex-center", width: '530px' }}>
@@ -82,20 +75,33 @@ export default function BudgetContent() {
           </BarChart>
         </Container>
 
+        {/* popup add window */}
+        <Modal show={open} onClose={handleClose} onHide={handleClose}>
+          <Modal.Body>
+            <h2 className='text-center mb-4'>Create Budget</h2>
+            {/* {error && <Alert variant="danger">{error}</Alert>} */}
+            <Form>
+            {/* TODO: add budget category and limit fields */}
+              <Button className='w-100 mt-3' onClick={handleClose}>
+                Create
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
 
-          <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-            <Card.Header>
-              Budget
-            </Card.Header>
-          </Card>
-          <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-            <Card.Header>
-              <Row>
-                <Col className="border-end">Category</Col>
-                <Col>Limit</Col>
-              </Row>
-            </Card.Header>
-          </Card>
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+          <Card.Header>
+            Budget
+          </Card.Header>
+        </Card>
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+          <Card.Header>
+            <Row>
+              <Col className="border-end">Category</Col>
+              <Col>Limit</Col>
+            </Row>
+          </Card.Header>
+        </Card>
 
         {/*Cards with Name, Total, Category, and Date*/}
         {
