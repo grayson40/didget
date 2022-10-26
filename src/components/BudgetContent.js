@@ -83,19 +83,19 @@ export default function BudgetContent() {
         </Container>
 
 
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            Budget
-          </Card.Header>
-        </Card>
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            <Row>
-              <Col className="border-end">Category</Col>
-              <Col>Limit</Col>
-            </Row>
-          </Card.Header>
-        </Card>
+          <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+            <Card.Header>
+              Budget
+            </Card.Header>
+          </Card>
+          <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+            <Card.Header>
+              <Row>
+                <Col className="border-end">Category</Col>
+                <Col>Limit</Col>
+              </Row>
+            </Card.Header>
+          </Card>
 
         {/*Cards with Name, Total, Category, and Date*/}
         {
