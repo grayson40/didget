@@ -19,10 +19,21 @@ export const ThemeContext = createContext(null)
 
 function App() {
 
-  const [theme, setTheme] = useState("dark")
+  //Sets light/dark theme. reading saved user preference from local storage
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("isUserPreferDark")
+    const initialValue = JSON.parse(saved)
+    return initialValue || ""
+  })
+
   const toggleTheme = () => {
     setTheme((curr) => (curr === "light" ? "dark" : "light"))
   }
+
+  React.useEffect(() => {
+    localStorage.setItem("isUserPreferDark", JSON.stringify(theme))
+  },[theme])
+
 
   return (
 
