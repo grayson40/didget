@@ -38,122 +38,123 @@ export default function BudgetContent() {
   }
 
   return (
-    <Container fluid style = {{ position: 'center', width: '500px', marginTop: '5%'}}>
-      <Modal show={open} onClose={handleClose} onHide={handleClose}>
-        <Modal.Body>
-          <h2 className='text-center mb-4'>Add Budget</h2>
-          {/* {error && <Alert variant="danger">{error}</Alert>} */}
-          <Form>
-            <Row>
-              <Col sm={8}>
-                <Form.Group id='categories'>
-                  <Form.Label>Category</Form.Label>
-                  <select className="form-control" name="city">
-                    <option selected>Select Category</option>
-                    <option value="acadmeic">Academic</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="rent">Rent</option>
-                    <option value="restaurants">Restaurants</option>
-                  </select>
-                  <Form.Label>Category</Form.Label>
-                  <select className="form-control" name="city">
-                    <option selected>Select Category</option>
-                    <option value="acadmeic">Academic</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="rent">Rent</option>
-                    <option value="restaurants">Restaurants</option>
-                  </select>
-                  <Form.Label>Category</Form.Label>
-                  <select className="form-control" name="city">
-                    <option selected>Select Category</option>
-                    <option value="acadmeic">Academic</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="rent">Rent</option>
-                    <option value="restaurants">Restaurants</option>
-                  </select>
-                </Form.Group>
-              </Col>
-              <Col sm={4}>
-                <Form.Group id='limit'>
-                  <Form.Label>Limit</Form.Label>
-                  <Form.Control type='value'/>
-                  <Form.Label>Limit</Form.Label>
-                  <Form.Control type='value'/>
-                  <Form.Label>Limit</Form.Label>
-                  <Form.Control type='value'/>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Button className='w-100 mt-3'>
-              Add
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
+    <Container>
+      <Container fluid style = {{ position: 'center', width: '500px', marginTop: '5%'}}>
+        <Modal show={open} onClose={handleClose} onHide={handleClose}>
+          <Modal.Body>
+            <h2 className='text-center mb-4'>Add Budget</h2>
+            {/* {error && <Alert variant="danger">{error}</Alert>} */}
+            <Form>
+              <Row>
+                <Col sm={8}>
+                  <Form.Group id='categories'>
+                    <Form.Label>Category</Form.Label>
+                    <select className="form-control" name="city">
+                      <option selected>Select Category</option>
+                      <option value="acadmeic">Academic</option>
+                      <option value="entertainment">Entertainment</option>
+                      <option value="groceries">Groceries</option>
+                      <option value="insurance">Insurance</option>
+                      <option value="rent">Rent</option>
+                      <option value="restaurants">Restaurants</option>
+                    </select>
+                    <Form.Label>Category</Form.Label>
+                    <select className="form-control" name="city">
+                      <option selected>Select Category</option>
+                      <option value="acadmeic">Academic</option>
+                      <option value="entertainment">Entertainment</option>
+                      <option value="groceries">Groceries</option>
+                      <option value="insurance">Insurance</option>
+                      <option value="rent">Rent</option>
+                      <option value="restaurants">Restaurants</option>
+                    </select>
+                    <Form.Label>Category</Form.Label>
+                    <select className="form-control" name="city">
+                      <option selected>Select Category</option>
+                      <option value="acadmeic">Academic</option>
+                      <option value="entertainment">Entertainment</option>
+                      <option value="groceries">Groceries</option>
+                      <option value="insurance">Insurance</option>
+                      <option value="rent">Rent</option>
+                      <option value="restaurants">Restaurants</option>
+                    </select>
+                  </Form.Group>
+                </Col>
+                <Col sm={4}>
+                  <Form.Group id='limit'>
+                    <Form.Label>Limit</Form.Label>
+                    <Form.Control type='value'/>
+                    <Form.Label>Limit</Form.Label>
+                    <Form.Control type='value'/>
+                    <Form.Label>Limit</Form.Label>
+                    <Form.Control type='value'/>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Button className='w-100 mt-3'>
+                Add
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
 
-      <Container style={{ width: '400px' }}>
-        <PieChart width={400} height={250}>
-          <Pie data={dataGroc} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
-            {
-              dataGroc.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index]} />
-              ))
-            }
-          </Pie>
-          <Legend layout='vertical' verticalAlign='middle' align='right' />
-        </PieChart>
+        <Container style={{ width: '400px' }}>
+          <PieChart width={400} height={250}>
+            <Pie data={dataGroc} cx="50%" cy="50%" innerRadius={45} outerRadius={70} label>
+              {
+                dataGroc.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={colors[index]} />
+                ))
+              }
+            </Pie>
+            <Legend layout='vertical' verticalAlign='middle' align='right' />
+          </PieChart>
 
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            Budget
-          </Card.Header>
-        </Card>
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            <Row>
-              <Col className="border-end">Category</Col>
-              <Col>Limit</Col>
-            </Row>
-          </Card.Header>
-        </Card>
+          <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+            <Card.Header>
+              Budget
+            </Card.Header>
+          </Card>
+          <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+            <Card.Header>
+              <Row>
+                <Col className="border-end">Category</Col>
+                <Col>Limit</Col>
+              </Row>
+            </Card.Header>
+          </Card>
 
-        {/*Cards with Name, Total, Category, and Date*/}
-        {
-          dataGroc.map((item) => (
-            <>
-              <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-                <Card.Body>
-                  <Row className="mb-2">
-                    <Col className="border-end">{item.name}</Col>
-                    <Col>${item.limit}</Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      {/*Compares current amount to limit, turns red if over and green if under limit*/}
-                      {left(item.limit, item.value) >= 0 
-                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
-                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
-                      }
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </>
-          ))
-        }
+          {/*Cards with Name, Total, Category, and Date*/}
+          {
+            dataGroc.map((item) => (
+              <>
+                <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+                  <Card.Body>
+                    <Row className="mb-2">
+                      <Col className="border-end">{item.name}</Col>
+                      <Col>${item.limit}</Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        {/*Compares current amount to limit, turns red if over and green if under limit*/}
+                        {left(item.limit, item.value) >= 0 
+                          ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                          : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                        }
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </>
+            ))
+          }
+        </Container>
       </Container>
-
       <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-        <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-          <FaPlus size={"30px"} />
-        </Fab>
-      </Container>
+          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+            <FaPlus size={"30px"} />
+          </Fab>
+        </Container>
     </Container>
   )
 }
