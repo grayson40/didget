@@ -47,7 +47,9 @@ function App() {
             </AuthProvider>
           </Router>
         </div>
+        <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-start', display: 'flex' }}>
         <ReactSwitch onChange={toggleTheme} checked={theme === "dark"}/>
+        </Container>
       </Container>
     </ThemeContext.Provider>
 
