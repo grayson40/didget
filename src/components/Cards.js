@@ -94,7 +94,7 @@ export default function Cards() {
                 </Button>
                 <Collapse in={open3}>
                     <div class="container-fluid justify-content-center align-content-center" height={500}>
-                        {budgetBool == true ?
+                        {budgetBool === true ?
                         /* Create a vertically aligned bar chart containing the dataset of limits and expense totals */
                         <BarChart data={data} layout="vertical" width={560} height={250} >
                             <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
