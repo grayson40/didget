@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Row, Col, Card } from 'react-bootstrap'
+import { Container, Row, Col, Card, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
 import { Legend, ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
@@ -46,6 +46,15 @@ export default function BudgetContent() {
   ];
 
 
+  //Calulates the total amount of money left (spending limit - amount spent)
+  function left(limit, spent) {
+    return limit - spent
+  }
+  //Calculates the percentage for the progress bar ((total spent/spending limit)*100)
+  function progressPercent(limit, spent) {
+    return (spent/limit)*100
+  }
+
   return (
     <>
       <Container style={{ width: '400px'}}>
@@ -73,17 +82,16 @@ export default function BudgetContent() {
         </Container>
         
 
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Budget
           </Card.Header>
         </Card>
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
-              <Col className="border-end">Amount</Col>
-              <Col>Percentage</Col>
+              <Col>Limit</Col>
             </Row>
           </Card.Header>
         </Card>
@@ -92,13 +100,20 @@ export default function BudgetContent() {
         {
           data.map((item, index) => (
             <>
-              <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+              <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
                 <Card.Body>
-                  <Row>
-                    {/* Create a column for each category's title, value, and percent */}
+                  <Row className="mb-2">
                     <Col className="border-end">{item.name}</Col>
-                    <Col className="border-end">${item.value}</Col>
-                    <Col>{item.expense}%</Col>
+                    <Col>${item.value}</Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      {/*Compares current amount to limit, turns red if over and green if under limit*/}
+                      {left(item.limit, item.value) >= 0 
+                        ? <ProgressBar variant="success" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                        : <ProgressBar variant="danger" now={progressPercent(item.limit, item.value)} label={`$${item.value} Spent`}/>
+                      }
+                    </Col>
                   </Row>
                   {/* Create a progress bar that tracks the percentage */}
                   <progress value ={item.expense} max="100" style={{ width: '400px' }}/>

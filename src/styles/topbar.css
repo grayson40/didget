@@ -1,3 +1,45 @@
+#light {
+    background-color: white;
+}
+
+#dark {
+    background-color: rgb(105, 98, 98);
+}
+
+#dark button {
+    background-color: gold !important;
+    border-color: gold;
+    color: black;
+}
+
+#dark .ulNote {
+    outline-style: dotted;
+    outline-width: 2px;
+    outline-color: black;
+    color: white
+}
+
+#dark .ulNote p {
+    color: white;
+}
+
+#dark .card {
+    background-color: rgb(105, 98, 98);
+    color: white;
+}
+
+#dark .dashboardCard {
+    background-color: rgb(105, 98, 98);
+    color: white;
+    outline-style: groove;
+    outline-color: black !important;
+    outline-width: 2px;
+}
+
+#dark .card header {
+    background-color: black;  
+}
+
 .fixed-top-2 {
     margin-top: 55px;
     background-color: gray;
