@@ -69,7 +69,7 @@ export default function BudgetContent() {
                 ))
               }
             </Bar>
-            <XAxis type="number" reversed />
+            <XAxis type="number" reversed tick={{ fill: "#1198c1"}} tickLine={{ stroke: "#1198c1"}} axisLine={{ fill: "#1198c1"}}/>
             <YAxis type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
             <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
           </BarChart>
