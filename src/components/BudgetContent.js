@@ -212,6 +212,7 @@ export default function BudgetContent() {
     <>
       <Container style={{ top: "5%", justifyContent: "flex-center", width: '530px' }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
+        {/* TODO: link bar chart to fetched data */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
           <BarChart data={data} layout="vertical" width={600} height={250} >
             <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
