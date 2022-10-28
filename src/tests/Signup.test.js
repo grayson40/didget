@@ -22,6 +22,8 @@ test('Sign up with email in use should throw an error', async () => {
   );
 });
 
+// Useless comment tee hee
+
 // Testing invalid email error
 test('Sign up with email in use should throw an error', async () => {
   let error = '';
