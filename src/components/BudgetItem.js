@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Row, Col, ProgressBar } from 'react-bootstrap'
 
 
-export default function BudgetItem({ item }) {
+export default function BudgetItem({ item, bordColor, backColor }) {
 
   //Calulates the total amount of money left (spending limit - amount spent)
   function left(limit, spent) {
@@ -13,9 +13,11 @@ export default function BudgetItem({ item }) {
     return (spent / limit) * 100
   }
   
+  
+
   return (
     <>
-      <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+      <Card style={{ backgroundColor: backColor, borderColor: bordColor, color: 'black' , width: '500px', textAlign: "Center" }} className="mb-2">
         <Card.Body>
           <Row className="mb-2">
             <Col className="border-end">{item.category}</Col>

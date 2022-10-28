@@ -15,8 +15,10 @@ import {
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
 
+
 export default function BudgetContent() {
   const [open, setOpen] = useState(false);
+  const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const rentLimit = useRef();
   const groceriesLimit = useRef();
@@ -24,7 +26,7 @@ export default function BudgetContent() {
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
-  const [noBudgets, setNoBudgets] = useState(true)
+  const [noBudgets, setNoBudgets] = useState([]);
 
   //    Use sample data for the different categories of bar graph
   const data = [
@@ -54,6 +56,15 @@ export default function BudgetContent() {
     '#EC7063',
     '#A569BD'
   ];
+
+  const symbolsDict = {
+    'Rent': '🏠',
+    'Groceries': '🛒',
+    'Food': '🍔',
+    'Insurance': '📋',
+    'Academic': '📚',
+    'Entertainment': '🍿'
+  }
 
   async function fetchData() {
     if (auth.currentUser) {
@@ -95,6 +106,7 @@ export default function BudgetContent() {
 
   const handleClose = () => {
     setOpen(false);
+    console.log(budgets[0]);
   }
 
   const updateBudget = () => {
@@ -209,29 +221,38 @@ export default function BudgetContent() {
     handleClose()
   }
 
+
+
+
   return (
     <>
       <Container style={{ top: "5%", justifyContent: "flex-center", width: '530px' }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
         {/* TODO: link bar chart to fetched data */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <BarChart data={data} layout="vertical" width={600} height={250} >
+          <BarChart data={graphData} layout="vertical" width={600} height={250} >
             <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
               {
-                data.map((entry, index) => (
+                graphData.map((entry, index) => (
                   <Cell key={'expense'} fill={expenseColors[index]} />
                 ))
               }
             </Bar>
             <Bar dataKey="max" barSize={10}>
               {
-                data.map((entry, index) => (
+                graphData.map((entry, index) => (
                   <Cell key={'limit'} fill={limitColors[index]} />
                 ))
               }
             </Bar>
-            <XAxis type="number" reversed />
-            <YAxis type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+            {/*
+            
+            NOTICE NOTICE NOTICE
+            BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+  
+            */}
+            <XAxis stroke="black" type="number" reversed />
+            <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
             <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
           </BarChart>
         </Container>
@@ -315,8 +336,14 @@ export default function BudgetContent() {
         {/*Cards with Name, Total, Category, and Date*/}
         {
           budgets.map((item, index) => (
+  
             <>
-              <BudgetItem key={index} item={item}></BudgetItem>
+              <BudgetItem 
+                key={index} 
+                item={ item } 
+                bordColor = { limitColors[index] } 
+                backColor = { expenseColors[index] }>
+              </BudgetItem>
             </>
           ))
         }
