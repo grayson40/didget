@@ -209,6 +209,83 @@ export default function Expenses(props) {
     }
   };
 
+  // id: expense.data().id,
+  // category: expense.data().category,
+  // place: expense.data().place,
+  // total: expense.data().total,
+  // date: expense.data().date
+
+  const updateExpense = async (id, updatedExpense) => {
+    // Update on screen
+    let totalDifference = 0;
+    console.log(`updating ${id}`)
+    expenses.forEach((expense) => {
+      if (expense.id === id) {
+        // calculate total difference for budget current
+        if (expense.total !== updatedExpense.total) {
+          totalDifference = updatedExpense.total - expense.total;
+        }
+
+        // Update expense
+        expense.id = updatedExpense.id;
+        expense.category = updatedExpense.category;
+        expense.place = updatedExpense.place;
+        expense.total = updatedExpense.total;
+        expense.date = updatedExpense.date;
+      }
+    });
+    setExpenses(expenses);
+
+    // Update in firebase
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    // Iterate through the documents fetched
+    usersRef.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const categoriesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/categories`)
+          )
+        );
+        categoriesRef.docs.map(async (category) => {
+          if (category.data().category.toLowerCase() === updatedExpense.category) {
+            const updatedCurrent = category.data().current + totalDifference;
+            const budgetRef = doc(db, `users/${user.id}/categories/${category.id}`);
+            // Update budget current
+            await updateDoc(budgetRef, { current: updatedCurrent })
+              .then(() => {
+                console.log(`${category.data().category} current updated`)
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+          const expensesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/categories/${category.id}/expenses`)
+            )
+          );
+          expensesRef.docs.map(async (expense) => {
+            if (expense.data().id === id) {
+              // Update expense
+              const docRef = doc(db, `users/${user.id}/categories/${category.id}/expenses/${expense.id}`)
+              await updateDoc(docRef, updatedExpense)
+                .then(() => {
+                  console.log('document updated')
+                })
+                .catch(error => {
+                  setError(error.toString())
+                })
+            }
+          })
+        })
+      }
+    })
+  }
+
   const deleteExpense = async (id) => {
     console.log(`deleting ${id}`)
     const newExpenses = expenses.filter((expense) => expense.id !== id);
@@ -321,7 +398,7 @@ export default function Expenses(props) {
 
         {
           expenses.map((expense, index) => (
-            <Expense key={index} expense={expense} onDelete={deleteExpense}></Expense>
+            <Expense key={index} expense={expense} onDelete={deleteExpense} onUpdate={updateExpense}></Expense>
           ))
         }
       </Container>
