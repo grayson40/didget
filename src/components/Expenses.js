@@ -32,7 +32,7 @@ const categoryFill =
 
 export default function Expenses(props) {
   const [open, setOpen] = useState(false);
-  const [expenses, setExpenses] = useState([])
+  const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('')
   const [rentTotal, setRentTotal] = useState(0)
   const [groceryTotal, setGroceryTotal] = useState(0)
