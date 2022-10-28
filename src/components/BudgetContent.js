@@ -24,6 +24,7 @@ export default function BudgetContent() {
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const [noBudgets, setNoBudgets] = useState(true)
 
   //    Use sample data for the different categories of bar graph
   const data = [
@@ -69,14 +70,17 @@ export default function BudgetContent() {
               collection(db, `users/${user.id}/categories`)
             )
           );
-          setBudgets(
-            categoriesRef.docs.map((category) => ({
-              id: category.id,
-              category: category.data().category,
-              limit: category.data().limit,
-              current: category.data().current
-            }))
-          )
+          if (!categoriesRef.empty) {
+            setNoBudgets(false);
+            setBudgets(
+              categoriesRef.docs.map((category) => ({
+                id: category.id,
+                category: category.data().category,
+                limit: category.data().limit,
+                current: category.data().current
+              }))
+            )
+          }
         }
       })
     }
@@ -145,65 +149,62 @@ export default function BudgetContent() {
   const createBudget = () => {
     // If category budget already set, update limits
     // Else create budget
-    if (budgets.length !== 0) {
-      updateBudget()
-    } else {
-      // Add budgets to screen
-      const newBudgets = [
-        {
-          category: "Rent",
-          limit: parseInt(rentLimit.current.value),
-          current: 0
-        },
-        {
-          category: "Groceries",
-          limit: parseInt(groceriesLimit.current.value),
-          current: 0
-        },
-        {
-          category: "Food",
-          limit: parseInt(foodLimit.current.value),
-          current: 0
-        },
-        {
-          category: "Insurance",
-          limit: parseInt(insuranceLimit.current.value),
-          current: 0
-        },
-        {
-          category: "Academic",
-          limit: parseInt(academicLimit.current.value),
-          current: 0
-        },
-        {
-          category: "Entertainment",
-          limit: parseInt(entertainmentLimit.current.value),
-          current: 0
-        }
-      ]
-      setBudgets(newBudgets);
 
-      // Add budgets to db
-      newBudgets.forEach(async (category) => {
-        const newBudget = {
-          category: category.category,
-          limit: category.limit,
-          current: category.current
+    // Add budgets to screen
+    const newBudgets = [
+      {
+        category: "Rent",
+        limit: parseInt(rentLimit.current.value),
+        current: 0
+      },
+      {
+        category: "Groceries",
+        limit: parseInt(groceriesLimit.current.value),
+        current: 0
+      },
+      {
+        category: "Food",
+        limit: parseInt(foodLimit.current.value),
+        current: 0
+      },
+      {
+        category: "Insurance",
+        limit: parseInt(insuranceLimit.current.value),
+        current: 0
+      },
+      {
+        category: "Academic",
+        limit: parseInt(academicLimit.current.value),
+        current: 0
+      },
+      {
+        category: "Entertainment",
+        limit: parseInt(entertainmentLimit.current.value),
+        current: 0
+      }
+    ]
+    setBudgets(newBudgets);
+    setNoBudgets(true);
+
+    // Add budgets to db
+    newBudgets.forEach(async (category) => {
+      const newBudget = {
+        category: category.category,
+        limit: category.limit,
+        current: category.current
+      }
+      const userRef = await getDocs(
+        query(
+          collection(db, "users")
+        )
+      );
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const collectionRef = collection(db, `users/${user.id}/categories/`);
+          await addDoc(collectionRef, newBudget);
         }
-        const userRef = await getDocs(
-          query(
-            collection(db, "users")
-          )
-        );
-        userRef.docs.map(async (user) => {
-          if (user.data().uid === auth.currentUser.uid) {
-            const collectionRef = collection(db, `users/${user.id}/categories/`);
-            await addDoc(collectionRef, newBudget);
-          }
-        })
       })
-    }
-
+    })
 
     handleClose()
   }
@@ -320,12 +321,14 @@ export default function BudgetContent() {
           ))
         }
       </Container>
-
-      <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-        <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-          <FaPlus size={"30px"} />
-        </Fab>
-      </Container>
+      {
+        noBudgets &&
+        <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+            <FaPlus size={"30px"} />
+          </Fab>
+        </Container>
+      }
     </>
   )
 }
