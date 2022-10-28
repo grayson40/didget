@@ -5,7 +5,7 @@ import { FaPlus } from 'react-icons/fa'
 import TopBar from './TopBar'
 import PageBar from './PageBar'
 import { uuidv4 } from '@firebase/util'
-import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, Legend } from 'recharts'
 import {
   collection,
   getDocs,
