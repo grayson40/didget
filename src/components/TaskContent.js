@@ -270,7 +270,7 @@ export default function TaskContent(props) {
   }
 
   return (
-    <>
+    <Container fluid>
 
       {
         props.inCourse
@@ -344,6 +344,6 @@ export default function TaskContent(props) {
           </>
       }
 
-    </>
+    </Container>
   )
 }

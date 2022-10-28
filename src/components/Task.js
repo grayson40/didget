@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Row, Col, Form, Button, Modal } from 'react-bootstrap'
+import { Card, Row, Col, Form, Button, Modal, Container } from 'react-bootstrap'
 import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 export default function Task(props) {
@@ -24,7 +24,7 @@ export default function Task(props) {
   };
 
   return (
-    <>
+    <Container fluid>
       {/* popup update window */}
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>
@@ -101,6 +101,6 @@ export default function Task(props) {
         </Card.Body>
       </Card>
 
-    </>
+    </Container>
   )
 }

@@ -164,7 +164,7 @@ export default function NotesContent(props) {
   };
 
   return (
-    <Container>
+    <Container fluid>
       <Container fluid style={{ width: '500px', marginTop: '5%' }}>
         {/* Render user notes */}
         {notes.map((note) => (
