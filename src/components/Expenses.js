@@ -5,7 +5,7 @@ import { FaPlus } from 'react-icons/fa'
 import TopBar from './TopBar'
 import PageBar from './PageBar'
 import { uuidv4 } from '@firebase/util'
-import { PieChart, Pie, Legend, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts'
 import {
   collection,
   getDocs,
@@ -34,46 +34,57 @@ export default function Expenses(props) {
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('')
-  const [rentTotal, setRentTotal] = useState(0)
-  const [groceryTotal, setGroceryTotal] = useState(0)
-  const [foodTotal, setFoodTotal] = useState(0)
-  const [insuranceTotal, setInsuranceTotal] = useState(0)
-  const [academicTotal, setAcademicTotal] = useState(0)
-  const [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  var [rentTotal, setRentTotal] = useState(0)
+  var [groceryTotal, setGroceryTotal] = useState(0)
+  var [foodTotal, setFoodTotal] = useState(0)
+  var [insuranceTotal, setInsuranceTotal] = useState(0)
+  var [academicTotal, setAcademicTotal] = useState(0)
+  var [entertainmentTotal, setEntertainmentTotal] = useState(0)
   const place = useRef();
   const total = useRef();
   const category = useRef();
   const date = useRef();
   const dataFetchedRef = useRef(false);
 
-  const graphData = [
+  
+  const limitColors = [
+    '#5DADE2',
+    '#45B39D',
+    '#F4D03F',
+    '#D35400',
+    '#EC7063',
+    '#A569BD'
+  ];
+
+
+  var graphData = [
     {
-      category: "Rent",
+      category: "rent",
       spent: rentTotal,
       fill: categoryFill.rent
     },
     {
-      category: "Groceries",
+      category: "groceries",
       spent: groceryTotal,
       fill: categoryFill.groceries
     },
     {
-      category: "Food",
+      category: "food",
       spent: foodTotal,
       fill: categoryFill.food
     },
     {
-      category: "Insurance",
+      category: "insurance",
       spent: insuranceTotal,
       fill: categoryFill.insurance
     },
     {
-      category: "Academic",
+      category: "academic",
       spent: academicTotal,
       fill: categoryFill.academic
     },
     {
-      category: "Entertainment",
+      category: "entertainment",
       spent: entertainmentTotal,
       fill: categoryFill.entertainment
     }
@@ -115,6 +126,35 @@ export default function Expenses(props) {
                 date: expense.data().date
               }
               setExpenses((current) => [...current, _expense])
+              
+              switch (_expense.category) {
+                case "rent":
+                  setRentTotal(rentTotal + _expense.total);
+                  console.log("adding " + rentTotal + " rent");
+                  break;
+                case "groceries":
+                  setGroceryTotal(groceryTotal + _expense.total);
+                  console.log("adding " + groceryTotal + " groc");
+                  break;
+                case "food":
+                  setFoodTotal(foodTotal + _expense.total);
+                  console.log("adding " + foodTotal + " food");
+                  break;
+                case "insurance":
+                  setInsuranceTotal(insuranceTotal + _expense.total);
+                  console.log("adding " + insuranceTotal + " insu");
+                  break;
+                case "academic":
+                  setAcademicTotal(academicTotal + _expense.total);
+                  console.log("adding " + academicTotal + " acad");
+                  break;
+                case "entertainment":
+                  setEntertainmentTotal(entertainmentTotal + _expense.total);
+                  console.log("adding " + entertainmentTotal + " entr");
+                  break;
+                default:
+                  break;
+              }
             })
           })
         }
@@ -299,12 +339,25 @@ export default function Expenses(props) {
         <TopBar />
         {/*GRAPH PLACEHOLDER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
         {/* TODO: link pie chart to fetched data */}
-        <ResponsiveContainer>
-          <PieChart width={730} height={250}>
-            <Pie data={graphData} dataKey="spent" nameKey="category" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#82ca9d" label />
-            <Legend></Legend>
+        <Container height="260px">
+          <PieChart width={430} height={250}>
+            <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} label >
+            {
+              graphData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={limitColors[index]}/>
+              ))
+            }
+            </Pie>
+            <Legend payload={[
+              {value: 'Rent', color: limitColors[0]},
+              {value: 'Groc', color: limitColors[1]},
+              {value: 'Food', color: limitColors[2]},
+              {value: 'Insu', color: limitColors[3]},
+              {value: 'Acad', color: limitColors[4]},
+              {value: 'Ente', color: limitColors[5]}
+            ]}></Legend>
           </PieChart>
-        </ResponsiveContainer>
+        </Container>
 
         <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
