@@ -58,13 +58,13 @@
     color:white;
 } */
 
-.topBarDropdown{
+/*.topBarDropdown{
     height:35px;
     background: gold;
     display: flex;
     justify-content: space-around;
     align-items: center;
-}
+}*/
 
 .quickaccess, .profile{
     position: relative;

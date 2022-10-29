@@ -39,7 +39,7 @@ export default function TopBar() {
 
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} className='topBarDropdown'>
+            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
               <Dropdown.Item href="/">Home</Dropdown.Item>
               <Dropdown.Divider/>
               <Dropdown.Item href="/tasks">Tasks</Dropdown.Item>
@@ -62,7 +62,7 @@ export default function TopBar() {
         <div class = "container-fluid d-flex justify-content-end">
           {/* Top Bar should finally consist of a right drop down button */}
           {/* Could be replaced with a profile icon dropdownbutton setup */}
-          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" className='topBarDropdown'>
+          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" style = {{ background: 'gold'}}>
             <Dropdown.Item href="/settings">Settings</Dropdown.Item>
             <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
           </DropdownButton>
