@@ -10,9 +10,6 @@
     background-color: gold !important;
     border-color: gold;
     color: black;
-    outline-style: groove;
-    outline-color: black !important;
-    outline-width: 2px;
 }
 
 #dark .ulNote {
