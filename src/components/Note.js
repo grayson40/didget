@@ -47,7 +47,7 @@ export default function Note(props) {
       <Card className='mb-2'>
         <Card.Body>
           <Row>
-            <Col sm={8}>
+            <Col sm={7}>
               <p>{props.note.note}</p>
             </Col>
             <Col sm={2}>
@@ -56,7 +56,7 @@ export default function Note(props) {
             {
               props.inCard && 
               <>
-                <Col sm={2}>
+                <Col sm={3}>
                   <Button
                     variant="contained"
                     color="primary"

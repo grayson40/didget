@@ -61,13 +61,13 @@ export default function Task(props) {
               props.task.isChecked
                 ? <>
                   <Col sm={1}><Form.Check defaultChecked onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
-                  <Col sm={5}>
+                  <Col sm={4}>
                     <p className="text-decoration-line-through" id={props.task.id}>{name}</p>
                   </Col>
                 </>
                 : <>
                   <Col sm={1}><Form.Check onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
-                  <Col sm={5}>
+                  <Col sm={4}>
                     <p id={props.task.id}>{props.task.name} {props.courseId}</p>
                   </Col>
                 </>
