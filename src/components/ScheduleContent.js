@@ -182,7 +182,7 @@ export default function ScheduleContent(props) {
 
   return (
     <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%' }}>
-      <Container fluid style={{ width: '500px', marginTop: '5%' }}>
+      <Container fluid style={{ width: '550px', marginTop: '5%' }}>
         {/* popup add window */}
         <Modal open={open} onClose={handleClose}>
           <Card style={

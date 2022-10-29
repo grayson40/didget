@@ -72,7 +72,7 @@ export default function Task(props) {
                   </Col>
                 </>
             }
-            <Col sm={3}>
+            <Col sm={4}>
             <p id={props.task.id}>{deadline}</p>
             </Col>
             {
