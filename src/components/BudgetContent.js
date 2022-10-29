@@ -51,7 +51,7 @@ export default function BudgetContent() {
 
   return (
     <>
-      <Container fluid style={{ top: "5%", justifyContent: "flex-center" }}>
+      <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
           <BarChart data={data} layout="vertical" width={600} height={250} >

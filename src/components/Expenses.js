@@ -55,7 +55,7 @@ export default function Expenses(props) {
   }
 
   return (
-    <Container fluid>
+    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
       {/* popup add window */}
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>

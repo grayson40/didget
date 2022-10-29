@@ -270,7 +270,7 @@ export default function TaskContent(props) {
   }
 
   return (
-    <Container fluid>
+    <Container fluid style= {{ paddingTop: '6%', paddingBottom: '6%' }}>
 
       {
         props.inCourse
