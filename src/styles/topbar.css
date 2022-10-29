@@ -31,7 +31,7 @@
     color: white;
     outline-style: groove;
     outline-color: black !important;
-    outline-width: 2px;
+    outline-width: 1px;
 }
 
 #dark .dashboardCard {
