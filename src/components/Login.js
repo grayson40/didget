@@ -49,10 +49,10 @@ export default function Login() {
                         </Button>
                     </Form>
                 </Card.Body>
-            </Card>
-            <div className="w-100 text-center mt-2">
+                <div className="w-100 text-center mt-2" style = {{ paddingBottom: '6%'}}>
                 Need an Account? <Link to='/signup'>Sign Up</Link>
-            </div>
+                </div>
+            </Card>
         </Container>
   )
 }
