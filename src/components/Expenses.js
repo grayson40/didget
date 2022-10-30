@@ -18,8 +18,10 @@ import {
 import { auth, db } from '../firebase';
 import Expense from './Expense'
 
+// Date object
 const d = new Date();
 
+// Budget colors
 const categoryFill =
 {
   rent: '#F06292',
@@ -28,6 +30,27 @@ const categoryFill =
   food: '#64B5F6',
   insurance: '#4DD0E1',
   academic: '#81C784',
+}
+
+// Color by category dictionaries
+const expenseFill =
+{
+  'rent': '#D2B4DE',
+  'entertainment': '#E59866',
+  'groceries': '#F5B7B1',
+  'food': '#F9E79F',
+  'insurance': '#AED6F1',
+  'academic': '#A2D9CE',
+}
+
+const limitFill =
+{
+  'rent': '#A569BD',
+  'entertainment': '#D35400',
+  'groceries': '#EC7063',
+  'food': '#F4D03F',
+  'insurance': '#5DADE2',
+  'academic': '#45B39D',
 }
 
 export default function Expenses(props) {
@@ -46,17 +69,7 @@ export default function Expenses(props) {
   const date = useRef();
   const dataFetchedRef = useRef(false);
 
-  
-  const limitColors = [
-    '#5DADE2',
-    '#45B39D',
-    '#F4D03F',
-    '#D35400',
-    '#EC7063',
-    '#A569BD'
-  ];
-
-
+  // List to store graph data objects
   var graphData = [
     {
       category: "rent",
@@ -90,12 +103,18 @@ export default function Expenses(props) {
     }
   ]
 
-  // Modal close
+  /**
+   * Closes the add budget modal.
+   */
   const handleClose = () => {
     setOpen(false);
     setError('')
   };
 
+  /**
+   * Fetches expense data from firebase. Sets expense and graph state arrays.
+   * @returns void
+   */
   async function fetchData() {
     if (auth.currentUser) {
       const usersRef = await getDocs(
@@ -106,56 +125,50 @@ export default function Expenses(props) {
       // Iterate through the documents fetched
       usersRef.forEach(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
-          const categoriesRef = await getDocs(
+          const expensesRef = await getDocs(
             query(
-              collection(db, `users/${user.id}/categories`)
+              collection(db, `users/${user.id}/expenses/`)
             )
           );
-          categoriesRef.docs.map(async (category) => {
-            const expensesRef = await getDocs(
-              query(
-                collection(db, `users/${user.id}/categories/${category.id}/expenses`)
-              )
-            );
-            expensesRef.docs.forEach((expense) => {
-              const _expense = {
-                id: expense.data().id,
-                category: expense.data().category,
-                place: expense.data().place,
-                total: expense.data().total,
-                date: expense.data().date
-              }
-              setExpenses((current) => [...current, _expense])
-              
-              switch (_expense.category) {
-                case "rent":
-                  setRentTotal(rentTotal + _expense.total);
-                  console.log("adding " + rentTotal + " rent");
-                  break;
-                case "groceries":
-                  setGroceryTotal(groceryTotal + _expense.total);
-                  console.log("adding " + groceryTotal + " groc");
-                  break;
-                case "food":
-                  setFoodTotal(foodTotal + _expense.total);
-                  console.log("adding " + foodTotal + " food");
-                  break;
-                case "insurance":
-                  setInsuranceTotal(insuranceTotal + _expense.total);
-                  console.log("adding " + insuranceTotal + " insu");
-                  break;
-                case "academic":
-                  setAcademicTotal(academicTotal + _expense.total);
-                  console.log("adding " + academicTotal + " acad");
-                  break;
-                case "entertainment":
-                  setEntertainmentTotal(entertainmentTotal + _expense.total);
-                  console.log("adding " + entertainmentTotal + " entr");
-                  break;
-                default:
-                  break;
-              }
-            })
+
+          expensesRef.docs.forEach((expense) => {
+            const _expense = {
+              id: expense.data().id,
+              category: expense.data().category,
+              place: expense.data().place,
+              total: expense.data().total,
+              date: expense.data().date
+            }
+            setExpenses((current) => [...current, _expense])
+
+            switch (_expense.category) {
+              case "rent":
+                setRentTotal(rentTotal + _expense.total);
+                console.log("adding " + rentTotal + " rent");
+                break;
+              case "groceries":
+                setGroceryTotal(groceryTotal + _expense.total);
+                console.log("adding " + groceryTotal + " groc");
+                break;
+              case "food":
+                setFoodTotal(foodTotal + _expense.total);
+                console.log("adding " + foodTotal + " food");
+                break;
+              case "insurance":
+                setInsuranceTotal(insuranceTotal + _expense.total);
+                console.log("adding " + insuranceTotal + " insu");
+                break;
+              case "academic":
+                setAcademicTotal(academicTotal + _expense.total);
+                console.log("adding " + academicTotal + " acad");
+                break;
+              case "entertainment":
+                setEntertainmentTotal(entertainmentTotal + _expense.total);
+                console.log("adding " + entertainmentTotal + " entr");
+                break;
+              default:
+                break;
+            }
           })
         }
       })
@@ -172,6 +185,10 @@ export default function Expenses(props) {
     console.log('in expense page effect')
   }, [])
 
+  /**
+   * Appends to expense state array and asynchronously adds the expense item in firebase.
+   * @returns void
+   */
   const addExpense = async () => {
     // Add expense to screen
     if (category.current.value === '') {
@@ -190,8 +207,6 @@ export default function Expenses(props) {
       };
       const newExpenses = [...expenses, newExpense];
       setExpenses(newExpenses);
-
-      console.log(newExpense.category)
 
       switch (newExpense.category) {
         case "rent":
@@ -222,24 +237,35 @@ export default function Expenses(props) {
           collection(db, "users")
         )
       );
-      userRef.docs.map(async (user) => {
+      userRef.docs.forEach(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
-          // add to total in categories and add to expense sub collection
-          const categoriesRef = await getDocs(
+          const userRef = await getDocs(
             query(
-              collection(db, `users/${user.id}/categories/`)
+              collection(db, "users")
             )
           );
-          categoriesRef.docs.map(async (category) => {
-            if (newExpense.category.toLowerCase() === category.data().category.toLowerCase()) {
-              const docRef = doc(db, `users/${user.id}/categories/${category.id}`)
-              const updatedCurrent = parseInt(category.data().current) + newExpense.total;
-              await updateDoc(docRef, { current: updatedCurrent })
-                .then(console.log(`${category.data().category} current updated`))
-              const expensesRef = collection(db, `users/${user.id}/categories/${category.id}/expenses/`);
-              await addDoc(expensesRef, newExpense)
-                .then(console.log('expense added'))
-                .catch((error) => console.log(error))
+          userRef.docs.map(async (user) => {
+            if (user.data().uid === auth.currentUser.uid) {
+              // Add expense to expenses collection
+              const expensesRef = collection(db, `users/${user.id}/expenses/`);
+              await addDoc(expensesRef, newExpense);
+
+              // Update current for budget category
+              const budgetsRef = await getDocs(
+                query(
+                  collection(db, `users/${user.id}/budgets/`)
+                )
+              );
+
+              budgetsRef.docs.forEach(async (budget) => {
+                if (budget.data().category.toLowerCase() === newExpense.category.toLowerCase()) {
+                  console.log(budget.id)
+                  const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
+                  const updatedCurrent = parseInt(budget.data().current) + newExpense.total;
+                  await updateDoc(docRef, { current: updatedCurrent })
+                    .then(console.log(`${budget.data().category} current updated`))
+                }
+              })
             }
           })
         }
@@ -249,12 +275,12 @@ export default function Expenses(props) {
     }
   };
 
-  // id: expense.data().id,
-  // category: expense.data().category,
-  // place: expense.data().place,
-  // total: expense.data().total,
-  // date: expense.data().date
-
+  /**
+   * Updates the expense state and asynchronously updates the expense item in firebase.
+   * @param {*} updatedExpense The updated expense item.
+   * @param {*} id The id of the expense item.
+   * @returns void
+   */
   const updateExpense = async (id, updatedExpense) => {
     // Update on screen
     let totalDifference = 0;
@@ -276,6 +302,29 @@ export default function Expenses(props) {
     });
     setExpenses(expenses);
 
+    switch (updatedExpense.category.toLowerCase()) {
+      case "rent":
+        setRentTotal(rentTotal + totalDifference);
+        break;
+      case "groceries":
+        setGroceryTotal(groceryTotal + totalDifference);
+        break;
+      case "food":
+        setFoodTotal(foodTotal + totalDifference);
+        break;
+      case "insurance":
+        setInsuranceTotal(insuranceTotal + totalDifference);
+        break;
+      case "academic":
+        setAcademicTotal(academicTotal + totalDifference);
+        break;
+      case "entertainment":
+        setEntertainmentTotal(entertainmentTotal + totalDifference);
+        break;
+      default:
+        break;
+    }
+
     // Update in firebase
     const usersRef = await getDocs(
       query(
@@ -285,48 +334,58 @@ export default function Expenses(props) {
     // Iterate through the documents fetched
     usersRef.forEach(async (user) => {
       if (user.data().uid === auth.currentUser.uid) {
-        const categoriesRef = await getDocs(
+        // Update expense
+        const expensesRef = await getDocs(
           query(
-            collection(db, `users/${user.id}/categories`)
+            collection(db, `users/${user.id}/expenses/`)
           )
         );
-        categoriesRef.docs.map(async (category) => {
-          if (category.data().category.toLowerCase() === updatedExpense.category) {
-            const updatedCurrent = category.data().current + totalDifference;
-            const budgetRef = doc(db, `users/${user.id}/categories/${category.id}`);
-            // Update budget current
-            await updateDoc(budgetRef, { current: updatedCurrent })
+        expensesRef.docs.forEach(async (expense) => {
+          if (expense.data().id === id) {
+            // Update expense
+            const docRef = doc(db, `users/${user.id}/expenses/${expense.id}`)
+            await updateDoc(docRef, updatedExpense)
               .then(() => {
-                console.log(`${category.data().category} current updated`)
+                console.log('document updated')
               })
               .catch(error => {
                 setError(error.toString())
               })
           }
-          const expensesRef = await getDocs(
-            query(
-              collection(db, `users/${user.id}/categories/${category.id}/expenses`)
-            )
-          );
-          expensesRef.docs.map(async (expense) => {
-            if (expense.data().id === id) {
-              // Update expense
-              const docRef = doc(db, `users/${user.id}/categories/${category.id}/expenses/${expense.id}`)
-              await updateDoc(docRef, updatedExpense)
-                .then(() => {
-                  console.log('document updated')
-                })
-                .catch(error => {
-                  setError(error.toString())
-                })
-            }
-          })
+        })
+
+        // Update budget category current
+        const budgetsRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/budgets/`)
+          )
+        );
+        budgetsRef.docs.forEach(async (budget) => {
+          if (budget.data().category.toLowerCase() === updatedExpense.category) {
+            const updatedCurrent = budget.data().current + totalDifference;
+            const budgetRef = doc(db, `users/${user.id}/budgets/${budget.id}`);
+            // Update budget current
+            await updateDoc(budgetRef, { current: updatedCurrent })
+              .then(() => {
+                console.log(`${budget.data().category} current updated`)
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
         })
       }
     })
   }
 
+  /**
+   * Updates the expense state and asynchronously deletes the expense item in firebase.
+   * @param {*} id The id of the expense item.
+   * @returns void
+   */
   const deleteExpense = async (id) => {
+    let deletedExpenseCategory = null
+    let deletedExpenseTotal = null
     console.log(`deleting ${id}`)
     const newExpenses = expenses.filter((expense) => expense.id !== id);
     setExpenses(newExpenses);
@@ -339,33 +398,70 @@ export default function Expenses(props) {
     // Iterate through the documents fetched
     usersRef.forEach(async (user) => {
       if (user.data().uid === auth.currentUser.uid) {
-        const categoriesRef = await getDocs(
+        // Delete expense from db
+        const expensesRef = await getDocs(
           query(
-            collection(db, `users/${user.id}/categories`)
+            collection(db, `users/${user.id}/expenses/`)
           )
         );
-        categoriesRef.docs.map(async (category) => {
-          const expensesRef = await getDocs(
-            query(
-              collection(db, `users/${user.id}/categories/${category.id}/expenses`)
-            )
-          );
-          expensesRef.docs.map(async (expense) => {
-            if (expense.data().id === id) {
-              const categoryRef = doc(db, `users/${user.id}/categories/${category.id}`)
-              const updatedCurrent = parseInt(category.data().current) - expense.data().total;
-              await updateDoc(categoryRef, { current: updatedCurrent })
-                .then(console.log(`${category.data().category} current updated`))
-              const docRef = doc(db, `users/${user.id}/categories/${category.id}/expenses/${expense.id}`)
-              await deleteDoc(docRef)
-                .then(() => {
-                  console.log('document deleted')
-                })
-                .catch(error => {
-                  setError(error.toString())
-                })
-            }
-          })
+        expensesRef.docs.forEach(async (expense) => {
+          if (expense.data().id === id) {
+            // Update expense
+            const docRef = doc(db, `users/${user.id}/expenses/${expense.id}`)
+            deletedExpenseCategory = expense.data().category
+            deletedExpenseTotal = expense.data().total
+            await deleteDoc(docRef)
+              .then(() => {
+                console.log('document deleted')
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+        })
+
+        switch (deletedExpenseCategory.toLowerCase()) {
+          case "rent":
+            setRentTotal(rentTotal - deletedExpenseTotal);
+            break;
+          case "groceries":
+            setGroceryTotal(groceryTotal - deletedExpenseTotal);
+            break;
+          case "food":
+            setFoodTotal(foodTotal - deletedExpenseTotal);
+            break;
+          case "insurance":
+            setInsuranceTotal(insuranceTotal - deletedExpenseTotal);
+            break;
+          case "academic":
+            setAcademicTotal(academicTotal - deletedExpenseTotal);
+            break;
+          case "entertainment":
+            setEntertainmentTotal(entertainmentTotal - deletedExpenseTotal);
+            break;
+          default:
+            break;
+        }
+
+        // Update budget category current
+        const budgetsRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/budgets/`)
+          )
+        );
+        budgetsRef.docs.forEach(async (budget) => {
+          if (budget.data().category.toLowerCase() === deletedExpenseCategory.toLowerCase()) {
+            const updatedCurrent = parseInt(budget.data().current) - deletedExpenseTotal;
+            const budgetRef = doc(db, `users/${user.id}/budgets/${budget.id}`);
+            // Update budget current
+            await updateDoc(budgetRef, { current: updatedCurrent })
+              .then(() => {
+                console.log(`${budget.data().category} current updated`)
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
         })
       }
     })
@@ -418,20 +514,20 @@ export default function Expenses(props) {
         {/* TODO: link pie chart to fetched data */}
         <Container height="260px">
           <PieChart width={430} height={250}>
-            <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} label >
-            {
-              graphData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={limitColors[index]}/>
-              ))
-            }
+            <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
+              {
+                graphData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={limitFill[entry.category.toLowerCase()]} />
+                ))
+              }
             </Pie>
             <Legend payload={[
-              {value: 'Rent', color: limitColors[0]},
-              {value: 'Groc', color: limitColors[1]},
-              {value: 'Food', color: limitColors[2]},
-              {value: 'Insu', color: limitColors[3]},
-              {value: 'Acad', color: limitColors[4]},
-              {value: 'Ente', color: limitColors[5]}
+              { value: 'Rent', color: limitFill['rent'] },
+              { value: 'Groc', color: limitFill['groceries'] },
+              { value: 'Food', color: limitFill['food'] },
+              { value: 'Insu', color: limitFill['insurance'] },
+              { value: 'Acad', color: limitFill['academic'] },
+              { value: 'Ente', color: limitFill['entertainment'] }
             ]}></Legend>
           </PieChart>
         </Container>
@@ -451,7 +547,14 @@ export default function Expenses(props) {
 
         {
           expenses.map((expense, index) => (
-            <Expense key={index} expense={expense} onDelete={deleteExpense} onUpdate={updateExpense}></Expense>
+            <Expense
+              key={index}
+              expense={expense}
+              onDelete={deleteExpense}
+              onUpdate={updateExpense}
+              backColor={expenseFill[expense.category.toLowerCase()]}
+              bordColor={limitFill[expense.category.toLowerCase()]}
+            />
           ))
         }
       </Container>

@@ -4,7 +4,7 @@ import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 const d = new Date();
 
-export default function Expense({ expense, onDelete, onUpdate }) {
+export default function Expense({ expense, onDelete, onUpdate, backColor, bordColor }) {
   const [open, setOpen] = useState(false);
   const place = useRef();
   const total = useRef();
@@ -37,11 +37,11 @@ export default function Expense({ expense, onDelete, onUpdate }) {
           <Form>
             <Form.Group id='name'>
               <Form.Label>Place</Form.Label>
-              <Form.Control ref={place} placeholder={expense.place}/>
+              <Form.Control ref={place} placeholder={expense.place} />
             </Form.Group>
             <Form.Group id='total'>
               <Form.Label>Total</Form.Label>
-              <Form.Control ref={total} placeholder={`$${expense.total}`}/>
+              <Form.Control ref={total} placeholder={`$${expense.total}`} />
             </Form.Group>
             <Form.Group id='category'>
               <Form.Label>Category</Form.Label>
@@ -57,7 +57,7 @@ export default function Expense({ expense, onDelete, onUpdate }) {
             </Form.Group>
             <Form.Group id='date'>
               <Form.Label>Date</Form.Label>
-              <Form.Control placeholder={d.toLocaleDateString()} ref={date}/>
+              <Form.Control placeholder={d.toLocaleDateString()} ref={date} />
             </Form.Group>
             <Button className='w-100 mt-3' onClick={handleUpdate}>
               Update
@@ -66,7 +66,7 @@ export default function Expense({ expense, onDelete, onUpdate }) {
         </Modal.Body>
       </Modal>
 
-      <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+      <Card style={{ backgroundColor: backColor, borderColor: bordColor, width: '450px', textAlign: "Center", color: 'black' }} className="mb-2">
         <Card.Body>
           <Row>
             <Col sm={4} className="border-end">{expense.place}</Col>
