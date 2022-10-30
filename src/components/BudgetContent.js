@@ -15,6 +15,36 @@ import {
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
 
+// Color by category dictionaries
+const bordFill =
+{
+  'rent': '#D2B4DE',
+  'entertainment': '#E59866',
+  'groceries': '#F5B7B1',
+  'food': '#F9E79F',
+  'insurance': '#AED6F1',
+  'academic': '#A2D9CE',
+}
+
+const backFill =
+{
+  'rent': '#A569BD',
+  'entertainment': '#D35400',
+  'groceries': '#EC7063',
+  'food': '#F4D03F',
+  'insurance': '#5DADE2',
+  'academic': '#45B39D',
+}
+
+// Symbol dictionary
+const symbolsDict = {
+  'Rent': '🏠',
+  'Groceries': '🛒',
+  'Food': '🍔',
+  'Insurance': '📋',
+  'Academic': '📚',
+  'Entertainment': '🍿'
+}
 
 export default function BudgetContent() {
   const [open, setOpen] = useState(false);
@@ -26,46 +56,11 @@ export default function BudgetContent() {
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
-  const [noBudgets, setNoBudgets] = useState([]);
 
-  //    Use sample data for the different categories of bar graph
-  const data = [
-    { name: 'Rent', symbol: '🏠', value: 600.00, expense: 100, limit: 600, max: 100 },
-    { name: 'Groceries', symbol: '🛒', value: 138.25, expense: 40, limit: 200, max: 100 },
-    { name: 'Food', symbol: '🍔', value: 45.65, expense: 60, limit: 100, max: 100 },
-    { name: 'Insurance', symbol: '📋', value: 200.00, expense: 100, limit: 200, max: 100 },
-    { name: 'Academic', symbol: '📚', value: 18.99, expense: 25, limit: 60, max: 100 },
-    { name: 'Entertainment', symbol: '🍿', value: 75.00, expense: 75, limit: 100, max: 100 }
-  ];
-
-  //    Use constants to hold colors for categories
-  const expenseColors = [
-    '#AED6F1',
-    '#A2D9CE',
-    '#F9E79F',
-    '#E59866',
-    '#F5B7B1',
-    '#D2B4DE'
-  ];
-
-  const limitColors = [
-    '#5DADE2',
-    '#45B39D',
-    '#F4D03F',
-    '#D35400',
-    '#EC7063',
-    '#A569BD'
-  ];
-
-  const symbolsDict = {
-    'Rent': '🏠',
-    'Groceries': '🛒',
-    'Food': '🍔',
-    'Insurance': '📋',
-    'Academic': '📚',
-    'Entertainment': '🍿'
-  }
-
+  /**
+   * Fetches budget data from firebase. Sets budget and graph state.
+   * @returns void
+   */
   async function fetchData() {
     if (auth.currentUser) {
       const usersRef = await getDocs(
@@ -76,22 +71,28 @@ export default function BudgetContent() {
       // Iterate through the documents fetched
       usersRef.forEach(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
-          const categoriesRef = await getDocs(
+          const budgetsRef = await getDocs(
             query(
-              collection(db, `users/${user.id}/categories`)
+              collection(db, `users/${user.id}/budgets`)
             )
           );
-          if (!categoriesRef.empty) {
-            setNoBudgets(false);
-            setBudgets(
-              categoriesRef.docs.map((category) => ({
-                id: category.id,
-                category: category.data().category,
-                limit: category.data().limit,
-                current: category.data().current
-              }))
-            )
-          }
+          setBudgets(
+            budgetsRef.docs.map((category) => ({
+              id: category.id,
+              category: category.data().category,
+              limit: category.data().limit,
+              current: category.data().current
+            }))
+          )
+          setGraphData(
+            budgetsRef.docs.map((category, index) => ({
+              name: category.data().category,
+              symbol: symbolsDict[category.data().category],
+              value: category.data().current,
+              expense: category.data().current / category.data().limit * 100,
+              max: 100
+            }))
+          )
         }
       })
     }
@@ -104,11 +105,18 @@ export default function BudgetContent() {
     console.log('in budget page effect')
   }, [])
 
+  /**
+   * Closes the add budget modal.
+   */
   const handleClose = () => {
     setOpen(false);
-    console.log(budgets[0]);
   }
 
+  /**
+   * Updates the budget state and asynchronously updates the budget item in firebase.
+   * @param {*} updatedBudget The updated budget item.
+   * @returns void
+   */
   const updateBudget = () => {
     // Update budget on screen
     let updatedLimit = 0;
@@ -158,99 +166,101 @@ export default function BudgetContent() {
     // TODO: update budget in db
   }
 
+  /**
+   * Appends to budget state array and asynchronously adds the budget item in firebase.
+   * @returns void
+   */
   const createBudget = () => {
     // If category budget already set, update limits
     // Else create budget
-
-    // Add budgets to screen
-    const newBudgets = [
-      {
-        category: "Rent",
-        limit: parseInt(rentLimit.current.value),
-        current: 0
-      },
-      {
-        category: "Groceries",
-        limit: parseInt(groceriesLimit.current.value),
-        current: 0
-      },
-      {
-        category: "Food",
-        limit: parseInt(foodLimit.current.value),
-        current: 0
-      },
-      {
-        category: "Insurance",
-        limit: parseInt(insuranceLimit.current.value),
-        current: 0
-      },
-      {
-        category: "Academic",
-        limit: parseInt(academicLimit.current.value),
-        current: 0
-      },
-      {
-        category: "Entertainment",
-        limit: parseInt(entertainmentLimit.current.value),
-        current: 0
-      }
-    ]
-    setBudgets(newBudgets);
-    setNoBudgets(true);
-
-    // Add budgets to db
-    newBudgets.forEach(async (category) => {
-      const newBudget = {
-        category: category.category,
-        limit: category.limit,
-        current: category.current
-      }
-      const userRef = await getDocs(
-        query(
-          collection(db, "users")
-        )
-      );
-      userRef.docs.map(async (user) => {
-        if (user.data().uid === auth.currentUser.uid) {
-          const collectionRef = collection(db, `users/${user.id}/categories/`);
-          await addDoc(collectionRef, newBudget);
+    if (budgets.length !== 0) {
+      updateBudget()
+    } else {
+      // Add budgets to screen
+      const newBudgets = [
+        {
+          category: "Rent",
+          limit: parseInt(rentLimit.current.value),
+          current: 0
+        },
+        {
+          category: "Groceries",
+          limit: parseInt(groceriesLimit.current.value),
+          current: 0
+        },
+        {
+          category: "Food",
+          limit: parseInt(foodLimit.current.value),
+          current: 0
+        },
+        {
+          category: "Insurance",
+          limit: parseInt(insuranceLimit.current.value),
+          current: 0
+        },
+        {
+          category: "Academic",
+          limit: parseInt(academicLimit.current.value),
+          current: 0
+        },
+        {
+          category: "Entertainment",
+          limit: parseInt(entertainmentLimit.current.value),
+          current: 0
         }
+      ]
+      setBudgets(newBudgets);
+
+      // Add budgets to db
+      newBudgets.forEach(async (category) => {
+        const newBudget = {
+          category: category.category,
+          limit: category.limit,
+          current: category.current
+        }
+        const userRef = await getDocs(
+          query(
+            collection(db, "users")
+          )
+        );
+        userRef.docs.map(async (user) => {
+          if (user.data().uid === auth.currentUser.uid) {
+            const collectionRef = collection(db, `users/${user.id}/budgets/`);
+            await addDoc(collectionRef, newBudget);
+          }
+        })
       })
-    })
+    }
 
     handleClose()
   }
-
-
-
 
   return (
     <>
       <Container style={{ top: "5%", justifyContent: "flex-center", width: '530px' }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
-        {/* TODO: link bar chart to fetched data */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
           <BarChart data={graphData} layout="vertical" width={600} height={250} >
             <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
               {
                 graphData.map((entry, index) => (
-                  <Cell key={'expense'} fill={expenseColors[index]} />
+                  <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
                 ))
               }
             </Bar>
             <Bar dataKey="max" barSize={10}>
               {
                 graphData.map((entry, index) => (
-                  <Cell key={'limit'} fill={limitColors[index]} />
+                  <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
                 ))
               }
             </Bar>
             {/*
-            
-            NOTICE NOTICE NOTICE
-            BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
-  
-            */}
+              
+              NOTICE NOTICE NOTICE
+              BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+    
+              */}
             <XAxis stroke="black" type="number" reversed />
             <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
             <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
@@ -336,26 +346,24 @@ export default function BudgetContent() {
         {/*Cards with Name, Total, Category, and Date*/}
         {
           budgets.map((item, index) => (
-  
+
             <>
-              <BudgetItem 
-                key={index} 
-                item={ item } 
-                bordColor = { limitColors[index] } 
-                backColor = { expenseColors[index] }>
+              <BudgetItem
+                key={index}
+                item={item}
+                bordColor={backFill[item.category.toLowerCase()]}
+                backColor={bordFill[item.category.toLowerCase()]}>
               </BudgetItem>
             </>
           ))
         }
       </Container>
-      {
-        noBudgets &&
-        <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
-          <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-            <FaPlus size={"30px"} />
-          </Fab>
-        </Container>
-      }
+
+      <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+        <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+          <FaPlus size={"30px"} />
+        </Fab>
+      </Container>
     </>
   )
 }
