@@ -53,7 +53,8 @@ const limitFill =
   'academic': '#45B39D',
 }
 
-export default function Expenses(props) {
+export default function Expenses({ notInCard }) {
+  if (notInCard != false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('')
@@ -532,6 +533,8 @@ export default function Expenses(props) {
           </PieChart>
         </Container>
 
+        {
+        notInCard ?
         <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Expenses
@@ -544,7 +547,10 @@ export default function Expenses(props) {
             </Row>
           </Card.Header>
         </Card>
-
+        :
+        <></>
+        }
+        
         {
           expenses.map((expense, index) => (
             <Expense

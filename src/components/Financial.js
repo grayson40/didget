@@ -28,7 +28,7 @@ export default function Financial() {
                     </Button>
                     <Collapse in={open1}>
                         <div>
-                            <BudgetContent/>
+                            <BudgetContent notInCard={false}/>
                         </div>
                     </Collapse>
                 </Card>
@@ -42,7 +42,7 @@ export default function Financial() {
                     </Button>
                     <Collapse in={open3}>
                         <div>
-                            <Expenses/>
+                            <Expenses notInCard={false}/>
                         </div>
                     </Collapse>
                 </Card>
