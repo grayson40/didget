@@ -15,6 +15,36 @@ import {
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
 
+// Color by category dictionaries
+const bordFill =
+{
+  'rent': '#D2B4DE',
+  'entertainment': '#E59866',
+  'groceries': '#F5B7B1',
+  'food': '#F9E79F',
+  'insurance': '#AED6F1',
+  'academic': '#A2D9CE',
+}
+
+const backFill =
+{
+  'rent': '#A569BD',
+  'entertainment': '#D35400',
+  'groceries': '#EC7063',
+  'food': '#F4D03F',
+  'insurance': '#5DADE2',
+  'academic': '#45B39D',
+}
+
+// Symbol dictionary
+const symbolsDict = {
+  'Rent': '🏠',
+  'Groceries': '🛒',
+  'Food': '🍔',
+  'Insurance': '📋',
+  'Academic': '📚',
+  'Entertainment': '🍿'
+}
 
 export default function BudgetContent() {
   const [open, setOpen] = useState(false);
@@ -27,34 +57,10 @@ export default function BudgetContent() {
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
 
-  //    Use constants to hold colors for categories
-  const expenseColors = [
-    '#AED6F1',
-    '#A2D9CE',
-    '#F9E79F',
-    '#E59866',
-    '#F5B7B1',
-    '#D2B4DE'
-  ];
-
-  const limitColors = [
-    '#5DADE2',
-    '#45B39D',
-    '#F4D03F',
-    '#D35400',
-    '#EC7063',
-    '#A569BD'
-  ];
-
-  const symbolsDict = {
-    'Rent': '🏠',
-    'Groceries': '🛒',
-    'Food': '🍔',
-    'Insurance': '📋',
-    'Academic': '📚',
-    'Entertainment': '🍿'
-  }
-
+  /**
+   * Fetches budget data from firebase. Sets budget and graph state.
+   * @returns void
+   */
   async function fetchData() {
     if (auth.currentUser) {
       const usersRef = await getDocs(
@@ -65,13 +71,13 @@ export default function BudgetContent() {
       // Iterate through the documents fetched
       usersRef.forEach(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
-          const categoriesRef = await getDocs(
+          const budgetsRef = await getDocs(
             query(
-              collection(db, `users/${user.id}/categories`)
+              collection(db, `users/${user.id}/budgets`)
             )
           );
           setBudgets(
-            categoriesRef.docs.map((category) => ({
+            budgetsRef.docs.map((category) => ({
               id: category.id,
               category: category.data().category,
               limit: category.data().limit,
@@ -79,7 +85,7 @@ export default function BudgetContent() {
             }))
           )
           setGraphData(
-            categoriesRef.docs.map((category,index) => ({
+            budgetsRef.docs.map((category, index) => ({
               name: category.data().category,
               symbol: symbolsDict[category.data().category],
               value: category.data().current,
@@ -99,11 +105,18 @@ export default function BudgetContent() {
     console.log('in budget page effect')
   }, [])
 
+  /**
+   * Closes the add budget modal.
+   */
   const handleClose = () => {
     setOpen(false);
-    console.log(budgets[0]);
   }
 
+  /**
+   * Updates the budget state and asynchronously updates the budget item in firebase.
+   * @param {*} updatedBudget The updated budget item.
+   * @returns void
+   */
   const updateBudget = () => {
     // Update budget on screen
     let updatedLimit = 0;
@@ -153,6 +166,10 @@ export default function BudgetContent() {
     // TODO: update budget in db
   }
 
+  /**
+   * Appends to budget state array and asynchronously adds the budget item in firebase.
+   * @returns void
+   */
   const createBudget = () => {
     // If category budget already set, update limits
     // Else create budget
@@ -208,47 +225,42 @@ export default function BudgetContent() {
         );
         userRef.docs.map(async (user) => {
           if (user.data().uid === auth.currentUser.uid) {
-            const collectionRef = collection(db, `users/${user.id}/categories/`);
+            const collectionRef = collection(db, `users/${user.id}/budgets/`);
             await addDoc(collectionRef, newBudget);
           }
         })
       })
     }
 
-
     handleClose()
   }
-
-
-
 
   return (
     <>
       <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
-        {/* TODO: link bar chart to fetched data */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
           <BarChart data={graphData} layout="vertical" width={600} height={250} >
             <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
               {
                 graphData.map((entry, index) => (
-                  <Cell key={'expense'} fill={expenseColors[index]} />
+                  <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
                 ))
               }
             </Bar>
             <Bar dataKey="max" barSize={10}>
               {
                 graphData.map((entry, index) => (
-                  <Cell key={'limit'} fill={limitColors[index]} />
+                  <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
                 ))
               }
             </Bar>
             {/*
-            
-            NOTICE NOTICE NOTICE
-            BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
-  
-            */}
+              
+              NOTICE NOTICE NOTICE
+              BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+    
+              */}
             <XAxis stroke="black" type="number" reversed />
             <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
             <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
@@ -333,13 +345,13 @@ export default function BudgetContent() {
         {/*Cards with Name, Total, Category, and Date*/}
         {
           budgets.map((item, index) => (
-  
+
             <>
-              <BudgetItem 
-                key={index} 
-                item={ item } 
-                bordColor = { limitColors[index] } 
-                backColor = { expenseColors[index] }>
+              <BudgetItem
+                key={index}
+                item={item}
+                bordColor={backFill[item.category.toLowerCase()]}
+                backColor={bordFill[item.category.toLowerCase()]}>
               </BudgetItem>
             </>
           ))
