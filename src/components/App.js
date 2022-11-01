@@ -58,7 +58,7 @@ function App() {
             </AuthProvider>
           </Router>
         </div>
-        <Container fluid style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-start', display: 'flex' }}>
+        <Container fluid style={{ position: "fixed", bottom: "3%", left: '5%' , display: 'flex' }}>
         <ReactSwitch onChange={toggleTheme} checked={theme === "dark"}/>
         </Container>
       </Container>

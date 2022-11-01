@@ -336,7 +336,7 @@ export default function TaskContent(props) {
               </Modal.Body>
             </Modal>
 
-            <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+            <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
               <Fab size={"80px"} color="primary" onClick={(e) => setOpen(!open)}>
                 <FaPlus size={"30px"} />
               </Fab>
