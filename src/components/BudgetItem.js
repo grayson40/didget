@@ -59,7 +59,7 @@ export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
           <Row className="mb-2">
             <Col className="border-end">{item.category}</Col>
             <Col>
-              <InlineEdit value={item.limit} setValue={setValue} />
+              $<InlineEdit />
             </Col>
           </Row>
           <Row>

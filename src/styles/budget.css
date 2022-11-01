@@ -1,8 +1,9 @@
 .inline {
   background-color: transparent;
   border: 0;
-  padding: 8px;
-  text-align: center;
+  padding: 2px;
+  width: 50px;
+  text-align: start;
 }
 
 .inline:hover {
