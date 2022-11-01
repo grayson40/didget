@@ -70,6 +70,8 @@ export default function Expenses({ notInCard }) {
   const date = useRef();
   const dataFetchedRef = useRef(false);
 
+  console.log(notInCard);
+
   // List to store graph data objects
   var graphData = [
     {
@@ -534,6 +536,7 @@ export default function Expenses({ notInCard }) {
         </Container>
 
         {
+        console.log(notInCard)}{
         notInCard ?
         <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
@@ -560,6 +563,7 @@ export default function Expenses({ notInCard }) {
               onUpdate={updateExpense}
               backColor={expenseFill[expense.category.toLowerCase()]}
               bordColor={limitFill[expense.category.toLowerCase()]}
+              notInCard={notInCard}
             />
           ))
         }
