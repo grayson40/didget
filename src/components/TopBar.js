@@ -9,13 +9,13 @@
 //              The signout option should logout the user and route back to signout
 //              All pages except for Signout and Login pages should be set as private routes
 
-import React, { useState } from 'react';
+import React from 'react';
 import {  Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import Container from 'react-bootstrap/Container';
 import { FaGrinSquint, FaBars } from 'react-icons/fa';
-import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem, MDBDropdownLink, MDBContainer } from 'mdb-react-ui-kit';
+import { MDBDropdownItem, MDBDropdownLink } from 'mdb-react-ui-kit';
 //import './topbar.css';
 
 
