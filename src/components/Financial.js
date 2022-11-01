@@ -14,7 +14,7 @@ export default function Financial() {
 
     return (
         <div>
-            <PageBar name="Financial"/>
+            <PageBar name='Financial'/>
             <TopBar/>
             <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%' }}>
             <Container fixed="top" fluid style={{ width: '650px', marginTop: "5%" }}>
