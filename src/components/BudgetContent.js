@@ -9,7 +9,7 @@ import {
   query,
   addDoc,
   doc,
-  // updateDoc,
+  updateDoc,
   deleteDoc
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -163,53 +163,50 @@ export default function BudgetContent({ notInCard }) {
    * @param {*} updatedBudget The updated budget item.
    * @returns void
    */
-  const updateBudget = () => {
-    // Update budget on screen
-    let updatedLimit = 0;
-    budgets.forEach((category) => {
-      switch (category.category) {
-        case "Rent":
-          updatedLimit = parseInt(rentLimit.current.value)
-          if (rentLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
+  const updateBudget = async (id, updatedLimit) => {
+    budgets.forEach((budget) => {
+      if (budget.id === id) {
+        // Update budget
+        budget.limit = updatedLimit
+      }
+    });
+    setBudgets(budgets);
+
+    setGraphData(
+      budgets.map((category, index) => ({
+        name: category.category,
+        symbol: symbolsDict[category.category],
+        value: category.current,
+        expense: category.current / category.limit * 100,
+        max: 100
+      }))
+    )
+
+    // update budget in db
+    console.log(`${id} ${updatedLimit}`)
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    usersRef.docs.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const budgetsRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/budgets`)
+          )
+        );
+        budgetsRef.forEach(async (budget) => {
+          if (budget.id === id) {
+            const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
+            await updateDoc(docRef, {limit: updatedLimit})
+              .then(() => {
+                console.log('document updated')
+              })
           }
-          break;
-        case "Groceries":
-          updatedLimit = parseInt(groceriesLimit.current.value)
-          if (groceriesLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Food":
-          updatedLimit = parseInt(foodLimit.current.value)
-          if (foodLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Insurance":
-          updatedLimit = parseInt(insuranceLimit.current.value)
-          if (insuranceLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Academic":
-          updatedLimit = parseInt(academicLimit.current.value)
-          if (academicLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Entertainment":
-          updatedLimit = parseInt(entertainmentLimit.current.value)
-          if (groceriesLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        default:
-          break;
+        })
       }
     })
-
-    // TODO: update budget in db
   }
 
   /**
@@ -437,8 +434,9 @@ export default function BudgetContent({ notInCard }) {
                 key={index}
                 item={item}
                 bordColor={backFill[item.category.toLowerCase()]}
-                backColor={bordFill[item.category.toLowerCase()]}>
-              </BudgetItem>
+                backColor={bordFill[item.category.toLowerCase()]}
+                onUpdate={updateBudget}
+              />
             </>
           ))
         }
