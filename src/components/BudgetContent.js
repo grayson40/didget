@@ -50,6 +50,12 @@ export default function BudgetContent() {
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  var [rentTotal, setRentTotal] = useState(0)
+  var [groceriesTotal, setGroceriesTotal] = useState(0)
+  var [foodTotal, setFoodTotal] = useState(0)
+  var [insuranceTotal, setInsuranceTotal] = useState(0)
+  var [academicTotal, setAcademicTotal] = useState(0)
+  var [entertainmentTotal, setEntertainmentTotal] = useState(0)
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
@@ -93,6 +99,39 @@ export default function BudgetContent() {
               max: 100
             }))
           )
+
+          // Iterate through expenses and add to category total
+          const expensesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/expenses/`)
+            )
+          );
+          expensesRef.docs.forEach((expense) => {
+            // console.log(expense.data().category)
+            const category = expense.data().category
+            switch (category) {
+              case "rent":
+                setRentTotal(rentTotal + parseInt(expense.data().total))
+                break;
+              case "groceries":
+                setGroceriesTotal(groceriesTotal + parseInt(expense.data().total))
+                break;
+              case "food":
+                setFoodTotal(foodTotal + parseInt(expense.data().total))
+                break;
+              case "insurance":
+                setInsuranceTotal(insuranceTotal + parseInt(expense.data().total))
+                break;
+              case "academic":
+                setAcademicTotal(academicTotal + parseInt(expense.data().total))
+                break;
+              case "entertainment":
+                setEntertainmentTotal(entertainmentTotal + parseInt(expense.data().total))
+                break;
+              default:
+                break;
+            }
+          })
         }
       })
     }
@@ -170,46 +209,56 @@ export default function BudgetContent() {
    * Appends to budget state array and asynchronously adds the budget item in firebase.
    * @returns void
    */
-  const createBudget = () => {
+  const createBudget = async () => {
     // If category budget already set, update limits
     // Else create budget
     if (budgets.length !== 0) {
       updateBudget()
     } else {
-      // Add budgets to screen
+      // calculate currents
       const newBudgets = [
         {
           category: "Rent",
           limit: parseInt(rentLimit.current.value),
-          current: 0
+          current: rentTotal
         },
         {
           category: "Groceries",
           limit: parseInt(groceriesLimit.current.value),
-          current: 0
+          current: groceriesTotal
         },
         {
           category: "Food",
           limit: parseInt(foodLimit.current.value),
-          current: 0
+          current: foodTotal
         },
         {
           category: "Insurance",
           limit: parseInt(insuranceLimit.current.value),
-          current: 0
+          current: insuranceTotal
         },
         {
           category: "Academic",
           limit: parseInt(academicLimit.current.value),
-          current: 0
+          current: academicTotal
         },
         {
           category: "Entertainment",
           limit: parseInt(entertainmentLimit.current.value),
-          current: 0
+          current: entertainmentTotal
         }
       ]
       setBudgets(newBudgets);
+
+      setGraphData(
+        newBudgets.map((category) => ({
+          name: category.category,
+          symbol: symbolsDict[category.category],
+          value: category.current,
+          expense: category.current / category.limit * 100,
+          max: 100
+        }))
+      )
 
       // Add budgets to db
       newBudgets.forEach(async (category) => {
