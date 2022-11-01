@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, Row, Col, ProgressBar } from 'react-bootstrap'
+import '../styles/budget.css';
 
-
-export default function BudgetItem({ item, bordColor, backColor }) {
+export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
+  const [value, setValue] = useState(item.limit);
 
   //Calulates the total amount of money left (spending limit - amount spent)
   function left(limit, spent) {
@@ -12,16 +13,54 @@ export default function BudgetItem({ item, bordColor, backColor }) {
   function progressPercent(limit, spent) {
     return (spent / limit) * 100
   }
+
+  const InlineEdit = () => {
+    const [editingValue, setEditingValue] = useState(value);
+    
+    const onChange = (event) => {
+      setEditingValue(event.target.value);
+    }
+    
+    const onKeyDown = (event) => {
+      if (event.key === "Enter" || event.key === "Escape") {
+        event.target.blur();
+      }
+    }
+    
+    const onBlur = (event) => {
+      const val = parseInt(event.target.value)
+      if (event.target.value.trim() === "") {
+        setEditingValue(value);
+      } else {
+        if (val !== item.limit) {
+          setValue(event.target.value)
+          onUpdate(item.id, val)
+        }
+      }
+    }
   
-  
+    return (
+      <input
+        class='inline'
+        type="text"
+        aria-label="Field name"
+        value={editingValue}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        onBlur={onBlur}
+      />
+    )
+  }
 
   return (
     <>
-      <Card style={{ backgroundColor: backColor, borderColor: bordColor, color: 'black' , width: '500px', textAlign: "Center" }} className="mb-2">
+      <Card style={{ backgroundColor: backColor, borderColor: bordColor, color: 'black', width: '500px', textAlign: "Center" }} className="mb-2">
         <Card.Body>
           <Row className="mb-2">
             <Col className="border-end">{item.category}</Col>
-            <Col>${item.limit}</Col>
+            <Col>
+              <InlineEdit value={item.limit} setValue={setValue} />
+            </Col>
           </Row>
           <Row>
             <Col>
