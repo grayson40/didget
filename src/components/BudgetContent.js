@@ -171,6 +171,16 @@ export default function BudgetContent() {
     });
     setBudgets(budgets);
 
+    setGraphData(
+      budgets.map((category, index) => ({
+        name: category.category,
+        symbol: symbolsDict[category.category],
+        value: category.current,
+        expense: category.current / category.limit * 100,
+        max: 100
+      }))
+    )
+
     // update budget in db
     console.log(`${id} ${updatedLimit}`)
     const usersRef = await getDocs(
