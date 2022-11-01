@@ -6,9 +6,7 @@ import DateBar from './DateBar';
 
 export default function Dashboard() {
   return (
-    <Container style={{
-      maxwidth: '100%'
-    }}>
+    <Container fluid>
       <DateBar/>
       <TopBar/>
       <Cards/>

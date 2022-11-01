@@ -164,7 +164,7 @@ export default function NotesContent(props) {
   };
 
   return (
-    <Container>
+    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%' }}>
       <Container fluid style={{ width: '500px', marginTop: '5%' }}>
         {/* Render user notes */}
         {notes.map((note) => (
@@ -196,7 +196,7 @@ export default function NotesContent(props) {
           </Card>
         </Modal>
       </Container>
-      {props.showButton && <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+      {props.showButton && <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, Row, Col, Form, Button, Modal } from 'react-bootstrap'
+import { Card, Row, Col, Form, Button, Modal, Container } from 'react-bootstrap'
 import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 export default function Task(props) {
@@ -26,7 +26,7 @@ export default function Task(props) {
   };
 
   return (
-    <>
+    <Container fluid>
       {/* popup update window */}
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>
@@ -55,18 +55,18 @@ export default function Task(props) {
               props.task.isChecked
                 ? <>
                   <Col sm={1}><Form.Check defaultChecked onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
-                  <Col sm={5}>
+                  <Col sm={4}>
                     <p className="text-decoration-line-through">{props.task.name}</p>
                   </Col>
                 </>
                 : <>
                   <Col sm={1}><Form.Check onChange={(e) => {props.onCheck(props.task.id, props.task.isChecked)}} aria-label="option 1" /></Col>
-                  <Col sm={5}>
+                  <Col sm={4}>
                     <p>{props.task.name}</p>
                   </Col>
                 </>
             }
-            <Col sm={3}>
+            <Col sm={4}>
             <p id={props.task.id}>{props.task.deadline}</p>
             </Col>
             {
@@ -95,6 +95,6 @@ export default function Task(props) {
         </Card.Body>
       </Card>
 
-    </>
+    </Container>
   )
 }
