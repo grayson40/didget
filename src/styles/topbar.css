@@ -43,6 +43,10 @@
     background-color: black;  
 }
 
+#dark .card-header {
+    background-color: rgb(66, 64, 64);
+}
+
 .fixed-top-2 {
     margin-top: 55px;
     background-color: gray;
