@@ -73,6 +73,7 @@ export default function Expense({ expense, onDelete, onUpdate, backColor, bordCo
             <Col sm={4} className="border-end">${expense.total}</Col>
             <Col sm={4}>
               {expense.date}
+              <br></br>
               <Button
                 variant="contained"
                 color="primary"
