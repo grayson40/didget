@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Container, Card, Row, Col, Modal, Form, Button } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
 import {
   collection,
   getDocs,
   query,
   addDoc,
-  // doc,
+  doc,
   // updateDoc,
-  // deleteDoc
+  deleteDoc
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
@@ -56,6 +56,7 @@ export default function BudgetContent() {
   var [insuranceTotal, setInsuranceTotal] = useState(0)
   var [academicTotal, setAcademicTotal] = useState(0)
   var [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  const [budgetsSet, setBudgetsSet] = useState(false)
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
@@ -82,23 +83,28 @@ export default function BudgetContent() {
               collection(db, `users/${user.id}/budgets`)
             )
           );
-          setBudgets(
-            budgetsRef.docs.map((category) => ({
-              id: category.id,
-              category: category.data().category,
-              limit: category.data().limit,
-              current: category.data().current
-            }))
-          )
-          setGraphData(
-            budgetsRef.docs.map((category, index) => ({
-              name: category.data().category,
-              symbol: symbolsDict[category.data().category],
-              value: category.data().current,
-              expense: category.data().current / category.data().limit * 100,
-              max: 100
-            }))
-          )
+          if (budgetsRef.docs.length === 0) {
+            setBudgetsSet(false);
+          } else {
+            setBudgetsSet(true);
+            setBudgets(
+              budgetsRef.docs.map((category) => ({
+                id: category.id,
+                category: category.data().category,
+                limit: category.data().limit,
+                current: category.data().current
+              }))
+            )
+            setGraphData(
+              budgetsRef.docs.map((category, index) => ({
+                name: category.data().category,
+                symbol: symbolsDict[category.data().category],
+                value: category.data().current,
+                expense: category.data().current / category.data().limit * 100,
+                max: 100
+              }))
+            )
+          }
 
           // Iterate through expenses and add to category total
           const expensesRef = await getDocs(
@@ -215,7 +221,7 @@ export default function BudgetContent() {
     if (budgets.length !== 0) {
       updateBudget()
     } else {
-      // calculate currents
+      setBudgetsSet(true);
       const newBudgets = [
         {
           category: "Rent",
@@ -282,6 +288,34 @@ export default function BudgetContent() {
     }
 
     handleClose()
+  }
+
+  const deleteBudgets = async () => {
+    console.log('deleting budgets')
+    setBudgets([])
+    setBudgetsSet(false);
+    setGraphData([])
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const budgetsRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/budgets/`)
+          )
+        );
+        budgetsRef.docs.forEach(async (budget) => {
+          const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
+          await deleteDoc(docRef)
+            .then(() => {
+              console.log('document deleted')
+            })
+        })
+      }
+    })
   }
 
   return (
@@ -407,12 +441,16 @@ export default function BudgetContent() {
           ))
         }
       </Container>
-
-      <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+      {budgetsSet ? <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+        <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
+          <FaTrashAlt size={"30px"} />
+        </Fab>
+      </Container> : <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
+      }
     </>
   )
 }
