@@ -47,7 +47,7 @@ const symbolsDict = {
 }
 
 export default function BudgetContent({ notInCard }) {
-  if (notInCard != false) notInCard = true;
+  if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);

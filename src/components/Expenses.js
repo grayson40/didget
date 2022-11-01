@@ -54,7 +54,7 @@ const limitFill =
 }
 
 export default function Expenses({ notInCard }) {
-  if (notInCard != false) notInCard = true;
+  if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('')
