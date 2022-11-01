@@ -136,14 +136,13 @@ export default function TaskContent(props) {
 
   const updateTask = async (id, name, deadline) => {
     // Update task on page
-    let newTasks = []
-    tasks.map((task) => {
+    console.log(`${id} ${name} ${deadline}`)
+    const newTasks = tasks.map((task) => {
       if (task.id === id) {
         task.name = name;
         task.deadline = deadline;
       }
-      newTasks.push(task)
-      return newTasks
+      return task;
     });
     setTasks(newTasks)
     handleClose()
@@ -184,15 +183,12 @@ export default function TaskContent(props) {
   const handleCheck = async (id, checked) => {
     console.log(`handling check of ${id}`)
     // Update task on page
-    let newTasks = []
-    tasks.map((task) => {
+    const newTasks = tasks.map((task) => {
       if (task.id === id) {
         task.isChecked = !task.isChecked;
       }
-      newTasks.push(task)
-      return newTasks
+      return task
     });
-    console.log(newTasks)
     setTasks(newTasks)
     handleClose()
 

@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Container, Card, Row, Col, Modal, Form, Button } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
 import {
   collection,
   getDocs,
   query,
   addDoc,
-  // doc,
-  // updateDoc,
-  // deleteDoc
+  doc,
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
@@ -50,6 +50,13 @@ export default function BudgetContent() {
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  var [rentTotal, setRentTotal] = useState(0)
+  var [groceriesTotal, setGroceriesTotal] = useState(0)
+  var [foodTotal, setFoodTotal] = useState(0)
+  var [insuranceTotal, setInsuranceTotal] = useState(0)
+  var [academicTotal, setAcademicTotal] = useState(0)
+  var [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  const [budgetsSet, setBudgetsSet] = useState(false)
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
@@ -76,23 +83,61 @@ export default function BudgetContent() {
               collection(db, `users/${user.id}/budgets`)
             )
           );
-          setBudgets(
-            budgetsRef.docs.map((category) => ({
-              id: category.id,
-              category: category.data().category,
-              limit: category.data().limit,
-              current: category.data().current
-            }))
-          )
-          setGraphData(
-            budgetsRef.docs.map((category, index) => ({
-              name: category.data().category,
-              symbol: symbolsDict[category.data().category],
-              value: category.data().current,
-              expense: category.data().current / category.data().limit * 100,
-              max: 100
-            }))
-          )
+          if (budgetsRef.docs.length === 0) {
+            setBudgetsSet(false);
+          } else {
+            setBudgetsSet(true);
+            setBudgets(
+              budgetsRef.docs.map((category) => ({
+                id: category.id,
+                category: category.data().category,
+                limit: category.data().limit,
+                current: category.data().current
+              }))
+            )
+            setGraphData(
+              budgetsRef.docs.map((category, index) => ({
+                name: category.data().category,
+                symbol: symbolsDict[category.data().category],
+                value: category.data().current,
+                expense: category.data().current / category.data().limit * 100,
+                max: 100
+              }))
+            )
+          }
+
+          // Iterate through expenses and add to category total
+          const expensesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/expenses/`)
+            )
+          );
+          expensesRef.docs.forEach((expense) => {
+            // console.log(expense.data().category)
+            const category = expense.data().category
+            switch (category) {
+              case "rent":
+                setRentTotal(rentTotal + parseInt(expense.data().total))
+                break;
+              case "groceries":
+                setGroceriesTotal(groceriesTotal + parseInt(expense.data().total))
+                break;
+              case "food":
+                setFoodTotal(foodTotal + parseInt(expense.data().total))
+                break;
+              case "insurance":
+                setInsuranceTotal(insuranceTotal + parseInt(expense.data().total))
+                break;
+              case "academic":
+                setAcademicTotal(academicTotal + parseInt(expense.data().total))
+                break;
+              case "entertainment":
+                setEntertainmentTotal(entertainmentTotal + parseInt(expense.data().total))
+                break;
+              default:
+                break;
+            }
+          })
         }
       })
     }
@@ -117,99 +162,106 @@ export default function BudgetContent() {
    * @param {*} updatedBudget The updated budget item.
    * @returns void
    */
-  const updateBudget = () => {
-    // Update budget on screen
-    let updatedLimit = 0;
-    budgets.forEach((category) => {
-      switch (category.category) {
-        case "Rent":
-          updatedLimit = parseInt(rentLimit.current.value)
-          if (rentLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
+  const updateBudget = async (id, updatedLimit) => {
+    budgets.forEach((budget) => {
+      if (budget.id === id) {
+        // Update budget
+        budget.limit = updatedLimit
+      }
+    });
+    setBudgets(budgets);
+
+    setGraphData(
+      budgets.map((category, index) => ({
+        name: category.category,
+        symbol: symbolsDict[category.category],
+        value: category.current,
+        expense: category.current / category.limit * 100,
+        max: 100
+      }))
+    )
+
+    // update budget in db
+    console.log(`${id} ${updatedLimit}`)
+    const usersRef = await getDocs(
+      query(
+        collection(db, 'users')
+      )
+    );
+    usersRef.docs.forEach(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const budgetsRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/budgets`)
+          )
+        );
+        budgetsRef.forEach(async (budget) => {
+          if (budget.id === id) {
+            const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
+            await updateDoc(docRef, {limit: updatedLimit})
+              .then(() => {
+                console.log('document updated')
+              })
           }
-          break;
-        case "Groceries":
-          updatedLimit = parseInt(groceriesLimit.current.value)
-          if (groceriesLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Food":
-          updatedLimit = parseInt(foodLimit.current.value)
-          if (foodLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Insurance":
-          updatedLimit = parseInt(insuranceLimit.current.value)
-          if (insuranceLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Academic":
-          updatedLimit = parseInt(academicLimit.current.value)
-          if (academicLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        case "Entertainment":
-          updatedLimit = parseInt(entertainmentLimit.current.value)
-          if (groceriesLimit.current.value !== '' && updatedLimit !== category.limit) {
-            category.limit = updatedLimit;
-          }
-          break;
-        default:
-          break;
+        })
       }
     })
-
-    // TODO: update budget in db
   }
 
   /**
    * Appends to budget state array and asynchronously adds the budget item in firebase.
    * @returns void
    */
-  const createBudget = () => {
+  const createBudget = async () => {
     // If category budget already set, update limits
     // Else create budget
     if (budgets.length !== 0) {
       updateBudget()
     } else {
-      // Add budgets to screen
+      setBudgetsSet(true);
       const newBudgets = [
         {
           category: "Rent",
           limit: parseInt(rentLimit.current.value),
-          current: 0
+          current: rentTotal
         },
         {
           category: "Groceries",
           limit: parseInt(groceriesLimit.current.value),
-          current: 0
+          current: groceriesTotal
         },
         {
           category: "Food",
           limit: parseInt(foodLimit.current.value),
-          current: 0
+          current: foodTotal
         },
         {
           category: "Insurance",
           limit: parseInt(insuranceLimit.current.value),
-          current: 0
+          current: insuranceTotal
         },
         {
           category: "Academic",
           limit: parseInt(academicLimit.current.value),
-          current: 0
+          current: academicTotal
         },
         {
           category: "Entertainment",
           limit: parseInt(entertainmentLimit.current.value),
-          current: 0
+          current: entertainmentTotal
         }
       ]
       setBudgets(newBudgets);
+
+      setGraphData(
+        newBudgets.map((category) => ({
+          name: category.category,
+          symbol: symbolsDict[category.category],
+          value: category.current,
+          expense: category.current / category.limit * 100,
+          max: 100
+        }))
+      )
 
       // Add budgets to db
       newBudgets.forEach(async (category) => {
@@ -235,8 +287,35 @@ export default function BudgetContent() {
     handleClose()
   }
 
+  const deleteBudgets = async () => {
+    console.log('deleting budgets')
+    setBudgets([])
+    setBudgetsSet(false);
+    setGraphData([])
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const budgetsRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/budgets/`)
+          )
+        );
+        budgetsRef.docs.forEach(async (budget) => {
+          const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
+          await deleteDoc(docRef)
+            .then(() => {
+              console.log('document deleted')
+            })
+        })
+      }
+    })
+  }
+
   return (
-    <>
       <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
@@ -351,19 +430,23 @@ export default function BudgetContent() {
                 key={index}
                 item={item}
                 bordColor={backFill[item.category.toLowerCase()]}
-                backColor={bordFill[item.category.toLowerCase()]}>
-              </BudgetItem>
+                backColor={bordFill[item.category.toLowerCase()]}
+                onUpdate={updateBudget}
+              />
             </>
           ))
         }
       </Container>
-      </Container>
-
-      <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+      {budgetsSet ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+        <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
+          <FaTrashAlt size={"30px"} />
+        </Fab>
+      </Container> : <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-    </>
+     }
+    </Container>
   )
 }

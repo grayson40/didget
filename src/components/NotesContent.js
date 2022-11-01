@@ -107,7 +107,7 @@ export default function NotesContent(props) {
 
   const updateNote = async (input, id) => {
     // Update on screen
-    console.log(`updating ${id} ${input}`)
+    console.log(`updating ${id}`)
     notes.forEach((note) => {
       if (note.noteId === id) {
         note.note = input
