@@ -415,6 +415,8 @@ export default function BudgetContent({ notInCard }) {
         <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Budget
+          </Card.Header>
+          <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
               <Col>Limit</Col>

@@ -513,8 +513,6 @@ export default function Expenses({ notInCard }) {
       <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
         <PageBar name='Expenses' />
         <TopBar />
-        {/*GRAPH PLACEHOLDER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
-        {/* TODO: link pie chart to fetched data */}
         <Container height="260px">
           <PieChart width={430} height={250}>
             <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
