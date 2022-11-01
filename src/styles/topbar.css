@@ -26,6 +26,9 @@
 #dark .card {
     background-color: rgb(105, 98, 98);
     color: white;
+    outline-style: groove;
+    outline-color: black !important;
+    outline-width: 1px;
 }
 
 #dark .dashboardCard {
@@ -40,6 +43,10 @@
     background-color: black;  
 }
 
+#dark .card-header {
+    background-color: rgb(66, 64, 64);
+}
+
 .fixed-top-2 {
     margin-top: 55px;
     background-color: gray;
@@ -50,21 +57,47 @@
     content: '\icon';
 }
 
-body {
+.dropdown-menu li {
+    position: relative;
+    }
+    .dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+    }
+    .dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+    }
+    .dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+    }
+    
+    .dropdown-hover:hover>.dropdown-menu {
+    display: inline-block;
+    }
+    
+    .dropdown-hover>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+    }
+
+/*body {
     padding-top: 100px;
-}
+}*/
 
 /* label {
     color:white;
 } */
 
-.topBarDropdown{
+/*.topBarDropdown{
     height:35px;
     background: gold;
     display: flex;
     justify-content: space-around;
     align-items: center;
-}
+}*/
 
 .quickaccess, .profile{
     position: relative;

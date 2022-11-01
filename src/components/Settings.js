@@ -83,10 +83,10 @@ export default function Settings() {
             </Button>
           </Form>
         </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
+        <div className="w-100 text-center mt-2" style = {{ paddingBottom: '6%' }}>
         <Link to="/">Cancel</Link>
-      </div>
+        </div>
+      </Card>
     </Container>
   )
 }

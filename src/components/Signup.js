@@ -67,10 +67,10 @@ export default function Signup() {
                     </Button>
                 </Form>
             </Card.Body>
-        </Card>
-        <div className="w-100 text-center mt-2">
+            <div className="w-100 text-center mt-2" style = {{ paddingBottom: '6%' }}>
             Already have an account? <Link to='/Login'>Log In</Link>
-        </div>
+            </div>
+        </Card>
     </Container>
   )
 }

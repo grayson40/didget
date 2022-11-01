@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { Card, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
+import { Card, Container, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
 import { Form } from 'react-bootstrap';
@@ -31,7 +31,7 @@ export default function Course(props) {
   };
 
   return (
-    <>
+    <Container fluid>
       {/* popup update window */}
       <Modal open={open} onClose={handleClose}>
         <Card style={
@@ -108,6 +108,6 @@ export default function Course(props) {
         }
         </Card.Body>
       </Card>
-    </>
+    </Container>
   )
 }

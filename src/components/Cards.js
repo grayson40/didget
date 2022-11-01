@@ -68,7 +68,7 @@ export default function Cards() {
   // Render Cards
   return (
     <div>
-        <Container fixed = "top" fluid style = {{ width: '550px', marginTop: "5%"}}>
+        <Container fixed = "top" fluid style = {{ paddingTop: '6%', paddingBottom: '6%', width: '600px', marginTop: "5%"}}>
             <Card className="mb-3 dashboardCard">
                 <Button
                     onClick={() => setOpen1(!open1)}
@@ -93,6 +93,7 @@ export default function Cards() {
                     Financial
                 </Button>
                 <Collapse in={open3}>
+                    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
                     <div class="container-fluid justify-content-center align-content-center" height={500}>
                         {budgetBool === true ?
                         /* Create a vertically aligned bar chart containing the dataset of limits and expense totals */
@@ -155,6 +156,7 @@ export default function Cards() {
                             </Card.Body>
                         </Card>
                     </div>
+                    </Container>
                 </Collapse>
             </Card>
             <Card className="mb-3 dashboardCard">

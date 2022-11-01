@@ -468,7 +468,7 @@ export default function Expenses(props) {
   }
 
   return (
-    <Container>
+    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
       {/* popup add window */}
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>
@@ -558,7 +558,7 @@ export default function Expenses(props) {
           ))
         }
       </Container>
-      <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+      <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>

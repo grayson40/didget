@@ -316,8 +316,7 @@ export default function BudgetContent() {
   }
 
   return (
-    <>
-      <Container style={{ top: "5%", justifyContent: "flex-center", width: '530px' }}>
+      <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
         {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
           <BarChart data={graphData} layout="vertical" width={600} height={250} >
@@ -345,7 +344,6 @@ export default function BudgetContent() {
             <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
             <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
           </BarChart>
-        </Container>
 
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
@@ -439,16 +437,16 @@ export default function BudgetContent() {
           ))
         }
       </Container>
-      {budgetsSet ? <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+      {budgetsSet ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
           <FaTrashAlt size={"30px"} />
         </Fab>
-      </Container> : <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+      </Container> : <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-      }
-    </>
+     }
+    </Container>
   )
 }
