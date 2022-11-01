@@ -9,12 +9,13 @@
 //              The signout option should logout the user and route back to signout
 //              All pages except for Signout and Login pages should be set as private routes
 
-import React from 'react';
+import React, { useState } from 'react';
 import {  Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import Container from 'react-bootstrap/Container';
 import { FaGrinSquint, FaBars } from 'react-icons/fa';
+import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem, MDBDropdownLink, MDBContainer } from 'mdb-react-ui-kit';
 //import './topbar.css';
 
 
@@ -40,16 +41,32 @@ export default function TopBar() {
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
             <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
-              <Dropdown.Item href="/">Home</Dropdown.Item>
-              <Dropdown.Divider/>
-              <Dropdown.Item href="/tasks">Tasks</Dropdown.Item>
-              <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
-              <Dropdown.Item href="/notes">Notes</Dropdown.Item>
-              <Dropdown.Divider/>
-              <Dropdown.Item href="/financial">Financial</Dropdown.Item>
-              <Dropdown.Item href="/budget">Budget</Dropdown.Item>
-              <Dropdown.Item href="/expenses">Expenses</Dropdown.Item>
-              <Dropdown.Item>Debt</Dropdown.Item>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/">Home</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/schedule">Schedule</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/notes">Notes</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="#">Financial &raquo;</MDBDropdownLink>
+            <ul className="dropdown-menu dropdown-submenu">
+              <MDBDropdownItem>
+                <MDBDropdownLink href="/financial">Financial Home</MDBDropdownLink>
+              </MDBDropdownItem>
+              <MDBDropdownItem>
+                <MDBDropdownLink href="/budget">Budget</MDBDropdownLink>
+              </MDBDropdownItem>
+              <MDBDropdownItem>
+                <MDBDropdownLink href="/expenses">Expenses</MDBDropdownLink>
+              </MDBDropdownItem>
+            </ul>
+          </MDBDropdownItem>
           </DropdownButton>
         </div>
         <div class = "container-fluid d-flex justify-content-center">
