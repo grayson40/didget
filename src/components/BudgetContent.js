@@ -46,7 +46,8 @@ const symbolsDict = {
   'Entertainment': '🍿'
 }
 
-export default function BudgetContent() {
+export default function BudgetContent({ notInCard }) {
+  if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
@@ -407,12 +408,12 @@ export default function BudgetContent() {
           </Modal.Body>
         </Modal>
 
+        {
+          notInCard ?
         <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Budget
           </Card.Header>
-        </Card>
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             <Row>
               <Col className="border-end">Category</Col>
@@ -420,6 +421,9 @@ export default function BudgetContent() {
             </Row>
           </Card.Header>
         </Card>
+        :
+        <></>
+        }
 
         {/*Cards with Name, Total, Category, and Date*/}
         {
