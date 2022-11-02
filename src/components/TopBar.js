@@ -13,7 +13,9 @@ import React from 'react';
 import {  Navbar, Dropdown, DropdownButton } from 'react-bootstrap';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import Container from 'react-bootstrap/Container';
 import { FaGrinSquint, FaBars } from 'react-icons/fa';
+import { MDBDropdownItem, MDBDropdownLink } from 'mdb-react-ui-kit';
 //import './topbar.css';
 
 
@@ -32,23 +34,39 @@ export default function TopBar() {
   const quickAccTitle = (<FaBars glyph="star"> Dropdown </FaBars>);
 
   return (
-
-    //  Create a nav bar which is situated at the top of the given workspace
+    <Container fluid>
     <Navbar bg="dark" variant="dark" fixed="top" height ="4vh">
         <div class = "container-fluid d-flex justify-content-start">
 
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} className='topBarDropdown'>
-              <Dropdown.Item href="/">Home</Dropdown.Item>
-              <Dropdown.Divider/>
-              <Dropdown.Item href="/tasks">Tasks</Dropdown.Item>
-              <Dropdown.Item href="/schedule">Schedule</Dropdown.Item>
-              <Dropdown.Item href="/notes">Notes</Dropdown.Item>
-              <Dropdown.Divider/>
-              <Dropdown.Item href="/financial">Financial</Dropdown.Item>
-              <Dropdown.Item href="/budget">Budget</Dropdown.Item>
-              <Dropdown.Item href="/expenses">Expenses</Dropdown.Item>
+            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/">Home</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/schedule">Schedule</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="/notes">Notes</MDBDropdownLink>
+            </MDBDropdownItem>
+            <MDBDropdownItem>
+            <MDBDropdownLink href="#">Financial &raquo;</MDBDropdownLink>
+            <ul className="dropdown-menu dropdown-submenu">
+              <MDBDropdownItem>
+                <MDBDropdownLink href="/financial">Financial Home</MDBDropdownLink>
+              </MDBDropdownItem>
+              <MDBDropdownItem>
+                <MDBDropdownLink href="/budget">Budget</MDBDropdownLink>
+              </MDBDropdownItem>
+              <MDBDropdownItem>
+                <MDBDropdownLink href="/expenses">Expenses</MDBDropdownLink>
+              </MDBDropdownItem>
+            </ul>
+          </MDBDropdownItem>
           </DropdownButton>
         </div>
         <div class = "container-fluid d-flex justify-content-center">
@@ -61,11 +79,12 @@ export default function TopBar() {
         <div class = "container-fluid d-flex justify-content-end">
           {/* Top Bar should finally consist of a right drop down button */}
           {/* Could be replaced with a profile icon dropdownbutton setup */}
-          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" className='topBarDropdown'>
+          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" style = {{ background: 'gold'}}>
             <Dropdown.Item href="/settings">Settings</Dropdown.Item>
             <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
           </DropdownButton>
         </div>
     </Navbar>
+    </Container>
   );
 }

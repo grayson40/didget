@@ -136,14 +136,13 @@ export default function TaskContent(props) {
 
   const updateTask = async (id, name, deadline) => {
     // Update task on page
-    let newTasks = []
-    tasks.map((task) => {
+    console.log(`${id} ${name} ${deadline}`)
+    const newTasks = tasks.map((task) => {
       if (task.id === id) {
         task.name = name;
         task.deadline = deadline;
       }
-      newTasks.push(task)
-      return newTasks
+      return task;
     });
     setTasks(newTasks)
     handleClose()
@@ -184,15 +183,12 @@ export default function TaskContent(props) {
   const handleCheck = async (id, checked) => {
     console.log(`handling check of ${id}`)
     // Update task on page
-    let newTasks = []
-    tasks.map((task) => {
+    const newTasks = tasks.map((task) => {
       if (task.id === id) {
         task.isChecked = !task.isChecked;
       }
-      newTasks.push(task)
-      return newTasks
+      return task
     });
-    console.log(newTasks)
     setTasks(newTasks)
     handleClose()
 
@@ -270,7 +266,7 @@ export default function TaskContent(props) {
   }
 
   return (
-    <>
+    <Container fluid style= {{ paddingTop: '6%', paddingBottom: '6%' }}>
 
       {
         props.inCourse
@@ -336,7 +332,7 @@ export default function TaskContent(props) {
               </Modal.Body>
             </Modal>
 
-            <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+            <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
               <Fab size={"80px"} color="primary" onClick={(e) => setOpen(!open)}>
                 <FaPlus size={"30px"} />
               </Fab>
@@ -344,6 +340,6 @@ export default function TaskContent(props) {
           </>
       }
 
-    </>
+    </Container>
   )
 }

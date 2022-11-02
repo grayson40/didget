@@ -53,7 +53,8 @@ const limitFill =
   'academic': '#45B39D',
 }
 
-export default function Expenses(props) {
+export default function Expenses({ notInCard }) {
+  if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('')
@@ -68,6 +69,8 @@ export default function Expenses(props) {
   const category = useRef();
   const date = useRef();
   const dataFetchedRef = useRef(false);
+
+  console.log(notInCard);
 
   // List to store graph data objects
   var graphData = [
@@ -468,7 +471,7 @@ export default function Expenses(props) {
   }
 
   return (
-    <Container>
+    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
       {/* popup add window */}
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>
@@ -510,8 +513,6 @@ export default function Expenses(props) {
       <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
         <PageBar name='Expenses' />
         <TopBar />
-        {/*GRAPH PLACEHOLDER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
-        {/* TODO: link pie chart to fetched data */}
         <Container height="260px">
           <PieChart width={430} height={250}>
             <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
@@ -532,6 +533,9 @@ export default function Expenses(props) {
           </PieChart>
         </Container>
 
+        {
+        console.log(notInCard)}{
+        notInCard ?
         <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
           <Card.Header>
             Expenses
@@ -544,7 +548,10 @@ export default function Expenses(props) {
             </Row>
           </Card.Header>
         </Card>
-
+        :
+        <></>
+        }
+        
         {
           expenses.map((expense, index) => (
             <Expense
@@ -554,11 +561,12 @@ export default function Expenses(props) {
               onUpdate={updateExpense}
               backColor={expenseFill[expense.category.toLowerCase()]}
               bordColor={limitFill[expense.category.toLowerCase()]}
+              notInCard={notInCard}
             />
           ))
         }
       </Container>
-      <Container style={{ position: "fixed", bottom: "20px", justifyContent: 'flex-end', display: 'flex' }}>
+      <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>

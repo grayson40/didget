@@ -6,7 +6,7 @@ import PageBar from './PageBar';
 
 export default function Notes() {
     return (
-        <Container>
+        <Container fluid>
           <PageBar name = 'Notes'/>
           <TopBar/>
           <NotesContent showButton={true}/>

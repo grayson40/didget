@@ -7,7 +7,7 @@ import PageBar from './PageBar'
 
 export default function TaskPage(props) {
     return (
-        <Container>
+        <Container fluid>
             <PageBar name = "Tasks"/>
             <TopBar/>
             <TaskContent showButton={true}/>

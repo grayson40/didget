@@ -4,7 +4,7 @@ import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 const d = new Date();
 
-export default function Expense({ expense, onDelete, onUpdate, backColor, bordColor }) {
+export default function Expense({ expense, onDelete, onUpdate, backColor, bordColor, notInCard }) {
   const [open, setOpen] = useState(false);
   const place = useRef();
   const total = useRef();
@@ -72,24 +72,31 @@ export default function Expense({ expense, onDelete, onUpdate, backColor, bordCo
             <Col sm={4} className="border-end">{expense.place}</Col>
             <Col sm={4} className="border-end">${expense.total}</Col>
             <Col sm={4}>
-              {expense.date}
-              <Button
-                variant="contained"
-                color="primary"
-                size="medium"
-                onClick={(e) => setOpen(true)}
-              >
-                <FaPen />
-              </Button>
-              <span className="space"></span>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="medium"
-                onClick={(e) => onDelete(expense.id)}
-              >
-                <FaTrashAlt color='gray' />
-              </Button>
+              {expense.date}{
+              notInCard ?
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="medium"
+                  onClick={(e) => setOpen(true)}
+                >
+                  <FaPen />
+                </Button>
+                <span className="space"></span>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="medium"
+                  onClick={(e) => onDelete(expense.id)}
+                >
+                  <FaTrashAlt color='gray' />
+                </Button>
+              </div>
+              :
+              <></>
+              }
+
             </Col>
           </Row>
         </Card.Body>
