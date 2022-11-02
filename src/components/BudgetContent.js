@@ -385,6 +385,14 @@ export default function BudgetContent({ notInCard }) {
             {/* {error && <Alert variant="danger">{error}</Alert>} */}
             <Form>
               {/* TODO: add budget category and limit fields */}
+              <Form.Group id='income'>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>
+                    <Form.Control type='income'/>
+                  </Col>
+                </Row>
+              </Form.Group>
               <Form.Group id='rent'>
                 <Row className="mb-2">
                   <Col className="border-end">Rent</Col>
