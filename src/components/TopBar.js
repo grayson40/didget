@@ -41,33 +41,38 @@ export default function TopBar() {
             {/* Top Bar should consist of a leftbound drop down */}
             {/* To be replaced with a hamburger dropdown button */}
             <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/">Home</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/schedule">Schedule</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/notes">Notes</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="#">Financial &raquo;</MDBDropdownLink>
-            <ul className="dropdown-menu dropdown-submenu">
               <MDBDropdownItem>
-                <MDBDropdownLink href="/financial">Financial Home</MDBDropdownLink>
+                <MDBDropdownLink href="#">Academics &raquo;</MDBDropdownLink>
+                    <ul className="dropdown-menu dropdown-submenu">
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/">Home</MDBDropdownLink>
+                      </MDBDropdownItem>
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
+                      </MDBDropdownItem>
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/schedule">Schedule</MDBDropdownLink>
+                      </MDBDropdownItem>
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/notes">Notes</MDBDropdownLink>
+                      </MDBDropdownItem>
+                    </ul>
               </MDBDropdownItem>
               <MDBDropdownItem>
-                <MDBDropdownLink href="/budget">Budget</MDBDropdownLink>
+                <MDBDropdownLink href="#">Financial &raquo;</MDBDropdownLink>
+                  <ul className="dropdown-menu dropdown-submenu">
+                    <MDBDropdownItem>
+                      <MDBDropdownLink href="/financial">Home</MDBDropdownLink>
+                    </MDBDropdownItem>
+                    <MDBDropdownItem>
+                      <MDBDropdownLink href="/budget">Budget</MDBDropdownLink>
+                    </MDBDropdownItem>
+                    <MDBDropdownItem>
+                      <MDBDropdownLink href="/expenses">Expenses</MDBDropdownLink>
+                    </MDBDropdownItem>
+                  </ul>
               </MDBDropdownItem>
-              <MDBDropdownItem>
-                <MDBDropdownLink href="/expenses">Expenses</MDBDropdownLink>
-              </MDBDropdownItem>
-            </ul>
-          </MDBDropdownItem>
-          </DropdownButton>
+            </DropdownButton>
         </div>
         <div class = "container-fluid d-flex justify-content-center">
           {/* Top Bar should also consist of an app title */}
