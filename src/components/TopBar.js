@@ -42,11 +42,11 @@ export default function TopBar() {
             {/* To be replaced with a hamburger dropdown button */}
             <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
               <MDBDropdownItem>
+                <MDBDropdownLink href="/">Home</MDBDropdownLink>
+              </MDBDropdownItem>
+              <MDBDropdownItem>
                 <MDBDropdownLink href="#">Academics &raquo;</MDBDropdownLink>
                     <ul className="dropdown-menu dropdown-submenu">
-                      <MDBDropdownItem>
-                        <MDBDropdownLink href="/">Home</MDBDropdownLink>
-                      </MDBDropdownItem>
                       <MDBDropdownItem>
                         <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
                       </MDBDropdownItem>
