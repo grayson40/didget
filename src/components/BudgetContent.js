@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Container, Card, Row, Col, Modal, Form, Button } from 'react-bootstrap'
+import { Container, Card, Row, Col, Modal, Form, Button, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
@@ -65,6 +65,12 @@ export default function BudgetContent({ notInCard }) {
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
 
+  const toDate = () => {
+    let date = new Date();
+    const today = `${date.getMonth() + 1}/${date.getFullYear()}`
+    return today;
+  };
+
   /**
    * Fetches budget data from firebase. Sets budget and graph state.
    * @returns void
@@ -93,7 +99,8 @@ export default function BudgetContent({ notInCard }) {
                 id: category.id,
                 category: category.data().category,
                 limit: category.data().limit,
-                current: category.data().current
+                current: category.data().current,
+                date: category.data().date
               }))
             )
             setGraphData(
@@ -199,7 +206,7 @@ export default function BudgetContent({ notInCard }) {
         budgetsRef.forEach(async (budget) => {
           if (budget.id === id) {
             const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
-            await updateDoc(docRef, {limit: updatedLimit})
+            await updateDoc(docRef, { limit: updatedLimit })
               .then(() => {
                 console.log('document updated')
               })
@@ -224,32 +231,38 @@ export default function BudgetContent({ notInCard }) {
         {
           category: "Rent",
           limit: parseInt(rentLimit.current.value),
-          current: rentTotal
+          current: rentTotal,
+          date: toDate()
         },
         {
           category: "Groceries",
           limit: parseInt(groceriesLimit.current.value),
-          current: groceriesTotal
+          current: groceriesTotal,
+          date: toDate()
         },
         {
           category: "Food",
           limit: parseInt(foodLimit.current.value),
-          current: foodTotal
+          current: foodTotal,
+          date: toDate()
         },
         {
           category: "Insurance",
           limit: parseInt(insuranceLimit.current.value),
-          current: insuranceTotal
+          current: insuranceTotal,
+          date: toDate()
         },
         {
           category: "Academic",
           limit: parseInt(academicLimit.current.value),
-          current: academicTotal
+          current: academicTotal,
+          date: toDate()
         },
         {
           category: "Entertainment",
           limit: parseInt(entertainmentLimit.current.value),
-          current: entertainmentTotal
+          current: entertainmentTotal,
+          date: toDate()
         }
       ]
       setBudgets(newBudgets);
@@ -269,7 +282,8 @@ export default function BudgetContent({ notInCard }) {
         const newBudget = {
           category: category.category,
           limit: category.limit,
-          current: category.current
+          current: category.current,
+          date: category.date
         }
         const userRef = await getDocs(
           query(
@@ -317,34 +331,52 @@ export default function BudgetContent({ notInCard }) {
   }
 
   return (
-      <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
-        {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
-        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <BarChart data={graphData} layout="vertical" width={600} height={250} >
-            <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
-              {
-                graphData.map((entry, index) => (
-                  <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
-                ))
-              }
-            </Bar>
-            <Bar dataKey="max" barSize={10}>
-              {
-                graphData.map((entry, index) => (
-                  <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
-                ))
-              }
-            </Bar>
-            {/*
+    <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
+      {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
+      <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
+        <BarChart data={graphData} layout="vertical" width={600} height={250} >
+          <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+            {
+              graphData.map((entry, index) => (
+                <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
+              ))
+            }
+          </Bar>
+          <Bar dataKey="max" barSize={10}>
+            {
+              graphData.map((entry, index) => (
+                <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
+              ))
+            }
+          </Bar>
+          {/*
               
               NOTICE NOTICE NOTICE
               BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
     
               */}
-            <XAxis stroke="black" type="number" reversed />
-            <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
-            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
-          </BarChart>
+          <XAxis stroke="black" type="number" reversed />
+          <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+          <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+        </BarChart>
+
+        {/* Income Card */}
+        <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+          <Card.Header>
+            <Row className="mb-2">
+              <Col className="border-end">Income</Col>
+              <Col>Income Amount</Col>
+            </Row>
+            <Row>
+              <Col>
+                {false
+                  ? <ProgressBar animated variant="success" now={30} label={`$200 Spent Total`} />
+                  : <ProgressBar animated variant="danger" now={100} label={`$1000 Spent Total`} />
+                }
+              </Col>
+            </Row>
+          </Card.Header>
+        </Card>
 
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
@@ -410,19 +442,19 @@ export default function BudgetContent({ notInCard }) {
 
         {
           notInCard ?
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            Budget
-          </Card.Header>
-          <Card.Header>
-            <Row>
-              <Col className="border-end">Category</Col>
-              <Col>Limit</Col>
-            </Row>
-          </Card.Header>
-        </Card>
-        :
-        <></>
+            <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                Budget
+              </Card.Header>
+              <Card.Header>
+                <Row>
+                  <Col className="border-end">Category</Col>
+                  <Col>Limit</Col>
+                </Row>
+              </Card.Header>
+            </Card>
+            :
+            <></>
         }
 
         {/*Cards with Name, Total, Category, and Date*/}
@@ -450,7 +482,7 @@ export default function BudgetContent({ notInCard }) {
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-     }
+      }
     </Container>
   )
 }
