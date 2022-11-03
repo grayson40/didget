@@ -1,7 +1,9 @@
+// import necessary libraries
 import React from 'react'
 import { Navigate } from "react-router-dom"
 import { useAuth } from '../contexts/AuthContext'
 
+// main function PrivateRoute(), recieves parameter children
 export default function PrivateRoute({ children }) {
   
     // Track Current User with Authentication path imported from AuthContext.js
