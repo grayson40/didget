@@ -16,7 +16,7 @@ import {
   deleteDoc
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import Expense from './Expense'
+import ExpenseItem from './ExpenseItem'
 
 // Date object
 const d = new Date();
@@ -53,7 +53,7 @@ const limitFill =
   'academic': '#45B39D',
 }
 
-export default function Expenses({ notInCard }) {
+export default function ExpenseContent({ notInCard }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
@@ -554,7 +554,7 @@ export default function Expenses({ notInCard }) {
         
         {
           expenses.map((expense, index) => (
-            <Expense
+            <ExpenseItem
               key={index}
               expense={expense}
               onDelete={deleteExpense}
