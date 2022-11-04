@@ -46,18 +46,31 @@ const symbolsDict = {
   'Entertainment': '🍿'
 }
 
-export default function BudgetContent({ notInCard, props }) {
+const monthsDict = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December'
+}
+
+const d = new Date();
+
+export default function BudgetContent({ notInCard }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
-  var [rentTotal, setRentTotal] = useState(0)
-  var [groceriesTotal, setGroceriesTotal] = useState(0)
-  var [foodTotal, setFoodTotal] = useState(0)
-  var [insuranceTotal, setInsuranceTotal] = useState(0)
-  var [academicTotal, setAcademicTotal] = useState(0)
-  var [entertainmentTotal, setEntertainmentTotal] = useState(0)
-  const [budgetsSet, setBudgetsSet] = useState(false)
+  const [expenses, setExpenses] = useState([])
+  const [month, setMonth] = useState(d.getMonth() + 1);
+  const [year, setYear] = useState(d.getFullYear())
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
@@ -84,28 +97,26 @@ export default function BudgetContent({ notInCard, props }) {
               collection(db, `users/${user.id}/budgets`)
             )
           );
-          if (budgetsRef.docs.length === 0) {
-            setBudgetsSet(false);
-          } else {
-            setBudgetsSet(true);
-            setBudgets(
-              budgetsRef.docs.map((category) => ({
-                id: category.id,
-                category: category.data().category,
-                limit: category.data().limit,
-                current: category.data().current
-              }))
-            )
-            setGraphData(
-              budgetsRef.docs.map((category, index) => ({
-                name: category.data().category,
-                symbol: symbolsDict[category.data().category],
-                value: category.data().current,
-                expense: category.data().current / category.data().limit * 100,
-                max: 100
-              }))
-            )
-          }
+
+          setBudgets(
+            budgetsRef.docs.map((category) => ({
+              id: category.id,
+              category: category.data().category,
+              limit: category.data().limit,
+              current: category.data().current,
+              month: category.data().month
+            }))
+          )
+          setGraphData(
+            budgetsRef.docs.map((category, index) => ({
+              name: category.data().category,
+              symbol: symbolsDict[category.data().category],
+              value: category.data().current,
+              expense: category.data().current / category.data().limit * 100,
+              max: 100,
+              month: category.data().month
+            }))
+          )
 
           // Iterate through expenses and add to category total
           const expensesRef = await getDocs(
@@ -113,32 +124,15 @@ export default function BudgetContent({ notInCard, props }) {
               collection(db, `users/${user.id}/expenses/`)
             )
           );
-          expensesRef.docs.forEach((expense) => {
-            // console.log(expense.data().category)
-            const category = expense.data().category
-            switch (category) {
-              case "rent":
-                setRentTotal(rentTotal + parseInt(expense.data().total))
-                break;
-              case "groceries":
-                setGroceriesTotal(groceriesTotal + parseInt(expense.data().total))
-                break;
-              case "food":
-                setFoodTotal(foodTotal + parseInt(expense.data().total))
-                break;
-              case "insurance":
-                setInsuranceTotal(insuranceTotal + parseInt(expense.data().total))
-                break;
-              case "academic":
-                setAcademicTotal(academicTotal + parseInt(expense.data().total))
-                break;
-              case "entertainment":
-                setEntertainmentTotal(entertainmentTotal + parseInt(expense.data().total))
-                break;
-              default:
-                break;
-            }
-          })
+          setExpenses(
+            expensesRef.docs.map((expense) => ({
+              id: expense.data().id,
+              category: expense.data().category,
+              place: expense.data().place,
+              total: expense.data().total,
+              date: expense.data().date
+            }))
+          )
         }
       })
     }
@@ -178,7 +172,8 @@ export default function BudgetContent({ notInCard, props }) {
         symbol: symbolsDict[category.category],
         value: category.current,
         expense: category.current / category.limit * 100,
-        max: 100
+        max: 100,
+        month: category.month
       }))
     )
 
@@ -199,7 +194,7 @@ export default function BudgetContent({ notInCard, props }) {
         budgetsRef.forEach(async (budget) => {
           if (budget.id === id) {
             const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
-            await updateDoc(docRef, {limit: updatedLimit})
+            await updateDoc(docRef, { limit: updatedLimit })
               .then(() => {
                 console.log('document updated')
               })
@@ -214,85 +209,120 @@ export default function BudgetContent({ notInCard, props }) {
    * @returns void
    */
   const createBudget = async () => {
-    // If category budget already set, update limits
-    // Else create budget
-    if (budgets.length !== 0) {
-      updateBudget()
-    } else {
-      setBudgetsSet(true);
-      const newBudgets = [
-        {
-          category: "Rent",
-          limit: parseInt(rentLimit.current.value),
-          current: rentTotal
-        },
-        {
-          category: "Groceries",
-          limit: parseInt(groceriesLimit.current.value),
-          current: groceriesTotal
-        },
-        {
-          category: "Food",
-          limit: parseInt(foodLimit.current.value),
-          current: foodTotal
-        },
-        {
-          category: "Insurance",
-          limit: parseInt(insuranceLimit.current.value),
-          current: insuranceTotal
-        },
-        {
-          category: "Academic",
-          limit: parseInt(academicLimit.current.value),
-          current: academicTotal
-        },
-        {
-          category: "Entertainment",
-          limit: parseInt(entertainmentLimit.current.value),
-          current: entertainmentTotal
+    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0;
+    expenses.forEach((expense) => {
+      let arr = expense.date.split('/')
+      let expenseMonth = parseInt(arr[0])
+      if (expenseMonth === month) {
+        switch (expense.category) {
+          case "rent":
+            rentTotal += parseInt(expense.total)
+            break;
+          case "groceries":
+            groceriesTotal += parseInt(expense.total)
+            break;
+          case "food":
+            foodTotal += parseInt(expense.total)
+            break;
+          case "insurance":
+            insuranceTotal += parseInt(expense.total)
+            break;
+          case "academic":
+            academicTotal += parseInt(expense.total)
+            break;
+          case "entertainment":
+            entertainmentTotal += parseInt(expense.total)
+            break;
+          default:
+            break;
         }
-      ]
-      setBudgets(newBudgets);
+      }
+    })
+    const newBudgets = [
+      {
+        category: "Rent",
+        limit: parseInt(rentLimit.current.value),
+        current: rentTotal,
+        month: month
+      },
+      {
+        category: "Groceries",
+        limit: parseInt(groceriesLimit.current.value),
+        current: groceriesTotal,
+        month: month
+      },
+      {
+        category: "Food",
+        limit: parseInt(foodLimit.current.value),
+        current: foodTotal,
+        month: month
+      },
+      {
+        category: "Insurance",
+        limit: parseInt(insuranceLimit.current.value),
+        current: insuranceTotal,
+        month: month
+      },
+      {
+        category: "Academic",
+        limit: parseInt(academicLimit.current.value),
+        current: academicTotal,
+        month: month
+      },
+      {
+        category: "Entertainment",
+        limit: parseInt(entertainmentLimit.current.value),
+        current: entertainmentTotal,
+        month: month
+      }
+    ]
 
-      setGraphData(
-        newBudgets.map((category) => ({
-          name: category.category,
-          symbol: symbolsDict[category.category],
-          value: category.current,
-          expense: category.current / category.limit * 100,
-          max: 100
-        }))
-      )
+    newBudgets.forEach((budget) => {
+      setBudgets((current) => [...current, budget]);
+    })
 
-      // Add budgets to db
-      newBudgets.forEach(async (category) => {
-        const newBudget = {
-          category: category.category,
-          limit: category.limit,
-          current: category.current
+    setGraphData(
+      newBudgets.filter(isInMonth).map((category) => ({
+        name: category.category,
+        symbol: symbolsDict[category.category],
+        value: category.current,
+        expense: category.current / category.limit * 100,
+        max: 100,
+        month: category.month
+      }))
+    )
+
+    // Add budgets to db
+    newBudgets.forEach(async (category) => {
+      const newBudget = {
+        category: category.category,
+        limit: category.limit,
+        current: category.current,
+        month: category.month
+      }
+      const userRef = await getDocs(
+        query(
+          collection(db, "users")
+        )
+      );
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const collectionRef = collection(db, `users/${user.id}/budgets/`);
+          await addDoc(collectionRef, newBudget);
         }
-        const userRef = await getDocs(
-          query(
-            collection(db, "users")
-          )
-        );
-        userRef.docs.map(async (user) => {
-          if (user.data().uid === auth.currentUser.uid) {
-            const collectionRef = collection(db, `users/${user.id}/budgets/`);
-            await addDoc(collectionRef, newBudget);
-          }
-        })
       })
-    }
+    })
 
+    fetchData()
     handleClose()
   }
 
   const deleteBudgets = async () => {
+    const newBudgets = budgets.filter((value) => value.month !== month)
+    const newGraph = graphData.filter((value) => value.month !== month)
+    setBudgets(newBudgets)
+    setGraphData(newGraph)
     console.log('deleting budgets')
-    setBudgets([])
-    setBudgetsSet(false);
-    setGraphData([])
     const userRef = await getDocs(
       query(
         collection(db, "users")
@@ -306,45 +336,84 @@ export default function BudgetContent({ notInCard, props }) {
           )
         );
         budgetsRef.docs.forEach(async (budget) => {
-          const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
-          await deleteDoc(docRef)
-            .then(() => {
-              console.log('document deleted')
-            })
+          if (budget.data().month === month) {
+            const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
+            await deleteDoc(docRef)
+              .then(() => {
+                console.log('document deleted')
+              })
+          }
         })
       }
     })
   }
 
+  const nextMonth = () => {
+    if (month === 12) {
+      setMonth(1)
+      setYear(year + 1)
+    } else {
+      setMonth(month + 1)
+    }
+  }
+
+  const prevMonth = () => {
+    if (month === 1) {
+      setMonth(12)
+      setYear(year - 1)
+    } else {
+      setMonth(month - 1)
+    }
+  }
+
+  // Returns true if budget is in current month
+  const isInMonth = (value) => {
+    const inMonth = value.month
+    return inMonth === month;
+  }
+
   return (
-      <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
-        {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
+    <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
+      {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
+      <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
+
         <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <BarChart data={graphData} layout="vertical" width={600} height={250} >
-            <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
-              {
-                graphData.map((entry, index) => (
-                  <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
-                ))
-              }
-            </Bar>
-            <Bar dataKey="max" barSize={10}>
-              {
-                graphData.map((entry, index) => (
-                  <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
-                ))
-              }
-            </Bar>
-            {/*
+          <Row>
+            <Col>
+              <Button onClick={prevMonth}>Prev</Button>
+            </Col>
+            <Col>{`${monthsDict[month]} ${year}`}</Col>
+            <Col>
+              <Button onClick={nextMonth}>Next</Button>
+            </Col>
+          </Row>
+        </Container>
+
+        <BarChart data={graphData.filter(isInMonth)} layout="vertical" width={600} height={250} >
+          <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+            {
+              graphData.filter(isInMonth).map((entry, index) => (
+                <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
+              ))
+            }
+          </Bar>
+          <Bar dataKey="max" barSize={10}>
+            {
+              graphData.filter(isInMonth).map((entry, index) => (
+                <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
+              ))
+            }
+          </Bar>
+          {/*
               
               NOTICE NOTICE NOTICE
               BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
     
               */}
-            <XAxis stroke="black" type="number" reversed />
-            <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
-            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
-          </BarChart>
+          <XAxis stroke="black" type="number" reversed />
+          <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+          <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+        </BarChart>
 
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
@@ -410,25 +479,24 @@ export default function BudgetContent({ notInCard, props }) {
 
         {
           notInCard ?
-        <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            Budget
-          </Card.Header>
-          <Card.Header>
-            <Row>
-              <Col className="border-end">Category</Col>
-              <Col>Limit</Col>
-            </Row>
-          </Card.Header>
-        </Card>
-        :
-        <></>
+            <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                Budget
+              </Card.Header>
+              <Card.Header>
+                <Row>
+                  <Col className="border-end">Category</Col>
+                  <Col>Limit</Col>
+                </Row>
+              </Card.Header>
+            </Card>
+            :
+            <></>
         }
 
         {/*Cards with Name, Total, Category, and Date*/}
-        {
-          budgets.map((item, index) => (
-
+        { 
+          budgets.filter(isInMonth).map((item, index) => (
             <>
               <BudgetItem
                 key={index}
@@ -441,7 +509,7 @@ export default function BudgetContent({ notInCard, props }) {
           ))
         }
       </Container>
-      {budgetsSet ? (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+      {budgets.filter(isInMonth).length !== 0 ? (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
           <FaTrashAlt size={"30px"} />
         </Fab>
@@ -449,8 +517,7 @@ export default function BudgetContent({ notInCard, props }) {
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>
-      </Container>)
-     }
+      </Container>)}
     </Container>
   )
 }

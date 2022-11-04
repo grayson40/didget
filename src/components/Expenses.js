@@ -53,7 +53,22 @@ const limitFill =
   'academic': '#45B39D',
 }
 
-export default function ExpenseContent({ notInCard }) {
+const monthsDict = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December'
+}
+
+export default function Expenses({ notInCard }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
@@ -64,13 +79,13 @@ export default function ExpenseContent({ notInCard }) {
   var [insuranceTotal, setInsuranceTotal] = useState(0)
   var [academicTotal, setAcademicTotal] = useState(0)
   var [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  const [month, setMonth] = useState(d.getMonth() + 1);
+  const [year, setYear] = useState(d.getFullYear())
   const place = useRef();
   const total = useRef();
   const category = useRef();
   const date = useRef();
   const dataFetchedRef = useRef(false);
-
-  console.log(notInCard);
 
   // List to store graph data objects
   var graphData = [
@@ -259,14 +274,14 @@ export default function ExpenseContent({ notInCard }) {
                   collection(db, `users/${user.id}/budgets/`)
                 )
               );
-
+              let arr = newExpense.date.split('/')
+              let expenseMonth = parseInt(arr[0])
               budgetsRef.docs.forEach(async (budget) => {
-                if (budget.data().category.toLowerCase() === newExpense.category.toLowerCase()) {
-                  console.log(budget.id)
+                if (budget.data().category.toLowerCase() === newExpense.category.toLowerCase() && budget.data().month === expenseMonth) {
                   const docRef = doc(db, `users/${user.id}/budgets/${budget.id}`)
                   const updatedCurrent = parseInt(budget.data().current) + newExpense.total;
                   await updateDoc(docRef, { current: updatedCurrent })
-                    .then(console.log(`${budget.data().category} current updated`))
+                    .then(console.log(`${budget.data().category} current for month ${budget.data().month} updated`))
                 }
               })
             }
@@ -363,14 +378,16 @@ export default function ExpenseContent({ notInCard }) {
             collection(db, `users/${user.id}/budgets/`)
           )
         );
+        let arr = updatedExpense.date.split('/')
+        let expenseMonth = parseInt(arr[0])
         budgetsRef.docs.forEach(async (budget) => {
-          if (budget.data().category.toLowerCase() === updatedExpense.category) {
+          if (budget.data().category.toLowerCase() === updatedExpense.category && budget.data().month === expenseMonth) {
             const updatedCurrent = budget.data().current + totalDifference;
             const budgetRef = doc(db, `users/${user.id}/budgets/${budget.id}`);
             // Update budget current
             await updateDoc(budgetRef, { current: updatedCurrent })
               .then(() => {
-                console.log(`${budget.data().category} current updated`)
+                console.log(`${budget.data().category} current of month ${budget.data().month} updated`)
               })
               .catch(error => {
                 setError(error.toString())
@@ -389,6 +406,7 @@ export default function ExpenseContent({ notInCard }) {
   const deleteExpense = async (id) => {
     let deletedExpenseCategory = null
     let deletedExpenseTotal = null
+    let deletedExpenseDate = null
     console.log(`deleting ${id}`)
     const newExpenses = expenses.filter((expense) => expense.id !== id);
     setExpenses(newExpenses);
@@ -413,6 +431,7 @@ export default function ExpenseContent({ notInCard }) {
             const docRef = doc(db, `users/${user.id}/expenses/${expense.id}`)
             deletedExpenseCategory = expense.data().category
             deletedExpenseTotal = expense.data().total
+            deletedExpenseDate = expense.data().date
             await deleteDoc(docRef)
               .then(() => {
                 console.log('document deleted')
@@ -452,14 +471,16 @@ export default function ExpenseContent({ notInCard }) {
             collection(db, `users/${user.id}/budgets/`)
           )
         );
+        let arr = deletedExpenseDate.split('/')
+        let expenseMonth = parseInt(arr[0])
         budgetsRef.docs.forEach(async (budget) => {
-          if (budget.data().category.toLowerCase() === deletedExpenseCategory.toLowerCase()) {
+          if (budget.data().category.toLowerCase() === deletedExpenseCategory.toLowerCase() && budget.data().month === expenseMonth) {
             const updatedCurrent = parseInt(budget.data().current) - deletedExpenseTotal;
             const budgetRef = doc(db, `users/${user.id}/budgets/${budget.id}`);
             // Update budget current
             await updateDoc(budgetRef, { current: updatedCurrent })
               .then(() => {
-                console.log(`${budget.data().category} current updated`)
+                console.log(`${budget.data().category} current of month ${budget.data().month} updated`)
               })
               .catch(error => {
                 setError(error.toString())
@@ -470,8 +491,33 @@ export default function ExpenseContent({ notInCard }) {
     })
   }
 
+  const nextMonth = () => {
+    if (month === 12) {
+      setMonth(1)
+      setYear(year + 1)
+    } else {
+      setMonth(month + 1)
+    }
+  }
+
+  const prevMonth = () => {
+    if (month === 1) {
+      setMonth(12)
+      setYear(year - 1)
+    } else {
+      setMonth(month - 1)
+    }
+  }
+
+  // Returns true if expense is in current month
+  const isInMonth = (value) => {
+    let arr = value.date.split('/')
+    const inMonth = parseInt(arr[0])
+    return inMonth === month;
+  }
+
   return (
-    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
+    <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%' }}>
       {/* popup add window */}
       <Modal show={open} onClose={handleClose} onHide={handleClose}>
         <Modal.Body>
@@ -513,6 +559,17 @@ export default function ExpenseContent({ notInCard }) {
       <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
         <PageBar name='Expenses' />
         <TopBar />
+        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
+          <Row>
+            <Col>
+              <Button onClick={prevMonth}>Prev</Button>
+            </Col>
+            <Col>{`${monthsDict[month]} ${year}`}</Col>
+            <Col>
+              <Button onClick={nextMonth}>Next</Button>
+            </Col>
+          </Row>
+        </Container>
         <Container height="260px">
           <PieChart width={430} height={250}>
             <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
@@ -534,27 +591,26 @@ export default function ExpenseContent({ notInCard }) {
         </Container>
 
         {
-        console.log(notInCard)}{
-        notInCard ?
-        <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            Expenses
-          </Card.Header>
-          <Card.Header>
-            <Row>
-              <Col sm={4} className="border-end">Place</Col>
-              <Col sm={4} className="border-end">Total</Col>
-              <Col sm={4}>Date</Col>
-            </Row>
-          </Card.Header>
-        </Card>
-        :
-        <></>
+          notInCard ?
+            <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                Expenses
+              </Card.Header>
+              <Card.Header>
+                <Row>
+                  <Col sm={4} className="border-end">Place</Col>
+                  <Col sm={4} className="border-end">Total</Col>
+                  <Col sm={4}>Date</Col>
+                </Row>
+              </Card.Header>
+            </Card>
+            :
+            <></>
         }
-        
+
         {
-          expenses.map((expense, index) => (
-            <ExpenseItem
+          expenses.filter(isInMonth).map((expense, index) => (
+            <Expense
               key={index}
               expense={expense}
               onDelete={deleteExpense}
