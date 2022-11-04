@@ -3,7 +3,6 @@ import { Card, Row, Col, ProgressBar } from 'react-bootstrap'
 import '../styles/budget.css';
 
 export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
-  const [value, setValue] = useState(item.limit);
 
   //Calulates the total amount of money left (spending limit - amount spent)
   function left(limit, spent) {
@@ -15,7 +14,7 @@ export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
   }
 
   const InlineEdit = () => {
-    const [editingValue, setEditingValue] = useState(value);
+    const [editingValue, setEditingValue] = useState(item.limit);
     
     const onChange = (event) => {
       setEditingValue(event.target.value);
@@ -30,10 +29,9 @@ export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
     const onBlur = (event) => {
       const val = parseInt(event.target.value)
       if (event.target.value.trim() === "") {
-        setEditingValue(value);
+        setEditingValue(item.limit);
       } else {
         if (val !== item.limit) {
-          setValue(event.target.value)
           onUpdate(item.id, val)
         }
       }
