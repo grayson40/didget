@@ -1,3 +1,4 @@
+// Import necessary libraries
 import React, { createContext, useState } from 'react';
 import Signup from "./Signup";
 import { Container } from 'react-bootstrap'
@@ -15,9 +16,11 @@ import Tasks from './Tasks';
 import Financial from './Financial';
 import Expenses from './Expenses';
 
+// const variable to set dark or light theme
 export const ThemeContext = createContext(null)
 
-function App() {
+// main function App()
+export default function App() {
 
   //Sets light/dark theme. reading saved user preference from local storage
   const [theme, setTheme] = useState(() => {
@@ -26,20 +29,28 @@ function App() {
     return initialValue || ""
   })
 
+  // variable to toggle dark/light theme
   const toggleTheme = () => {
     setTheme((curr) => (curr === "light" ? "dark" : "light"))
   }
 
+  // store user preferred theme
   React.useEffect(() => {
     localStorage.setItem("isUserPreferDark", JSON.stringify(theme))
   },[theme])
 
 
+  // return val to display to screen
   return (
 
+    // toggleable theme container
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
+
+      {/* main container*/}
       <Container fluid className="d-flex align-items-center justify-content-center" style={{ maxWidth: "100%", minHeight: "100vh" }} id={theme}>
         <div className="w-100" style={{ maxWidth: '100%' }}>
+
+          {/* backend path creation for sight navigation */}
           <Router>
             <AuthProvider>
               <Routes>
@@ -58,14 +69,12 @@ function App() {
             </AuthProvider>
           </Router>
         </div>
-        <Container fluid style={{ position: "fixed", bottom: "3%", left: '5%' , display: 'flex' }}>
+        
+        {/* switch to toggle light/dark mode*/}
+        <Container fluid style={{ position: "fixed", width: '75px', bottom: "3%", left: '5%' , display: 'flex' }}>
         <ReactSwitch onChange={toggleTheme} checked={theme === "dark"}/>
         </Container>
       </Container>
     </ThemeContext.Provider>
-
   )
-
 }
-
-export default App;

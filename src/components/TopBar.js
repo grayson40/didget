@@ -18,7 +18,7 @@ import { FaGrinSquint, FaBars } from 'react-icons/fa';
 import { MDBDropdownItem, MDBDropdownLink } from 'mdb-react-ui-kit';
 //import './topbar.css';
 
-
+// main function TopBar()
 export default function TopBar() {
 
   /**
@@ -26,65 +26,119 @@ export default function TopBar() {
    * @param void
    * @return {Promise<void>} A Promise for the completion of the callback.
    */
+
+  // function logOut()
   function logOut() {
+
+    // returns signOut(), passed parameter auth
     return signOut(auth);
   }
 
   //  Create title constants for the navbar dropdowns
   const quickAccTitle = (<FaBars glyph="star"> Dropdown </FaBars>);
 
+  // return val to display to screen
   return (
-    <Container fluid>
-    <Navbar bg="dark" variant="dark" fixed="top" height ="4vh">
-        <div class = "container-fluid d-flex justify-content-start">
 
-            {/* Top Bar should consist of a leftbound drop down */}
-            {/* To be replaced with a hamburger dropdown button */}
-            <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/">Home</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/schedule">Schedule</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="/notes">Notes</MDBDropdownLink>
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-            <MDBDropdownLink href="#">Financial &raquo;</MDBDropdownLink>
-            <ul className="dropdown-menu dropdown-submenu">
-              <MDBDropdownItem>
-                <MDBDropdownLink href="/financial">Financial Home</MDBDropdownLink>
-              </MDBDropdownItem>
-              <MDBDropdownItem>
-                <MDBDropdownLink href="/budget">Budget</MDBDropdownLink>
-              </MDBDropdownItem>
-              <MDBDropdownItem>
-                <MDBDropdownLink href="/expenses">Expenses</MDBDropdownLink>
-              </MDBDropdownItem>
-            </ul>
-          </MDBDropdownItem>
-          </DropdownButton>
-        </div>
-        <div class = "container-fluid d-flex justify-content-center">
-          {/* Top Bar should also consist of an app title */}
-          <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-center">
-              <Navbar.Brand href="/">Didget: Pocket Teller</Navbar.Brand>
-          </Navbar.Collapse>
-        </div>
-        <div class = "container-fluid d-flex justify-content-end">
-          {/* Top Bar should finally consist of a right drop down button */}
-          {/* Could be replaced with a profile icon dropdownbutton setup */}
-          <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" style = {{ background: 'gold'}}>
-            <Dropdown.Item href="/settings">Settings</Dropdown.Item>
-            <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
-          </DropdownButton>
-        </div>
-    </Navbar>
+    // main container
+    <Container fluid>
+
+      {/* main navbar container */}
+      <Navbar bg="dark" variant="dark" fixed="top" height ="4vh">
+
+          {/* div to set content to start */}
+          <div class = "container-fluid d-flex justify-content-start">
+
+              {/* Top Bar should consist of a leftbound drop down */}
+              {/* To be replaced with a hamburger dropdown button */}
+              <DropdownButton class="dropdown-toggle" id="dropdown-basic-button" title={quickAccTitle} style = {{ background: 'gold'}}>
+
+                {/* dropdown button Home */}
+                <MDBDropdownItem>
+                  <MDBDropdownLink href="/">Home</MDBDropdownLink>
+                </MDBDropdownItem>
+
+                {/* nested dropdown menu inside button */}
+                <MDBDropdownItem>
+
+                  {/* dropdown Academics */}
+                  <MDBDropdownLink href="#">Academics &raquo;</MDBDropdownLink>
+
+                      {/* dropdown list */}
+                      <ul className="dropdown-menu dropdown-submenu">
+
+                        {/* dropdown button Tasks */}
+                        <MDBDropdownItem>
+                          <MDBDropdownLink href="/tasks">Tasks</MDBDropdownLink>
+                        </MDBDropdownItem>
+
+                        {/* dropdown button Schedule */}
+                        <MDBDropdownItem>
+                          <MDBDropdownLink href="/schedule">Schedule</MDBDropdownLink>
+                        </MDBDropdownItem>
+
+                        {/* dropdown button Notes */}
+                        <MDBDropdownItem>
+                          <MDBDropdownLink href="/notes">Notes</MDBDropdownLink>
+                        </MDBDropdownItem>
+                      </ul>
+                </MDBDropdownItem>
+
+                {/* nested dropdown menu inside button*/}
+                <MDBDropdownItem>
+
+                  {/* dropdown Financial */}
+                  <MDBDropdownLink href="#">Financial &raquo;</MDBDropdownLink>
+
+                    {/* dropdown list */}
+                    <ul className="dropdown-menu dropdown-submenu">
+
+                      {/* dropdown button Home */}
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/financial">Home</MDBDropdownLink>
+                      </MDBDropdownItem>
+
+                      {/* dropdown button Budget */}
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/budget">Budget</MDBDropdownLink>
+                      </MDBDropdownItem>
+
+                      {/* dropdown button Expenses */}
+                      <MDBDropdownItem>
+                        <MDBDropdownLink href="/expenses">Expenses</MDBDropdownLink>
+                      </MDBDropdownItem>
+                    </ul>
+                </MDBDropdownItem>
+              </DropdownButton>
+          </div>
+
+          {/* div to set content to center */}
+          <div class = "container-fluid d-flex justify-content-center">
+
+            {/* Top Bar should also consist of an app title */}
+            <Navbar.Toggle />
+
+              {/* main logo */}
+              <Navbar.Collapse className="justify-content-center">
+                  <Navbar.Brand href="/">Didget: Pocket Teller</Navbar.Brand>
+              </Navbar.Collapse>
+          </div>
+
+          {/* div to set content to end */}
+          <div class = "container-fluid d-flex justify-content-end">
+
+            {/* Top Bar should finally consist of a right drop down button */}
+            {/* Could be replaced with a profile icon dropdownbutton setup */}
+            <DropdownButton icon={<FaGrinSquint />} title={"Profile"} id="dropdown-basic-button" style = {{ background: 'gold'}}>
+
+              {/* dropdown button Settings */}
+              <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+
+              {/* dropdown button Sign Out */}
+              <Dropdown.Item onClick={logOut}>Sign Out</Dropdown.Item>
+            </DropdownButton>
+          </div>
+      </Navbar>
     </Container>
   );
 }
