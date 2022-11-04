@@ -46,7 +46,7 @@ const symbolsDict = {
   'Entertainment': '🍿'
 }
 
-export default function BudgetContent({ notInCard }) {
+export default function BudgetContent({ notInCard, props }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
@@ -441,15 +441,15 @@ export default function BudgetContent({ notInCard }) {
           ))
         }
       </Container>
-      {budgetsSet ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+      {budgetsSet ? (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
           <FaTrashAlt size={"30px"} />
         </Fab>
-      </Container> : <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+      </Container>) : (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
           <FaPlus size={"30px"} />
         </Fab>
-      </Container>
+      </Container>)
      }
     </Container>
   )
