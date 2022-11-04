@@ -610,7 +610,7 @@ export default function Expenses({ notInCard }) {
 
         {
           expenses.filter(isInMonth).map((expense, index) => (
-            <Expense
+            <ExpenseItem
               key={index}
               expense={expense}
               onDelete={deleteExpense}
