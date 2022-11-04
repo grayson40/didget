@@ -69,6 +69,7 @@ export default function BudgetContent({ notInCard }) {
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [expenses, setExpenses] = useState([])
+  const [incomes, setIncomes] = useState([])
   const [month, setMonth] = useState(d.getMonth() + 1);
   const [year, setYear] = useState(d.getFullYear())
   const rentLimit = useRef();
@@ -77,6 +78,7 @@ export default function BudgetContent({ notInCard }) {
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const incomeRef = useRef();
 
   const toDate = () => {
     let date = new Date();
@@ -130,6 +132,7 @@ export default function BudgetContent({ notInCard }) {
               collection(db, `users/${user.id}/expenses/`)
             )
           );
+
           setExpenses(
             expensesRef.docs.map((expense) => ({
               id: expense.data().id,
@@ -137,6 +140,19 @@ export default function BudgetContent({ notInCard }) {
               place: expense.data().place,
               total: expense.data().total,
               date: expense.data().date
+            }))
+          )
+
+          const incomesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/incomes`)
+            )
+          );
+          setIncomes(
+            incomesRef.docs.map((income) => ({
+              income: income.data().income,
+              month: income.data().month,
+              year: income.data().year
             }))
           )
         }
@@ -298,6 +314,12 @@ export default function BudgetContent({ notInCard }) {
       }))
     )
 
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+
     // Add budgets to db
     newBudgets.forEach(async (category) => {
       const newBudget = {
@@ -306,17 +328,24 @@ export default function BudgetContent({ notInCard }) {
         current: category.current,
         month: category.month
       }
-      const userRef = await getDocs(
-        query(
-          collection(db, "users")
-        )
-      );
       userRef.docs.map(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
           const collectionRef = collection(db, `users/${user.id}/budgets/`);
           await addDoc(collectionRef, newBudget);
         }
       })
+    })
+
+    const newIncome = {
+      income: parseInt(incomeRef.current.value),
+      month: month,
+      year: year
+    }
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = collection(db, `users/${user.id}/incomes/`);
+        await addDoc(incomesRef, newIncome);
+      }
     })
 
     fetchData()
@@ -378,6 +407,20 @@ export default function BudgetContent({ notInCard }) {
     return inMonth === month;
   }
 
+  const expenseInMonth = (value) => {
+    const arr = value.date.split('/')
+    const _month = parseInt(arr[0])
+    return _month === month;
+  }
+
+  const calculateExpenseTotal = () => {
+    let total = 0;
+    expenses.filter(expenseInMonth).forEach((expense) => {
+      total += expense.total
+    })
+    return total
+  }
+
   return (
     <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
       {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
@@ -422,22 +465,27 @@ export default function BudgetContent({ notInCard }) {
         </BarChart>
 
         {/* Income Card */}
-        <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
-          <Card.Header>
-            <Row className="mb-2">
-              <Col className="border-end">Income</Col>
-              <Col>Income Amount</Col>
-            </Row>
-            <Row>
-              <Col>
-                {false
-                  ? <ProgressBar animated variant="success" now={30} label={`$200 Spent Total`} />
-                  : <ProgressBar animated variant="danger" now={100} label={`$1000 Spent Total`} />
-                }
-              </Col>
-            </Row>
-          </Card.Header>
-        </Card>
+        {incomes.filter(isInMonth).length !== 0 ?
+          incomes.filter(isInMonth).map((income) => (
+            <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>${income.income}</Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {calculateExpenseTotal() < income.income
+                      ? <ProgressBar animated variant="success" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                      : <ProgressBar animated variant="danger" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                    }
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          ))
+          : <p>No income!!!!</p>
+        }
 
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
@@ -450,7 +498,7 @@ export default function BudgetContent({ notInCard }) {
                 <Row className="mb-2">
                   <Col className="border-end">Income</Col>
                   <Col>
-                    <Form.Control type='income'/>
+                    <Form.Control type='income' ref={incomeRef} />
                   </Col>
                 </Row>
               </Form.Group>
@@ -527,7 +575,7 @@ export default function BudgetContent({ notInCard }) {
         }
 
         {/*Cards with Name, Total, Category, and Date*/}
-        { 
+        {
           budgets.filter(isInMonth).map((item, index) => (
             <>
               <BudgetItem
