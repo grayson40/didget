@@ -46,8 +46,9 @@ const symbolsDict = {
   'Entertainment': '🍿'
 }
 
-export default function BudgetContent({ notInCard }) {
+export default function BudgetContent({ notInCard, homepage }) {
   if (notInCard !== false) notInCard = true;
+  if (homepage !== true) homepage = false;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
@@ -440,7 +441,9 @@ export default function BudgetContent({ notInCard }) {
             </>
           ))
         }
+        
       </Container>
+      { !homepage ? <div>
       {budgetsSet ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
         <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
           <FaTrashAlt size={"30px"} />
@@ -450,7 +453,12 @@ export default function BudgetContent({ notInCard }) {
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
+      }
+      </div>
+      :
+      <></>
      }
     </Container>
+    
   )
 }

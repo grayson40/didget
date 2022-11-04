@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Card, Row, Col, Button, Modal, Form } from 'react-bootstrap'
 import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
+
 const d = new Date();
 
 export default function Expense({ expense, onDelete, onUpdate, backColor, bordColor, notInCard }) {

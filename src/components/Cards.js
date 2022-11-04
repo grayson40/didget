@@ -6,21 +6,64 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import { Button, Collapse, Row, Col } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
-import { ReferenceLine, PieChart, Pie, Cell, Legend, BarChart, Bar, YAxis, XAxis } from 'recharts';
+import BudgetContent from './BudgetContent';
+import {  PieChart, Pie, Cell, Legend } from 'recharts';
+import { auth, db } from '../firebase';
+import {
+    collection,
+    getDocs,
+    query
+  } from 'firebase/firestore';
+
+
+
 
 export default function Cards() {
+    const [budgetBool, setBudgetBool] = useState(false)
+    async function fetchData() {
+        if (auth.currentUser) {
+          const usersRef = await getDocs(
+            query(
+              collection(db, 'users')
+            )
+          );
+          // Iterate through the documents fetched
+          usersRef.forEach(async (user) => {
+            if (user.data().uid === auth.currentUser.uid) {
+              const budgetsRef = await getDocs(
+                query(
+                  collection(db, `users/${user.id}/budgets`)
+                )
+              );
+              if (budgetsRef.docs.length === 0) {
+                setBudgetBool(false);
+              } else {
+                setBudgetBool(true);
+                
+              }
+            }
+        })
+    }
+}
+
+  // Used to fetch users notes from firestore
+  useEffect(() => {
+    fetchData();
+    console.log('in budget page effect')
+  }, [])
+
+
 
     const [open1, setOpen1] = useState(true);
     // const [open2, setOpen2] = useState(true)
     const [open3, setOpen3] = useState(true);
     const [open4, setOpen4] = useState(true);
-    let budgetBool = true;
     
 
   //    Use sample data for the different categories of bar graph
@@ -95,25 +138,10 @@ export default function Cards() {
                 <Collapse in={open3}>
                     <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
                     <div class="container-fluid justify-content-center align-content-center" height={500}>
-                        {budgetBool === true ?
+                        {budgetBool ?
                         /* Create a vertically aligned bar chart containing the dataset of limits and expense totals */
-                        <BarChart data={data} layout="vertical" width={560} height={250} >
-                            <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
-                            {
-                                data.map((entry, index) => (
-                                <Cell key={'expense'} fill={expenseColors[index]}/>
-                                ))
-                            }
-                            </Bar>
-                            <Bar dataKey="max" barSize={10}>{
-                                data.map((entry, index) => (
-                                <Cell key={'max'} fill={limitColors[index]}/>
-                                ))}
-                            </Bar>
-                            <XAxis type="number" reversed />
-                            <YAxis type="category" width={150} padding={{ left: 20 }} dataKey="name" orientation="right" />
-                            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
-                        </BarChart>
+                        <BudgetContent notInCard={false} homepage = {true}/>
+                       
                         :
                         /* Create a pie chart to hold the data of each individual category */
                         <PieChart width={400} height={250}>
@@ -128,33 +156,6 @@ export default function Cards() {
                         </PieChart>
                         }
                         
-                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
-                            <Card.Body>
-                                <Row>
-                                    <Col sm={4} className="border-end">Name</Col>
-                                    <Col sm={4} className="border-end">Total</Col>
-                                    <Col sm={4}>Date</Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
-                            <Card.Body>
-                                <Row>
-                                    <Col sm={4} className="border-end">Name</Col>
-                                    <Col sm={4} className="border-end">Total</Col>
-                                    <Col sm={4}>Date</Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
-                            <Card.Body>
-                                <Row>
-                                    <Col sm={4} className="border-end">Name</Col>
-                                    <Col sm={4} className="border-end">Total</Col>
-                                    <Col sm={4}>Date</Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
                     </div>
                     </Container>
                 </Collapse>
