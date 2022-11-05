@@ -63,7 +63,7 @@ const monthsDict = {
 
 const d = new Date();
 
-export default function BudgetContent({ notInCard }) {
+export default function BudgetContent({ notInCard, showButton }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
@@ -494,7 +494,7 @@ export default function BudgetContent({ notInCard }) {
         }
 
         {/*Cards with Name, Total, Category, and Date*/}
-        { 
+        {
           budgets.filter(isInMonth).map((item, index) => (
             <>
               <BudgetItem
@@ -508,15 +508,21 @@ export default function BudgetContent({ notInCard }) {
           ))
         }
       </Container>
-      {budgets.filter(isInMonth).length !== 0 ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
-        <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
-          <FaTrashAlt size={"30px"} />
-        </Fab>
-      </Container> : <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
-        <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
-          <FaPlus size={"30px"} />
-        </Fab>
-      </Container>}
+      { showButton &&
+        <>
+          {
+            budgets.filter(isInMonth).length !== 0 ? (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+              <Fab size={"80px"} color="primary" onClick={deleteBudgets}>
+                <FaTrashAlt size={"30px"} />
+              </Fab>
+            </Container>) : (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
+              <Fab size={"80px"} color="primary" onClick={(e) => setOpen(true)}>
+                <FaPlus size={"30px"} />
+              </Fab>
+            </Container>)
+          }
+        </>
+      }
     </Container>
   )
 }

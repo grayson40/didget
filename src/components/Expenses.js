@@ -16,7 +16,7 @@ import {
   deleteDoc
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import Expense from './Expense'
+import ExpenseItem from './ExpenseItem'
 
 // Date object
 const d = new Date();
@@ -583,6 +583,8 @@ export default function Expenses({ notInCard }) {
         {
           expenses.filter(isInDateRange).map((expense, index) => (
             <Expense
+          expenses.filter(isInMonth).map((expense, index) => (
+            <ExpenseItem
               key={index}
               expense={expense}
               onDelete={deleteExpense}
