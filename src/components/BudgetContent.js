@@ -377,18 +377,6 @@ export default function BudgetContent({ notInCard }) {
       {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
       <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
 
-        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <Row>
-            <Col>
-              <Button onClick={prevMonth}>Prev</Button>
-            </Col>
-            <Col>{`${monthsDict[month]} ${year}`}</Col>
-            <Col>
-              <Button onClick={nextMonth}>Next</Button>
-            </Col>
-          </Row>
-        </Container>
-
         <BarChart data={graphData.filter(isInMonth)} layout="vertical" width={600} height={250} >
           <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
             {
@@ -415,13 +403,24 @@ export default function BudgetContent({ notInCard }) {
           <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
         </BarChart>
 
+        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
+          <Row>
+            <Col sm={4}>
+              <Button onClick={prevMonth}>Prev</Button>
+            </Col>
+            <Col >{`${monthsDict[month]} ${year}`}</Col>
+          <Col sm={4}>
+              <Button onClick={nextMonth}>Next</Button>
+            </Col>
+          </Row>
+        </Container>
+
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
           <Modal.Body>
             <h2 className='text-center mb-4'>Create Budget</h2>
             {/* {error && <Alert variant="danger">{error}</Alert>} */}
             <Form>
-              {/* TODO: add budget category and limit fields */}
               <Form.Group id='rent'>
                 <Row className="mb-2">
                   <Col className="border-end">Rent</Col>
