@@ -20,6 +20,8 @@ import Expense from './Expense'
 
 // Date object
 const d = new Date();
+var firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
+var lastDay = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate() + 1);
 
 // Budget colors
 const categoryFill =
@@ -53,20 +55,6 @@ const limitFill =
   'academic': '#45B39D',
 }
 
-const monthsDict = {
-  1: 'January',
-  2: 'February',
-  3: 'March',
-  4: 'April',
-  5: 'May',
-  6: 'June',
-  7: 'July',
-  8: 'August',
-  9: 'September',
-  10: 'October',
-  11: 'November',
-  12: 'December'
-}
 
 export default function Expenses({ notInCard }) {
   if (notInCard !== false) notInCard = true;
@@ -79,8 +67,8 @@ export default function Expenses({ notInCard }) {
   var [insuranceTotal, setInsuranceTotal] = useState(0)
   var [academicTotal, setAcademicTotal] = useState(0)
   var [entertainmentTotal, setEntertainmentTotal] = useState(0)
-  const [month, setMonth] = useState(d.getMonth() + 1);
-  const [year, setYear] = useState(d.getFullYear())
+  const [startDate, setStartDate] = useState(new Date(firstDay))
+  const [endDate, setEndDate] = useState(new Date(lastDay))
   const place = useRef();
   const total = useRef();
   const category = useRef();
@@ -491,29 +479,10 @@ export default function Expenses({ notInCard }) {
     })
   }
 
-  const nextMonth = () => {
-    if (month === 12) {
-      setMonth(1)
-      setYear(year + 1)
-    } else {
-      setMonth(month + 1)
-    }
-  }
+  const isInDateRange = (expense) => {
+    let expenseDate = new Date(expense.date)
 
-  const prevMonth = () => {
-    if (month === 1) {
-      setMonth(12)
-      setYear(year - 1)
-    } else {
-      setMonth(month - 1)
-    }
-  }
-
-  // Returns true if expense is in current month
-  const isInMonth = (value) => {
-    let arr = value.date.split('/')
-    const inMonth = parseInt(arr[0])
-    return inMonth === month;
+    return expenseDate >= startDate && expenseDate <= endDate
   }
 
   return (
@@ -559,17 +528,6 @@ export default function Expenses({ notInCard }) {
       <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
         <PageBar name='Expenses' />
         <TopBar />
-        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <Row>
-            <Col>
-              <Button onClick={prevMonth}>Prev</Button>
-            </Col>
-            <Col>{`${monthsDict[month]} ${year}`}</Col>
-            <Col>
-              <Button onClick={nextMonth}>Next</Button>
-            </Col>
-          </Row>
-        </Container>
         <Container height="260px">
           <PieChart width={430} height={250}>
             <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
@@ -589,7 +547,21 @@ export default function Expenses({ notInCard }) {
             ]}></Legend>
           </PieChart>
         </Container>
-
+        <br></br>
+        <Row >
+          <Col sm={4}>
+            <Form.Group controlId="start">
+              <Form.Control type="date" onChange={(e) => setStartDate(new Date(e.target.value))}/>
+            </Form.Group>
+          </Col>
+          <Col style={{fontSize: '30px', textAlign: 'center', maxWidth: '140px'}}>-</Col>
+          <Col sm={4}>
+            <Form.Group controlId="end">
+              <Form.Control type="date" onChange={(e) => setEndDate(new Date(e.target.value))}/>
+            </Form.Group>
+          </Col>
+        </Row>
+        <br></br>
         {
           notInCard ?
             <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
@@ -609,7 +581,7 @@ export default function Expenses({ notInCard }) {
         }
 
         {
-          expenses.filter(isInMonth).map((expense, index) => (
+          expenses.filter(isInDateRange).map((expense, index) => (
             <Expense
               key={index}
               expense={expense}
