@@ -13,8 +13,9 @@ import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
 import { ReferenceLine, PieChart, Pie, Cell, Legend, BarChart, Bar, YAxis, XAxis } from 'recharts';
+import BudgetContent from './BudgetContent';
 
-export default function Cards() {
+export default function Cards({ date }) {
 
     const [open1, setOpen1] = useState(true);
     // const [open2, setOpen2] = useState(true)
@@ -63,8 +64,6 @@ export default function Cards() {
     '#A569BD'
   ];
 
-
-
   // Render Cards
   return (
     <div>
@@ -80,7 +79,7 @@ export default function Cards() {
                 </Button>
                 <Collapse in={open1}>
                     <div>
-                      <ScheduleContent showButton={false} />
+                      <ScheduleContent showButton={false} date={date}/>
                     </div>
                 </Collapse>
             </Card>
@@ -95,66 +94,7 @@ export default function Cards() {
                 <Collapse in={open3}>
                     <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
                     <div class="container-fluid justify-content-center align-content-center" height={500}>
-                        {budgetBool === true ?
-                        /* Create a vertically aligned bar chart containing the dataset of limits and expense totals */
-                        <BarChart data={data} layout="vertical" width={560} height={250} >
-                            <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
-                            {
-                                data.map((entry, index) => (
-                                <Cell key={'expense'} fill={expenseColors[index]}/>
-                                ))
-                            }
-                            </Bar>
-                            <Bar dataKey="max" barSize={10}>{
-                                data.map((entry, index) => (
-                                <Cell key={'max'} fill={limitColors[index]}/>
-                                ))}
-                            </Bar>
-                            <XAxis type="number" reversed />
-                            <YAxis type="category" width={150} padding={{ left: 20 }} dataKey="name" orientation="right" />
-                            <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
-                        </BarChart>
-                        :
-                        /* Create a pie chart to hold the data of each individual category */
-                        <PieChart width={400} height={250}>
-                            <Pie data={expenseData} cx="50%" cy="50%" innerRadius={45} outerRadius={70}>
-                            {
-                                data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={limitColors[index]}/>
-                                ))
-                            }
-                            </Pie>
-                            <Legend layout='vertical' verticalAlign='middle' align='right'/>
-                        </PieChart>
-                        }
-                        
-                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
-                            <Card.Body>
-                                <Row>
-                                    <Col sm={4} className="border-end">Name</Col>
-                                    <Col sm={4} className="border-end">Total</Col>
-                                    <Col sm={4}>Date</Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
-                            <Card.Body>
-                                <Row>
-                                    <Col sm={4} className="border-end">Name</Col>
-                                    <Col sm={4} className="border-end">Total</Col>
-                                    <Col sm={4}>Date</Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                        <Card style={{ width: '100%', textAlign: "Center" }} className="mb-2">
-                            <Card.Body>
-                                <Row>
-                                    <Col sm={4} className="border-end">Name</Col>
-                                    <Col sm={4} className="border-end">Total</Col>
-                                    <Col sm={4}>Date</Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
+                        <BudgetContent inDate={date}/>
                     </div>
                     </Container>
                 </Collapse>
@@ -169,7 +109,7 @@ export default function Cards() {
                 </Button>
                 <Collapse in={open4}>
                     <div>
-                        <NotesContent showButton={false}/>
+                        <NotesContent showButton={false} date={date}/>
                     </div>
                 </Collapse>
             </Card>
