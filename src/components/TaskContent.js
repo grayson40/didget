@@ -3,14 +3,14 @@ import { Card, Container, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Task from './Task'
 import Fab from '@mui/material/Fab';
 import { FaPlus } from 'react-icons/fa'
-import { 
-  collection, 
-  getDocs, 
-  query, 
-  addDoc, 
-  doc, 
-  updateDoc, 
-  deleteDoc 
+import {
+  collection,
+  getDocs,
+  query,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
@@ -265,14 +265,32 @@ export default function TaskContent(props) {
     return courseId === props.courseId
   }
 
+  const isInDate = (value) => {
+    const taskDate = value.deadline.split('/')
+    const inDate = props.inDate.split('/')
+    const taskMonth = parseInt(taskDate[0])
+    const taskDay = parseInt(taskDate[1])
+    const inMonth = parseInt(inDate[0])
+    const inDay = parseInt(inDate[1])
+
+    return taskMonth === inMonth && taskDay === inDay + 1
+  }
+
   return (
-    <Container fluid style= {{ paddingTop: '6%', paddingBottom: '6%' }}>
+    <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%' }}>
 
       {
         props.inCourse
-          ? tasks.filter(isCourseTask).map((task) => (
-            <Task key={task.id} task={task} showButtons={false} showCheck={false} onCheck={handleCheck}/>
-          ))
+          ? <> {tasks.filter(isCourseTask).filter(isInDate).length !== 0
+            ? tasks.filter(isCourseTask).filter(isInDate).map((task) => (
+              <>
+                <p>{props.inDate}</p>
+                <Task key={task.id} task={task} showButtons={false} showCheck={false} onCheck={handleCheck} />
+              </>
+            ))
+            : <p style={{textAlign: 'center'}}>No tasks due today</p>
+          }
+          </>
           :
           <>
             <Container fluid style={{ width: '600px', marginTop: '5%' }}>

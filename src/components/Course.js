@@ -103,7 +103,7 @@ export default function Course(props) {
           </>
           :
           <>
-            <TaskContent courseId={props.course.courseId} inCourse={true} />
+            <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} />
           </>
         }
         </Card.Body>
