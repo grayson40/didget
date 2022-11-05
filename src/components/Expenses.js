@@ -582,8 +582,6 @@ export default function Expenses({ notInCard }) {
 
         {
           expenses.filter(isInDateRange).map((expense, index) => (
-            <Expense
-          expenses.filter(isInMonth).map((expense, index) => (
             <ExpenseItem
               key={index}
               expense={expense}
