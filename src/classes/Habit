@@ -1,0 +1,124 @@
+//  Create a class that holds a habit and tracks the habit across a user's budgeting history
+//  the habit class should consist of float attributes:
+//      A local rent average, tracking average rent locally
+//      A local insurance average, tracking average insurance locally
+//      A local academic average, tracking average academic locally
+//      A local entertainment average, tracking average entertainment locally
+//      A local groceries average, tracking average groceries locally
+//      A local food average, tracking average food locally
+//      An Overall rent average, tracking average rent expenditure over the course of the last six months
+//      An Overall insurance average, tracking average insurance expenditure over the course of the last six months
+//      An Overall academic average, tracking average academic expenditure over the course of the last six months
+//      An Overall entertainment average, tracking average entertainment expenditure over the course of the last six months
+//      An Overall groceries average, tracking average groceries expenditure over the course of the last six months
+//      An Overall food average, tracking average food expenditure over the course of the last six months
+
+import React, { useState, useRef, useEffect } from 'react';
+import { Container, Card, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap';
+import Fab from '@mui/material/Fab';
+import { FaPlus } from 'react-icons/fa';
+import TopBar from './TopBar';
+import PageBar from './PageBar';
+import { uuidv4 } from '@firebase/util';
+import { PieChart, Pie, Cell, Legend } from 'recharts';
+import {
+  collection,
+  getDocs,
+  query,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc
+} from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import Expense from './Expense';
+
+
+class Habit {
+    constructor(user_id) {
+        //  locals: Values are junk data
+        var Local_Rent_Average = 500.82;
+        var Local_Insurance_Average = 150.24;
+        var Local_Academic_Average = 45.98;
+        var Local_Entertainment_Average = 66.90;
+        var Local_Groceries_Average = 129.88;
+        var Local_Food_Average = 98.99;
+
+        async function fetchData() {
+            if (auth.currentUser) {
+              const usersRef = await getDocs(
+                query(
+                  collection(db, 'users')
+                )
+              );
+              // Iterate through the documents fetched
+              usersRef.forEach(async (user) => {
+                if (user.data().uid === auth.currentUser.uid) {
+                  const expensesRef = await getDocs(
+                    query(
+                      collection(db, `users/${user.id}/expenses/`)
+                    )
+                  );
+        
+                  expensesRef.docs.forEach((expense) => {
+                    const _expense = {
+                      id: expense.data().id,
+                      category: expense.data().category,
+                      place: expense.data().place,
+                      total: expense.data().total,
+                      date: expense.data().date
+                    }
+                    setExpenses((current) => [...current, _expense])
+        
+                    switch (_expense.category) {
+                      case "rent":
+                        setRentTotal(rentTotal + _expense.total);
+                        console.log("adding " + rentTotal + " rent");
+                        break;
+                      case "groceries":
+                        setGroceryTotal(groceryTotal + _expense.total);
+                        console.log("adding " + groceryTotal + " groc");
+                        break;
+                      case "food":
+                        setFoodTotal(foodTotal + _expense.total);
+                        console.log("adding " + foodTotal + " food");
+                        break;
+                      case "insurance":
+                        setInsuranceTotal(insuranceTotal + _expense.total);
+                        console.log("adding " + insuranceTotal + " insu");
+                        break;
+                      case "academic":
+                        setAcademicTotal(academicTotal + _expense.total);
+                        console.log("adding " + academicTotal + " acad");
+                        break;
+                      case "entertainment":
+                        setEntertainmentTotal(entertainmentTotal + _expense.total);
+                        console.log("adding " + entertainmentTotal + " entr");
+                        break;
+                      default:
+                        break;
+                    }
+                  })
+                }
+              })
+            }
+            console.log('fetching expense data')
+          }
+        
+          useEffect(() => {
+            if (dataFetchedRef.current) {
+              return;
+            }
+            fetchData();
+            dataFetchedRef.current = true;
+            console.log('in expense page effect')
+          }, [])
+        
+
+        //  averages: Values track average expenditures over the course of the last 6 months
+        var Rent_Average, Insurance_Average, Academic_Average, 
+        Entertainment_Average, Groceries_Average, Food_Average;
+
+
+    }
+}
