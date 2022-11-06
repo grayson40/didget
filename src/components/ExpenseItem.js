@@ -5,7 +5,7 @@ import { FaTrashAlt, FaPen } from 'react-icons/fa'
 
 const d = new Date();
 
-export default function Expense({ expense, onDelete, onUpdate, backColor, bordColor, notInCard }) {
+export default function ExpenseItem({ expense, onDelete, onUpdate, backColor, bordColor, notInCard }) {
   const [open, setOpen] = useState(false);
   const place = useRef();
   const total = useRef();
