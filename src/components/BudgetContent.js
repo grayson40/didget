@@ -65,7 +65,6 @@ const d = new Date();
 
 export default function BudgetContent({ notInCard, showButton }) {
   if (notInCard !== false) notInCard = true;
-  if (homepage !== true) homepage = false;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
@@ -78,6 +77,7 @@ export default function BudgetContent({ notInCard, showButton }) {
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+
 
   /**
    * Fetches budget data from firebase. Sets budget and graph state.

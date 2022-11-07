@@ -35,7 +35,42 @@ import Expense from './Expense';
 
 
 class Habit {
+    
     constructor(user_id) {
+        const monthsDict = {
+            'Jan': 1,
+            'Feb': 2,
+            'Mar': 3,
+            'Apr': 4,
+            'May': 5,
+            'Jun': 6,
+            'Jul': 7,
+            'Aug': 8,
+            'Sep': 9,
+            'Oct': 10,
+            'Nov': 11,
+            'Dec': 12
+          }
+          
+
+
+        const [open, setOpen] = useState(false);
+        const [expenses, setExpenses] = useState([]);
+        const [error, setError] = useState('')
+        var [rentTotal, setRentTotal] = useState(0)
+        var [groceryTotal, setGroceryTotal] = useState(0)
+        var [foodTotal, setFoodTotal] = useState(0)
+        var [insuranceTotal, setInsuranceTotal] = useState(0)
+        var [academicTotal, setAcademicTotal] = useState(0)
+        var [entertainmentTotal, setEntertainmentTotal] = useState(0)
+        const [month, setMonth] = useState(d.getMonth() + 1);
+        const [year, setYear] = useState(d.getFullYear())
+        const place = useRef();
+        const total = useRef();
+        const category = useRef();
+        const date = useRef();
+        const dataFetchedRef = useRef(false);
+
         //  locals: Values are junk data
         var Local_Rent_Average = 500.82;
         var Local_Insurance_Average = 150.24;
@@ -113,12 +148,64 @@ class Habit {
             dataFetchedRef.current = true;
             console.log('in expense page effect')
           }, [])
+
         
 
         //  averages: Values track average expenditures over the course of the last 6 months
         var Rent_Average, Insurance_Average, Academic_Average, 
         Entertainment_Average, Groceries_Average, Food_Average;
+        }
+        getAverages() {
+            expenses.forEach(
 
 
+
+
+
+            )
+            function updateAverage(item) {var date = value.deadline
+                var x = new Date;
+                var curMonth = monthsDict((x.toDateString().split(" ")[1]))
+                var itemMonth = monthDict(item.deadline.toDateString().split(" ")[1]);
+                var dateDiff = curMonth - itemMonth;
+                if (dateDiff <= 6) {
+                    switch (item.category) {
+                    case "rent":
+                      
+                      break;
+                    case "groceries":
+                      setGroceryTotal(groceryTotal + _expense.total);
+                      console.log("adding " + groceryTotal + " groc");
+                      break;
+                    case "food":
+                      setFoodTotal(foodTotal + _expense.total);
+                      console.log("adding " + foodTotal + " food");
+                      break;
+                    case "insurance":
+                      setInsuranceTotal(insuranceTotal + _expense.total);
+                      console.log("adding " + insuranceTotal + " insu");
+                      break;
+                    case "academic":
+                      setAcademicTotal(academicTotal + _expense.total);
+                      console.log("adding " + academicTotal + " acad");
+                      break;
+                    case "entertainment":
+                      setEntertainmentTotal(entertainmentTotal + _expense.total);
+                      console.log("adding " + entertainmentTotal + " entr");
+                      break;
+                    default:
+                      break;
+                  }
+                }
+            }
+            function findLowestMonth(expenses) {
+                var x = new Date;
+                var lowest = monthsDict((x.toDateString().split(" ")[1]))
+                expenses.forEach(element => {
+                    
+                })
+
+            }
+        }
+        
     }
-}
