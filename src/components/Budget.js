@@ -21,7 +21,7 @@ export default function Budget() {
             <TopBar/>
 
             {/* display main page content */}
-            <BudgetContent />
+            <BudgetContent showButton={true}/>
         </Container>
     )
 }

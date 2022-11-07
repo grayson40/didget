@@ -29,7 +29,7 @@ export default function Financial() {
                     </Button>
                     <Collapse in={open1}>
                         <div>
-                            <BudgetContent notInCard={false}/>
+                            <BudgetContent showButton = {false} notInCard={false}/>
                         </div>
                     </Collapse>
                 </Card>
