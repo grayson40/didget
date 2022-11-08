@@ -383,12 +383,9 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   }
 
   const expenseFilter = (value) => {
-    const arr1 = value.date.split('/')
-    const arr2 = inDate.split('/')
-    const cardMonth = parseInt(arr1[0])
-    const inMonth = parseInt(arr2[0])
-    // console.log(`${inMonth} ${cardMonth}`)
-    return inMonth === cardMonth
+    const expDate = new Date(value.date)
+    const d = new Date(inDate)
+    return expDate.getMonth() === d.getMonth() && expDate.getDate() === d.getDate()
   }
 
   return (
@@ -596,7 +593,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                         />
                       ))}
                     </>
-                    : <p>{`No expenses for ${monthsDict[parseInt(inDate.split('/')[0])]}`}</p>
+                    : <p>No expenses for today</p>
                   }
                 </>
               }
