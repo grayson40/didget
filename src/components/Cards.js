@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
-import { Button, Collapse, Row, Col } from 'react-bootstrap';
+import { Button, Collapse } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import NotesContent from './NotesContent';
 import ScheduleContent from './ScheduleContent';
@@ -88,14 +88,6 @@ export default function Cards() {
   ];
 
   //    Use constants to hold colors for categories
-  const expenseColors = [
-    '#AED6F1',
-    '#A2D9CE',
-    '#F9E79F',
-    '#E59866',
-    '#F5B7B1',
-    '#D2B4DE'
-  ];
 
   const limitColors = [
     '#5DADE2',
