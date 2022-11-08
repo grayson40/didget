@@ -20,6 +20,7 @@ export default function Cards({ date }) {
     // const [open2, setOpen2] = useState(true)
     const [open3, setOpen3] = useState(true);
     const [open4, setOpen4] = useState(true);
+    const [isBudget, setIsBudget] = useState(true);
 
   // Render Cards
   return (
@@ -51,7 +52,11 @@ export default function Cards({ date }) {
                 <Collapse in={open3}>
                     <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%'}}>
                     <div class="container-fluid justify-content-center align-content-center" height={500}>
-                        <BudgetContent inDate={date}/>
+                        <div style={{textAlign: 'center'}}>
+                          <Button style={{marginRight: '20px'}} onClick={(e) => setIsBudget(true)}>Budget</Button>
+                          <Button onClick={(e) => setIsBudget(false)}>Expenses</Button>
+                        </div>
+                        <BudgetContent isBudget={isBudget} inDate={date}/>
                     </div>
                     </Container>
                 </Collapse>
