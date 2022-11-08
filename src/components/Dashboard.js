@@ -11,6 +11,13 @@ const d = new Date();
 export default function Dashboard() {
   const [date, setDate] = useState(d.toLocaleDateString())
 
+  const handleDateChange = (e) => {
+    e.preventDefault()
+    const arr = e.target.value.split('-')
+    const dateString = `${arr[1]}/${arr[2]}/${arr[0]}`
+    setDate(dateString)
+  }
+
   // return val to display to screen
   return (
 
@@ -21,7 +28,7 @@ export default function Dashboard() {
       <Nav class="navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
         <div class="container-fluid p-2 justify-content-center">
           <Form.Group controlId="start">
-            <Form.Control type="date" onChange={(e) => setDate(new Date(e.target.value).toLocaleDateString())} />
+            <Form.Control type="date" onChange={handleDateChange} />
           </Form.Group>
         </div>
       </Nav>

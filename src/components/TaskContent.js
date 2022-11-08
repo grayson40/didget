@@ -266,14 +266,15 @@ export default function TaskContent(props) {
   }
 
   const isInDate = (value) => {
+    const arr = props.inDate.split('/')
+    const d = new Date(parseInt(arr[2]), parseInt(arr[0]) - 1, parseInt(arr[1]))
     const taskDate = value.deadline.split('/')
-    const inDate = props.inDate.split('/')
     const taskMonth = parseInt(taskDate[0])
     const taskDay = parseInt(taskDate[1])
-    const inMonth = parseInt(inDate[0])
-    const inDay = parseInt(inDate[1])
+    const inMonth = d.getMonth() + 1
+    const inDay = d.getDate()
 
-    return taskMonth === inMonth && taskDay === inDay + 1
+    return taskMonth === inMonth && taskDay === inDay
   }
 
   return (
@@ -284,7 +285,6 @@ export default function TaskContent(props) {
           ? <> {tasks.filter(isCourseTask).filter(isInDate).length !== 0
             ? tasks.filter(isCourseTask).filter(isInDate).map((task) => (
               <>
-                <p>{props.inDate}</p>
                 <Task key={task.id} task={task} showButtons={false} showCheck={false} onCheck={handleCheck} />
               </>
             ))
