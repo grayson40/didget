@@ -13,47 +13,18 @@
 //      An Overall groceries average, tracking average groceries expenditure over the course of the last six months
 //      An Overall food average, tracking average food expenditure over the course of the last six months
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Container, Card, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap';
-import Fab from '@mui/material/Fab';
-import { FaPlus } from 'react-icons/fa';
-import TopBar from './TopBar';
-import PageBar from './PageBar';
-import { uuidv4 } from '@firebase/util';
-import { PieChart, Pie, Cell, Legend } from 'recharts';
+import { useState, useRef, useEffect } from 'react';
 import {
   collection,
   getDocs,
-  query,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc
+  query
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import Expense from './Expense';
 
-
+//  Class habit
 class Habit {
     
     constructor(user_id) {
-        const monthsDict = {
-            'Jan': 1,
-            'Feb': 2,
-            'Mar': 3,
-            'Apr': 4,
-            'May': 5,
-            'Jun': 6,
-            'Jul': 7,
-            'Aug': 8,
-            'Sep': 9,
-            'Oct': 10,
-            'Nov': 11,
-            'Dec': 12
-          }
-          
-
-
         const [open, setOpen] = useState(false);
         const [expenses, setExpenses] = useState([]);
         const [error, setError] = useState('')
@@ -78,6 +49,13 @@ class Habit {
         var Local_Entertainment_Average = 66.90;
         var Local_Groceries_Average = 129.88;
         var Local_Food_Average = 98.99;
+
+        var isInMonth = (value) => {
+          const date = value.deadline
+          const arr = date.split("/")
+      
+          return parseInt(arr[0]) === desiredMonth;
+        } 
 
         async function fetchData() {
             if (auth.currentUser) {
@@ -155,57 +133,104 @@ class Habit {
         var Rent_Average, Insurance_Average, Academic_Average, 
         Entertainment_Average, Groceries_Average, Food_Average;
         }
-        getAverages() {
-            expenses.forEach(
-
-
-
-
-
-            )
-            function updateAverage(item) {var date = value.deadline
-                var x = new Date;
-                var curMonth = monthsDict((x.toDateString().split(" ")[1]))
-                var itemMonth = monthDict(item.deadline.toDateString().split(" ")[1]);
-                var dateDiff = curMonth - itemMonth;
-                if (dateDiff <= 6) {
-                    switch (item.category) {
+        calcAverages() {
+          let cur = new Date;
+          var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0;
+          var lowestMonth = cur.getMonth();
+          var curMonth = cur.getMonth();
+          cur = 12 + cur.getMonth();
+              expenses.filter(isInMonth).map((expense, index) => function() {
+                if ((expense.deadline.split("/")[0] >= cur - 6) && (expense.deadline.split("/")[0] <= cur)) {
+                  switch (expense.category) {
                     case "rent":
-                      
+                      totalR += expense.total;
+                      if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "groceries":
-                      setGroceryTotal(groceryTotal + _expense.total);
-                      console.log("adding " + groceryTotal + " groc");
+                      totalG += expense.total;
+                      if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "food":
-                      setFoodTotal(foodTotal + _expense.total);
-                      console.log("adding " + foodTotal + " food");
+                      totalF += expense.total;
+                      if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "insurance":
-                      setInsuranceTotal(insuranceTotal + _expense.total);
-                      console.log("adding " + insuranceTotal + " insu");
+                      totalI += expense.total;
+                      if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "academic":
-                      setAcademicTotal(academicTotal + _expense.total);
-                      console.log("adding " + academicTotal + " acad");
+                      totalA += expense.total;
+                      if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "entertainment":
-                      setEntertainmentTotal(entertainmentTotal + _expense.total);
-                      console.log("adding " + entertainmentTotal + " entr");
+                      totalE += expense.total;
+                      if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     default:
                       break;
                   }
+                  
                 }
-            }
-            function findLowestMonth(expenses) {
-                var x = new Date;
-                var lowest = monthsDict((x.toDateString().split(" ")[1]))
-                expenses.forEach(element => {
-                    
-                })
+               })
 
+               // assign averages
+                Rent_Average = totalR/(abs(curMonth - lowestMonth));
+                Groceries_Average = totalG/(abs(curMonth - lowestMonth)); 
+                Food_Average = totalF/(abs(curMonth - lowestMonth));
+                Insurance_Average = totalI/(abs(curMonth - lowestMonth)); 
+                Academic_Average = totalA/(abs(curMonth - lowestMonth));
+                Entertainment_Average = totalE/(abs(curMonth - lowestMonth));
+              }
+
+            // getters for user averages
+            getRentAverage() {
+              return this.Rent_Average;
             }
+
+            getGroceriesAverage() {
+              return this.Groceries_Average;
+            }
+
+            getFoodAverage() {
+              return this.Food_Average;
+            }
+
+            getInsuranceAverage() {
+              return this.Insurance_Average;
+            }
+
+            getAcademicAverage() {
+              return this.Academic_Average;
+            }
+
+            getEntertainmentAverage() {
+              return this.Entertainment_Average;
+            }
+
+            // Get locals
+            getLocalRent() {
+              return this.Local_Rent_Average;
+            }
+
+            getLocalGroc() {
+              return this.Local_Groceries_Average;
+            }
+
+            getLocalFood() {
+              return this.Local_Food_Average;
+            }
+
+            getLocalInsu() {
+              return this.Local_Insurance_Average;
+            }
+
+            getLocalAcad() {
+              return this.Local_Academic_Average;
+            }
+
+            getLocalEnte() {
+              return this.Local_Entertainment_Average;
+            }
+
+
         }
-        
-    }
