@@ -18,6 +18,11 @@ import Habit from "../classes/Habit"
 
 let pageHabit = new Habit();
 
-<Container>
-    <label> { pageHabit.getTotalAvg() } </label>
-</Container>
+export default function HabitItem() {
+
+    return (
+    <Container>
+        <label> { pageHabit.getTotalAvg() } </label>
+    </Container>
+    );
+}

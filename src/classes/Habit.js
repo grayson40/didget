@@ -22,8 +22,65 @@ import {
 import { auth, db } from '../firebase';
 
 //  Class habit
-class Habit {
+export default class Habit {
     
+  calcAverages() {
+    let cur = new Date;
+    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, TotalT = 0;
+    var lowestMonth = cur.getMonth();
+    var curMonth = cur.getMonth();
+    cur = 12 + cur.getMonth();
+        expenses.filter(isInMonth).map((expense, index) => function() {
+          if ((expense.deadline.split("/")[0] >= cur - 6) && (expense.deadline.split("/")[0] <= cur)) {
+            switch (expense.category) {
+              case "rent":
+                totalR += expense.total;
+                totalT += expense.total;
+                if (curMonth < lowestMonth) lowestMonth = curMonth;
+                break;
+              case "groceries":
+                totalG += expense.total;
+                totalT += expense.total;
+                if (curMonth < lowestMonth) lowestMonth = curMonth;
+                break;
+              case "food":
+                totalF += expense.total;
+                totalT += expense.total;
+                if (curMonth < lowestMonth) lowestMonth = curMonth;
+                break;
+              case "insurance":
+                totalI += expense.total;
+                totalT += expense.total;
+                if (curMonth < lowestMonth) lowestMonth = curMonth;
+                break;
+              case "academic":
+                totalA += expense.total;
+                totalT += expense.total;
+                if (curMonth < lowestMonth) lowestMonth = curMonth;
+                break;
+              case "entertainment":
+                totalE += expense.total;
+                totalT += expense.total;
+                if (curMonth < lowestMonth) lowestMonth = curMonth;
+                break;
+              default:
+                break;
+            }
+            
+          }
+         })
+
+         // assign averages
+          Rent_Average = totalR/(abs(curMonth - lowestMonth));
+          Groceries_Average = totalG/(abs(curMonth - lowestMonth)); 
+          Food_Average = totalF/(abs(curMonth - lowestMonth));
+          Insurance_Average = totalI/(abs(curMonth - lowestMonth)); 
+          Academic_Average = totalA/(abs(curMonth - lowestMonth));
+          Entertainment_Average = totalE/(abs(curMonth - lowestMonth));
+          Total_Average = TotalT/(abs(curMonth - lowestMonth));
+        }
+
+
     constructor(user_id) {
         const [open, setOpen] = useState(false);
         const [expenses, setExpenses] = useState([]);
@@ -142,68 +199,8 @@ class Habit {
             console.log('in expense page effect')
           }, [])
 
-        
-
+          this.calcAverages();
         }
-        calcAverages() {
-          let cur = new Date;
-          var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, TotalT = 0;
-          var lowestMonth = cur.getMonth();
-          var curMonth = cur.getMonth();
-          cur = 12 + cur.getMonth();
-              expenses.filter(isInMonth).map((expense, index) => function() {
-                if ((expense.deadline.split("/")[0] >= cur - 6) && (expense.deadline.split("/")[0] <= cur)) {
-                  switch (expense.category) {
-                    case "rent":
-                      totalR += expense.total;
-                      totalT += expense.total;
-                      if (curMonth < lowestMonth) lowestMonth = curMonth;
-                      break;
-                    case "groceries":
-                      totalG += expense.total;
-                      totalT += expense.total;
-                      if (curMonth < lowestMonth) lowestMonth = curMonth;
-                      break;
-                    case "food":
-                      totalF += expense.total;
-                      totalT += expense.total;
-                      if (curMonth < lowestMonth) lowestMonth = curMonth;
-                      break;
-                    case "insurance":
-                      totalI += expense.total;
-                      totalT += expense.total;
-                      if (curMonth < lowestMonth) lowestMonth = curMonth;
-                      break;
-                    case "academic":
-                      totalA += expense.total;
-                      totalT += expense.total;
-                      if (curMonth < lowestMonth) lowestMonth = curMonth;
-                      break;
-                    case "entertainment":
-                      totalE += expense.total;
-                      totalT += expense.total;
-                      if (curMonth < lowestMonth) lowestMonth = curMonth;
-                      break;
-                    default:
-                      break;
-                  }
-                  
-                }
-               })
-
-               // assign averages
-                Rent_Average = totalR/(abs(curMonth - lowestMonth));
-                Groceries_Average = totalG/(abs(curMonth - lowestMonth)); 
-                Food_Average = totalF/(abs(curMonth - lowestMonth));
-                Insurance_Average = totalI/(abs(curMonth - lowestMonth)); 
-                Academic_Average = totalA/(abs(curMonth - lowestMonth));
-                Entertainment_Average = totalE/(abs(curMonth - lowestMonth));
-                Total_Average = TotalT/(abs(curMonth - lowestMonth));
-              }
-
-              constructor() {
-                this.calcAverages();
-              }
 
             // getters for user averages
             getRentAverage() {
