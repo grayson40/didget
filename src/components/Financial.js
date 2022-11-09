@@ -3,7 +3,7 @@ import { Container, Card, Button, Collapse } from 'react-bootstrap'
 import TopBar from './TopBar'
 import PageBar from './PageBar'
 import BudgetContent from './BudgetContent'
-import Expenses from './Expenses'
+import Expenses from './ExpenseContent'
 
 export default function Financial() {
 
@@ -43,7 +43,7 @@ export default function Financial() {
                     </Button>
                     <Collapse in={open3}>
                         <div>
-                            <Expenses notInCard={false}/>
+                            <Expenses showButton={false} notInCard={false}/>
                         </div>
                     </Collapse>
                 </Card>

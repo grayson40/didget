@@ -223,7 +223,7 @@ export default function ScheduleContent(props) {
 
         {/* Map over list of courses */}
         {courses.map((course) => (
-          <Course key={course.id} showButton={props.showButton} course={course} onUpdate={updateCourse} onDelete={deleteCourse} />
+          <Course key={course.id} inDate={props.inDate} showButton={props.showButton} course={course} onUpdate={updateCourse} onDelete={deleteCourse} />
         ))}
 
       </Container>
