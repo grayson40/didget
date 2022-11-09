@@ -508,7 +508,10 @@ export default function BudgetContent({ notInCard, showButton }) {
                 <Row className="mb-2">
                   <Col className="border-end">Income</Col>
                   <Col>
-                    <Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
+                  {incomes.filter(isInMonth).length === 0 
+                  ?<Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
+                  :<Form.Control type='income' placeholder={'Income already Set'}/>
+                  }
                   </Col>
                 </Row>
               </Form.Group>
