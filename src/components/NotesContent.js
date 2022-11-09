@@ -167,9 +167,14 @@ export default function NotesContent(props) {
     <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%' }}>
       <Container fluid style={{ width: '500px', marginTop: '5%' }}>
         {/* Render user notes */}
-        {notes.map((note) => (
-          <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
-        ))}
+        {props.showButton?
+          <>
+            {notes.map((note) => (
+              <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
+            ))}
+          </>
+        : null
+        }
 
         {/* Form to create a new note */}
         <Modal open={open} onClose={handleClose}>
