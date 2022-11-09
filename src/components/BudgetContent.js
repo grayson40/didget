@@ -15,6 +15,7 @@ import {
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
 import ExpenseItem from './ExpenseItem';
+import '../styles/budget.css'
 
 // Color by category dictionaries
 const bordFill =
@@ -151,6 +152,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
           );
           setIncomes(
             incomesRef.docs.map((income) => ({
+              id: income.id,
               income: income.data().income,
               month: income.data().month,
               year: income.data().year
@@ -337,17 +339,19 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
       })
     })
 
-    const newIncome = {
-      income: parseInt(incomeRef.current.value),
-      month: month,
-      year: year
-    }
-    userRef.docs.map(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const incomesRef = collection(db, `users/${user.id}/incomes/`);
-        await addDoc(incomesRef, newIncome);
+    if (incomes.filter(isInMonth).length === 0) {
+      const newIncome = {
+        income: parseInt(incomeRef.current.value),
+        month: month,
+        year: year
       }
-    })
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const incomesRef = collection(db, `users/${user.id}/incomes/`);
+          await addDoc(incomesRef, newIncome);
+        }
+      })
+    }
 
     fetchData()
     handleClose()
@@ -425,6 +429,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   const calculateIncomeAverage = () => {
     let total = 0
     let count = 0
+    if (incomes.length === 0) return 0
     incomes.forEach((income) => {
           total += income.income
           count++
@@ -445,6 +450,106 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     const expDate = new Date(value.date)
     const d = new Date(inDate)
     return expDate.getMonth() === d.getMonth() && expDate.getDate() === d.getDate()
+  }
+
+  const updateIncome = async (id, newIncome) => {
+    console.log(`${id} ${newIncome}`)
+    incomes.forEach((income) => {
+      if (income.id === id) {
+        income.income = parseInt(newIncome)
+        console.log('set new Income')
+      }
+    })
+    setIncomes(incomes)
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/incomes/`)
+          )
+        );
+        incomesRef.docs.forEach(async (income) => {
+          console.log(income.id)
+          if (income.id === id) {
+            console.log('in here')
+            const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
+            await updateDoc(docRef, {income: parseInt(newIncome)})
+              .then(console.log('document updated'))
+          }
+        })
+      }
+    })
+    fetchData()
+  }
+
+  const InlineEdit = ({ element }) => {
+    const [editingValue, setEditingValue] = useState(element.income);
+    
+    const onChange = (event) => {
+      setEditingValue(event.target.value);
+    }
+    
+    const onKeyDown = (event) => {
+      if (event.key === "Enter" || event.key === "Escape") {
+        event.target.blur();
+      }
+    }
+    
+    const onBlur = (event) => {
+      const val = parseInt(event.target.value)
+      if (event.target.value.trim() === "") {
+        setEditingValue(element.income);
+      } else {
+        if (val !== element.income) {
+          updateIncome(element.id, val)
+        }
+      }
+    }
+  
+    return (
+      <input
+        class='inline'
+        type="text"
+        aria-label="Field name"
+        value={editingValue}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        onBlur={onBlur}
+      />
+    )
+  }
+
+  const deleteIncome = async (id) => {
+    const newIncomes = incomes.filter((income) => income.id !== id)
+    setIncomes(newIncomes)
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/incomes/`)
+          )
+        );
+        incomesRef.docs.forEach(async (income) => {
+          console.log(income.id)
+          if (income.id === id) {
+            console.log('in here')
+            const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
+            await deleteDoc(docRef)
+              .then(console.log('document deleted'))
+          }
+        })
+      }
+    })
   }
 
   return (
@@ -526,7 +631,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
               <Card.Header>
                 <Row className="mb-2">
                   <Col className="border-end">Income</Col>
-                  <Col>${income.income}</Col>
+                  <Col>$<InlineEdit element={income}/> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
                 </Row>
                 <Row>
                   <Col>
@@ -539,30 +644,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
               </Card.Header>
             </Card>
           ))
-          : <p>No income!!!!</p>
-        }
-
-        {/* Income Card */}
-        {incomes.filter(isInMonth).length !== 0 ?
-          incomes.filter(isInMonth).map((income) => (
-            <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
-              <Card.Header>
-                <Row className="mb-2">
-                  <Col className="border-end">Income</Col>
-                  <Col>${income.income}</Col>
-                </Row>
-                <Row>
-                  <Col>
-                    {calculateExpenseTotal() < income.income
-                      ? <ProgressBar animated variant="success" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
-                      : <ProgressBar animated variant="danger" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
-                    }
-                  </Col>
-                </Row>
-              </Card.Header>
-            </Card>
-          ))
-          : <p>No income!!!!</p>
+          : <p>{`No income for ${monthsDict[month]}`}</p>
         }
 
         {/* popup add window */}
