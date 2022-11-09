@@ -58,8 +58,6 @@ export default function Cards() {
     console.log('in budget page effect')
   }, [])
 
-
-
     const [open1, setOpen1] = useState(true);
     // const [open2, setOpen2] = useState(true)
     const [open3, setOpen3] = useState(true);

@@ -42,6 +42,18 @@ class Habit {
         const date = useRef();
         const dataFetchedRef = useRef(false);
 
+
+        //  user averages
+        var Rent_Average;
+        var Insurance_Average;
+        var Academic_Average;
+        var Entertainment_Average;
+        var Groceries_Average;
+        var Food_Average;
+        var Total_Average;
+        
+
+
         //  locals: Values are junk data
         var Local_Rent_Average = 500.82;
         var Local_Insurance_Average = 150.24;
@@ -50,13 +62,16 @@ class Habit {
         var Local_Groceries_Average = 129.88;
         var Local_Food_Average = 98.99;
 
+        var Local_Overall_Average = Local_Rent_Average + Local_Insurance_Average + Local_Academic_Average + 
+        Local_Entertainment_Average + Local_Groceries_Average + Local_Food_Average;
+
         var isInMonth = (value) => {
           const date = value.deadline
           const arr = date.split("/")
       
           return parseInt(arr[0]) === desiredMonth;
-        } 
-
+        }
+        
         async function fetchData() {
             if (auth.currentUser) {
               const usersRef = await getDocs(
@@ -129,13 +144,10 @@ class Habit {
 
         
 
-        //  averages: Values track average expenditures over the course of the last 6 months
-        var Rent_Average, Insurance_Average, Academic_Average, 
-        Entertainment_Average, Groceries_Average, Food_Average;
         }
         calcAverages() {
           let cur = new Date;
-          var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0;
+          var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, TotalT = 0;
           var lowestMonth = cur.getMonth();
           var curMonth = cur.getMonth();
           cur = 12 + cur.getMonth();
@@ -144,26 +156,32 @@ class Habit {
                   switch (expense.category) {
                     case "rent":
                       totalR += expense.total;
+                      totalT += expense.total;
                       if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "groceries":
                       totalG += expense.total;
+                      totalT += expense.total;
                       if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "food":
                       totalF += expense.total;
+                      totalT += expense.total;
                       if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "insurance":
                       totalI += expense.total;
+                      totalT += expense.total;
                       if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "academic":
                       totalA += expense.total;
+                      totalT += expense.total;
                       if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     case "entertainment":
                       totalE += expense.total;
+                      totalT += expense.total;
                       if (curMonth < lowestMonth) lowestMonth = curMonth;
                       break;
                     default:
@@ -180,6 +198,11 @@ class Habit {
                 Insurance_Average = totalI/(abs(curMonth - lowestMonth)); 
                 Academic_Average = totalA/(abs(curMonth - lowestMonth));
                 Entertainment_Average = totalE/(abs(curMonth - lowestMonth));
+                Total_Average = TotalT/(abs(curMonth - lowestMonth));
+              }
+
+              constructor() {
+                this.calcAverages();
               }
 
             // getters for user averages
@@ -232,5 +255,7 @@ class Habit {
               return this.Local_Entertainment_Average;
             }
 
-
+            getTotalAvg() {
+              return this.Total_Average;
+            }
         }

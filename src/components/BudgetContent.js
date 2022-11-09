@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
+import HabitItem from './HabitItem';
 
 // Color by category dictionaries
 const bordFill =
@@ -139,6 +140,10 @@ export default function BudgetContent({ notInCard, showButton }) {
     }
     console.log('fetching budget data')
   }
+
+
+
+
 
   // Used to fetch users notes from firestore
   useEffect(() => {
@@ -509,6 +514,7 @@ export default function BudgetContent({ notInCard, showButton }) {
             </>
           ))
         }
+        <HabitItem/>
         
       </Container>
       { showButton &&
