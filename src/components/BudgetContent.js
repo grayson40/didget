@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Container, Card, Row, Col, Modal, Form, Button } from 'react-bootstrap'
+import { Container, Card, Row, Col, Modal, Form, Button, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
@@ -15,6 +15,7 @@ import {
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
 import ExpenseItem from './ExpenseItem';
+import '../styles/budget.css'
 
 // Color by category dictionaries
 const bordFill =
@@ -70,6 +71,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [expenses, setExpenses] = useState([])
+  const [incomes, setIncomes] = useState([])
   const [month, setMonth] = useState(d.getMonth() + 1);
   const [year, setYear] = useState(d.getFullYear())
   const rentLimit = useRef();
@@ -78,6 +80,13 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const incomeRef = useRef();
+
+  // const toDate = () => {
+  //   let date = new Date();
+  //   const today = `${date.getMonth() + 1}/${date.getFullYear()}`
+  //   return today;
+  // };
 
   /**
    * Fetches budget data from firebase. Sets budget and graph state.
@@ -125,6 +134,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
               collection(db, `users/${user.id}/expenses/`)
             )
           );
+
           setExpenses(
             expensesRef.docs.map((expense) => ({
               id: expense.data().id,
@@ -132,6 +142,20 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
               place: expense.data().place,
               total: expense.data().total,
               date: expense.data().date
+            }))
+          )
+
+          const incomesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/incomes`)
+            )
+          );
+          setIncomes(
+            incomesRef.docs.map((income) => ({
+              id: income.id,
+              income: income.data().income,
+              month: income.data().month,
+              year: income.data().year
             }))
           )
         }
@@ -293,6 +317,12 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
       }))
     )
 
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+
     // Add budgets to db
     newBudgets.forEach(async (category) => {
       const newBudget = {
@@ -301,11 +331,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
         current: category.current,
         month: category.month
       }
-      const userRef = await getDocs(
-        query(
-          collection(db, "users")
-        )
-      );
       userRef.docs.map(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
           const collectionRef = collection(db, `users/${user.id}/budgets/`);
@@ -313,6 +338,20 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
         }
       })
     })
+
+    if (incomes.filter(isInMonth).length === 0) {
+      const newIncome = {
+        income: parseInt(incomeRef.current.value),
+        month: month,
+        year: year
+      }
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const incomesRef = collection(db, `users/${user.id}/incomes/`);
+          await addDoc(incomesRef, newIncome);
+        }
+      })
+    }
 
     fetchData()
     handleClose()
@@ -373,6 +412,31 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     return inMonth === month;
   }
 
+  const expenseInMonth = (value) => {
+    const arr = value.date.split('/')
+    const _month = parseInt(arr[0])
+    return _month === month;
+  }
+
+  const calculateExpenseTotal = () => {
+    let total = 0;
+    expenses.filter(expenseInMonth).forEach((expense) => {
+      total += expense.total
+    })
+    return total
+  }
+
+  const calculateIncomeAverage = () => {
+    let total = 0
+    let count = 0
+    if (incomes.length === 0) return 0
+    incomes.forEach((income) => {
+          total += income.income
+          count++
+    })
+    return parseInt(total/count)
+  }
+
   const cardFilter = (value) => {
     // console.log(inDate)
     const arr = inDate.split('/')
@@ -386,6 +450,106 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     const expDate = new Date(value.date)
     const d = new Date(inDate)
     return expDate.getMonth() === d.getMonth() && expDate.getDate() === d.getDate()
+  }
+
+  const updateIncome = async (id, newIncome) => {
+    console.log(`${id} ${newIncome}`)
+    incomes.forEach((income) => {
+      if (income.id === id) {
+        income.income = parseInt(newIncome)
+        console.log('set new Income')
+      }
+    })
+    setIncomes(incomes)
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/incomes/`)
+          )
+        );
+        incomesRef.docs.forEach(async (income) => {
+          console.log(income.id)
+          if (income.id === id) {
+            console.log('in here')
+            const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
+            await updateDoc(docRef, {income: parseInt(newIncome)})
+              .then(console.log('document updated'))
+          }
+        })
+      }
+    })
+    fetchData()
+  }
+
+  const InlineEdit = ({ element }) => {
+    const [editingValue, setEditingValue] = useState(element.income);
+    
+    const onChange = (event) => {
+      setEditingValue(event.target.value);
+    }
+    
+    const onKeyDown = (event) => {
+      if (event.key === "Enter" || event.key === "Escape") {
+        event.target.blur();
+      }
+    }
+    
+    const onBlur = (event) => {
+      const val = parseInt(event.target.value)
+      if (event.target.value.trim() === "") {
+        setEditingValue(element.income);
+      } else {
+        if (val !== element.income) {
+          updateIncome(element.id, val)
+        }
+      }
+    }
+  
+    return (
+      <input
+        class='inline'
+        type="text"
+        aria-label="Field name"
+        value={editingValue}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        onBlur={onBlur}
+      />
+    )
+  }
+
+  const deleteIncome = async (id) => {
+    const newIncomes = incomes.filter((income) => income.id !== id)
+    setIncomes(newIncomes)
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/incomes/`)
+          )
+        );
+        incomesRef.docs.forEach(async (income) => {
+          console.log(income.id)
+          if (income.id === id) {
+            console.log('in here')
+            const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
+            await deleteDoc(docRef)
+              .then(console.log('document deleted'))
+          }
+        })
+      }
+    })
   }
 
   return (
@@ -460,12 +624,47 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
           </>
         }
 
+        {/* Income Card */}
+        {incomes.filter(isInMonth).length !== 0 ?
+          incomes.filter(isInMonth).map((income) => (
+            <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>$<InlineEdit element={income}/> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {calculateExpenseTotal() < income.income
+                      ? <ProgressBar animated variant="success" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                      : <ProgressBar animated variant="danger" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                    }
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          ))
+          : <p>{`No income for ${monthsDict[month]}`}</p>
+        }
+
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
           <Modal.Body>
             <h2 className='text-center mb-4'>Create Budget</h2>
             {/* {error && <Alert variant="danger">{error}</Alert>} */}
             <Form>
+              {/* TODO: add budget category and limit fields */}
+              <Form.Group id='income'>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>
+                  {incomes.filter(isInMonth).length === 0 
+                  ?<Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
+                  :<p>Income already set</p>
+                  }
+                  </Col>
+                </Row>
+              </Form.Group>
               <Form.Group id='rent'>
                 <Row className="mb-2">
                   <Col className="border-end">Rent</Col>

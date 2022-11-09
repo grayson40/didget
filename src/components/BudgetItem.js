@@ -65,7 +65,7 @@ export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
               {/*Compares current amount to limit, turns red if over and green if under limit*/}
               {left(item.limit, item.current) >= 0
                 ? <ProgressBar variant="success" now={progressPercent(item.limit, item.current)} label={`$${item.current} Spent`} />
-                : <ProgressBar variant="danger" now={progressPercent(item.limit, item.current)} label={`$${item.current} Spent`} />
+                : <ProgressBar animated variant="danger" now={progressPercent(item.limit, item.current)} label={`$${item.current} Spent`} />
               }
             </Col>
           </Row>
