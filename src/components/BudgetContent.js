@@ -510,7 +510,7 @@ export default function BudgetContent({ notInCard, showButton }) {
                   <Col>
                   {incomes.filter(isInMonth).length === 0 
                   ?<Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
-                  :<Form.Control type='income' placeholder={'Income already Set'}/>
+                  :<p>Income already set</p>
                   }
                   </Col>
                 </Row>
