@@ -421,6 +421,16 @@ export default function BudgetContent({ notInCard, showButton }) {
     return total
   }
 
+  const calculateIncomeAverage = () => {
+    let total = 0
+    let count = 0
+    incomes.forEach((income) => {
+          total += income.income
+          count++
+    })
+    return parseInt(total/count)
+  }
+
   return (
     <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
       {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
@@ -498,7 +508,7 @@ export default function BudgetContent({ notInCard, showButton }) {
                 <Row className="mb-2">
                   <Col className="border-end">Income</Col>
                   <Col>
-                    <Form.Control type='income' ref={incomeRef} />
+                    <Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
                   </Col>
                 </Row>
               </Form.Group>
