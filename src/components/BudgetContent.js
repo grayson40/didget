@@ -82,11 +82,11 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   const entertainmentLimit = useRef();
   const incomeRef = useRef();
 
-  const toDate = () => {
-    let date = new Date();
-    const today = `${date.getMonth() + 1}/${date.getFullYear()}`
-    return today;
-  };
+  // const toDate = () => {
+  //   let date = new Date();
+  //   const today = `${date.getMonth() + 1}/${date.getFullYear()}`
+  //   return today;
+  // };
 
   /**
    * Fetches budget data from firebase. Sets budget and graph state.
