@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
+import ExpenseItem from './ExpenseItem';
 
 // Color by category dictionaries
 const bordFill =
@@ -63,7 +64,7 @@ const monthsDict = {
 
 const d = new Date();
 
-export default function BudgetContent({ notInCard, showButton }) {
+export default function BudgetContent({ notInCard, inDate, showButton, isBudget }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
@@ -431,48 +432,115 @@ export default function BudgetContent({ notInCard, showButton }) {
     return parseInt(total/count)
   }
 
+  const cardFilter = (value) => {
+    // console.log(inDate)
+    const arr = inDate.split('/')
+    const cardMonth = parseInt(arr[0])
+    const inMonth = value.month
+    // console.log(`${inMonth} ${cardMonth}`)
+    return inMonth === cardMonth
+  }
+
+  const expenseFilter = (value) => {
+    const expDate = new Date(value.date)
+    const d = new Date(inDate)
+    return expDate.getMonth() === d.getMonth() && expDate.getDate() === d.getDate()
+  }
+
   return (
     <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
       {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
       <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-
-        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <Row>
-            <Col>
-              <Button onClick={prevMonth}>Prev</Button>
-            </Col>
-            <Col>{`${monthsDict[month]} ${year}`}</Col>
-            <Col>
-              <Button onClick={nextMonth}>Next</Button>
-            </Col>
-          </Row>
-        </Container>
-
-        <BarChart data={graphData.filter(isInMonth)} layout="vertical" width={600} height={250} >
-          <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
-            {
-              graphData.filter(isInMonth).map((entry, index) => (
-                <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
-              ))
+        {showButton ?
+          <>
+            {graphData.filter(isInMonth).length !== 0 ?
+              <BarChart data={graphData.filter(isInMonth)} layout="vertical" width={600} height={250} >
+                <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+                  {
+                    graphData.filter(isInMonth).map((entry, index) => (
+                      <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
+                    ))
+                  }
+                </Bar>
+                <Bar dataKey="max" barSize={10}>
+                  {
+                    graphData.filter(isInMonth).map((entry, index) => (
+                      <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
+                    ))
+                  }
+                </Bar>
+                {/*
+                
+                NOTICE NOTICE NOTICE
+                BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+      
+                */}
+                <XAxis stroke="black" type="number" reversed />
+                <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+                <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+              </BarChart>
+              : null
             }
-          </Bar>
-          <Bar dataKey="max" barSize={10}>
-            {
-              graphData.filter(isInMonth).map((entry, index) => (
-                <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
-              ))
+          </>
+          :
+          <>
+            {isBudget ?
+              <> {graphData.filter(cardFilter).length !== 0 ?
+                <BarChart data={graphData.filter(cardFilter)} layout="vertical" width={600} height={250} >
+                  <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+                    {
+                      graphData.filter(isInMonth).map((entry, index) => (
+                        <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
+                      ))
+                    }
+                  </Bar>
+                  <Bar dataKey="max" barSize={10}>
+                    {
+                      graphData.filter(isInMonth).map((entry, index) => (
+                        <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
+                      ))
+                    }
+                  </Bar>
+                  {/*
+                
+                NOTICE NOTICE NOTICE
+                BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+      
+                */}
+                  <XAxis stroke="black" type="number" reversed />
+                  <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+                  <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+                </BarChart>
+                : <p>{`No budget for ${monthsDict[parseInt(inDate.split('/')[0])]}`}</p>
+              }
+              </>
+              : null
             }
-          </Bar>
-          {/*
-              
-              NOTICE NOTICE NOTICE
-              BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
-    
-              */}
-          <XAxis stroke="black" type="number" reversed />
-          <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
-          <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
-        </BarChart>
+          </>
+        }
+
+        {/* Income Card */}
+        {incomes.filter(isInMonth).length !== 0 ?
+          incomes.filter(isInMonth).map((income) => (
+            <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>${income.income}</Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {calculateExpenseTotal() < income.income
+                      ? <ProgressBar animated variant="success" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                      : <ProgressBar animated variant="danger" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                    }
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          ))
+          : <p>No income!!!!</p>
+        }
 
         {/* Income Card */}
         {incomes.filter(isInMonth).length !== 0 ?
@@ -571,38 +639,86 @@ export default function BudgetContent({ notInCard, showButton }) {
         </Modal>
 
         {
-          notInCard ?
-            <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-              <Card.Header>
-                Budget
-              </Card.Header>
-              <Card.Header>
+          showButton ?
+            <>
+              <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
                 <Row>
-                  <Col className="border-end">Category</Col>
-                  <Col>Limit</Col>
+                  <Col sm={4}>
+                    <Button onClick={prevMonth}>Prev</Button>
+                  </Col>
+                  <Col >{`${monthsDict[month]} ${year}`}</Col>
+                  <Col sm={4}>
+                    <Button onClick={nextMonth}>Next</Button>
+                  </Col>
                 </Row>
-              </Card.Header>
-            </Card>
+              </Container>
+              <>
+                {budgets.filter(isInMonth).length !== 0 ?
+                  <>
+                    <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+                      <Card.Header>
+                        Budget
+                      </Card.Header>
+                      <Card.Header>
+                        <Row>
+                          <Col className="border-end">Category</Col>
+                          <Col>Limit</Col>
+                        </Row>
+                      </Card.Header>
+                    </Card>
+                    {budgets.filter(isInMonth).map((item, index) => (
+                      <>
+                        <BudgetItem
+                          key={index}
+                          item={item}
+                          bordColor={backFill[item.category.toLowerCase()]}
+                          backColor={bordFill[item.category.toLowerCase()]}
+                          onUpdate={updateBudget}
+                        />
+                      </>
+                    ))
+                    }
+                  </>
+                  : <p>{`No budget for ${monthsDict[month]}`}</p>
+                }
+              </>
+            </>
             :
-            <></>
+            <>
+              {isBudget ?
+                <>{budgets.filter(cardFilter).map((item, index) => (
+                  <BudgetItem
+                    key={index}
+                    item={item}
+                    bordColor={backFill[item.category.toLowerCase()]}
+                    backColor={bordFill[item.category.toLowerCase()]}
+                    onUpdate={updateBudget}
+                  />
+                ))
+                }
+                </>
+                :
+                <>
+                  {expenses.filter(expenseFilter).length !== 0 ?
+                    <>
+                      {expenses.filter(expenseFilter).map((expense, index) => (
+                        <ExpenseItem
+                          key={index}
+                          expense={expense}
+                          bordColor={backFill[expense.category.toLowerCase()]}
+                          backColor={bordFill[expense.category.toLowerCase()]}
+                        />
+                      ))}
+                    </>
+                    : <p>No expenses for today</p>
+                  }
+                </>
+              }
+            </>
         }
 
-        {/*Cards with Name, Total, Category, and Date*/}
-        {
-          budgets.filter(isInMonth).map((item, index) => (
-            <>
-              <BudgetItem
-                key={index}
-                item={item}
-                bordColor={backFill[item.category.toLowerCase()]}
-                backColor={bordFill[item.category.toLowerCase()]}
-                onUpdate={updateBudget}
-              />
-            </>
-          ))
-        }
       </Container>
-      { showButton &&
+      {showButton &&
         <>
           {
             budgets.filter(isInMonth).length !== 0 ? (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>

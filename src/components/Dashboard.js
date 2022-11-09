@@ -1,12 +1,22 @@
 // import necessary libraries
-import React from 'react'
-import Container from 'react-bootstrap/Container';
+import React, { useState } from 'react'
+import { Container, Nav, Form } from 'react-bootstrap';
 import TopBar from './TopBar';
 import Cards from './Cards';
-import DateBar from './DateBar';
+
+//  Create a variable that tracks the date currently being looked at
+const d = new Date();
 
 // main function Dashboard()
 export default function Dashboard() {
+  const [date, setDate] = useState(d.toLocaleDateString())
+
+  const handleDateChange = (e) => {
+    e.preventDefault()
+    const arr = e.target.value.split('-')
+    const dateString = `${arr[1]}/${arr[2]}/${arr[0]}`
+    setDate(dateString)
+  }
 
   // return val to display to screen
   return (
@@ -15,13 +25,19 @@ export default function Dashboard() {
     <Container fluid>
 
       {/* call to display date selector tool */}
-      <DateBar/>
+      <Nav class="navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
+        <div class="container-fluid p-2 justify-content-center">
+          <Form.Group controlId="start">
+            <Form.Control type="date" onChange={handleDateChange} />
+          </Form.Group>
+        </div>
+      </Nav>
 
       {/* call to display top nav bar */}
-      <TopBar/>
+      <TopBar />
 
       {/* display main page content */}
-      <Cards/>
+      <Cards date={date} />
     </Container>
   )
 }
