@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Card, Container, Button, Collapse, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
 import { FaEllipsisH } from 'react-icons/fa'
 import { Modal } from '@material-ui/core';
@@ -51,6 +51,12 @@ export default function Course(props) {
     }
     console.log('fetching task data')
   }
+
+  // Used to fetch users notes from firestore
+  useEffect(() => {
+    console.log('in course page effect')
+    fetchData();
+  }, [])
 
   const handleUpdate = () => {
     const course = {
@@ -125,45 +131,91 @@ export default function Course(props) {
           </Card.Body>
         </Card>
       </Modal>
-      <Card className='mb-4'>
-        <Card.Header as="h5">
-          <Row>
-            <Col sm={8}>{props.course.name}</Col>
-            <Col xs={0}>
-              {props.showButton &&
-                <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
-                  {/* onclick method for these two */}
-                  <Dropdown.Item onClick={(e) => setOpen(true)}>Edit</Dropdown.Item>
-                  <Dropdown.Item onClick={(e) => { props.onDelete(props.course.courseId) }}>Delete</Dropdown.Item>
-                </DropdownButton>
-              }
-            </Col>
-          </Row>
-        </Card.Header>
-        <Card.Body>
-          {props.showButton
-            ?
-            <>
-              <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
-              <Card.Text>{props.course.professor}</Card.Text>
+      {props.showButton ?
+        <Card className='mb-4'>
+          <Card.Header as="h5">
+            <Row>
+              <Col sm={8}>{props.course.name}</Col>
+              <Col xs={0}>
+                {props.showButton &&
+                  <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
+                    {/* onclick method for these two */}
+                    <Dropdown.Item onClick={(e) => setOpen(true)}>Edit</Dropdown.Item>
+                    <Dropdown.Item onClick={(e) => { props.onDelete(props.course.courseId) }}>Delete</Dropdown.Item>
+                  </DropdownButton>
+                }
+              </Col>
+            </Row>
+          </Card.Header>
+          <Card.Body>
+            {props.showButton
+              ?
+              <>
+                <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
+                <Card.Text>{props.course.professor}</Card.Text>
 
-              {/*Set Button to be collapsable*/}
-              <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
-              <Collapse in={open1}>
-                {/* map over list of tasks */}
-                <div>
-                  <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} filter={false}/>
-                </div>
-              </Collapse>
-            </>
+                {/*Set Button to be collapsable*/}
+                <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+                <Collapse in={open1}>
+                  {/* map over list of tasks */}
+                  <div>
+                    <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} filter={false} />
+                  </div>
+                </Collapse>
+              </>
+              :
+              <>
+                <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} filter={true} />
+              </>
+            }
+          </Card.Body>
+        </Card>
+        :
+        <>
+          {tasks.filter(isCourseTask).filter(isInDate).length === 0
+            ? <p>No tasks due today</p>
             :
-            <>
-              <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} filter={true}/>
-            </>
-          }
-        </Card.Body>
-      </Card>
+            <Card className='mb-4'>
+              <Card.Header as="h5">
+                <Row>
+                  <Col sm={8}>{props.course.name}</Col>
+                  <Col xs={0}>
+                    {props.showButton &&
+                      <DropdownButton id="dropdown-basic-button" title={<FaEllipsisH />} style={{ textAlign: "right", height: '10px', bottom: '7px' }}>
+                        {/* onclick method for these two */}
+                        <Dropdown.Item onClick={(e) => setOpen(true)}>Edit</Dropdown.Item>
+                        <Dropdown.Item onClick={(e) => { props.onDelete(props.course.courseId) }}>Delete</Dropdown.Item>
+                      </DropdownButton>
+                    }
+                  </Col>
+                </Row>
+              </Card.Header>
+              <Card.Body>
+                {props.showButton
+                  ?
+                  <>
+                    <Card.Title>{`${props.course.meetDay} ${props.course.meetTime}`}</Card.Title>
+                    <Card.Text>{props.course.professor}</Card.Text>
 
+                    {/*Set Button to be collapsable*/}
+                    <Button variant="primary" className='mb-2' onClick={() => setOpen1(!open1)} aria-controls="example-collapse-text" aria-expanded={open1}> Tasks </Button>
+                    <Collapse in={open1}>
+                      {/* map over list of tasks */}
+                      <div>
+                        <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} filter={false} />
+                      </div>
+                    </Collapse>
+                  </>
+                  :
+                  <>
+                    <TaskContent inDate={props.inDate} courseId={props.course.courseId} inCourse={true} filter={true} />
+                  </>
+                }
+              </Card.Body>
+            </Card>
+          }
+        </>
+      }
     </Container>
   )
 }
