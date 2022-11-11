@@ -282,14 +282,17 @@ export default function TaskContent(props) {
 
       {
         props.inCourse
-          ? <> {tasks.filter(isCourseTask).filter(isInDate).length !== 0
-            ? tasks.filter(isCourseTask).filter(isInDate).map((task) => (
-              <>
+          ? <>
+            {props.filter ?
+              <>{tasks.filter(isCourseTask).filter(isInDate).map((task) => (
                 <Task key={task.id} task={task} showButtons={false} showCheck={false} onCheck={handleCheck} />
-              </>
-            ))
-            : <p style={{textAlign: 'center'}}>No tasks due today</p>
-          }
+              ))}</>
+              :
+              <>{tasks.filter(isCourseTask).map((task) => (
+                <Task key={task.id} task={task} showButtons={false} showCheck={false} onCheck={handleCheck} />
+              ))
+              }</>
+            }
           </>
           :
           <>
