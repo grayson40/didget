@@ -65,6 +65,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
   var [insuranceTotal, setInsuranceTotal] = useState(0)
   var [academicTotal, setAcademicTotal] = useState(0)
   var [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  const [onAdd, setOnAdd] = useState(false);
   const [startDate, setStartDate] = useState(new Date(firstDay))
   const [endDate, setEndDate] = useState(new Date(lastDay))
   const place = useRef();
@@ -189,6 +190,45 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
     console.log('in expense page effect')
   }, [])
 
+  useEffect(() => {
+    setRentTotal(0);
+    setGroceryTotal(0);
+    setFoodTotal(0);
+    setInsuranceTotal(0);
+    setAcademicTotal(0);
+    setEntertainmentTotal(0);
+    expenses.filter(isInDateRange).forEach((expense) => {
+      switch (expense.category) {
+        case "rent":
+          setRentTotal(rentTotal + expense.total);
+          console.log("adding " + rentTotal + " rent");
+          break;
+        case "groceries":
+          setGroceryTotal(groceryTotal + expense.total);
+          console.log("adding " + groceryTotal + " groc");
+          break;
+        case "food":
+          setFoodTotal(foodTotal + expense.total);
+          console.log("adding " + foodTotal + " food");
+          break;
+        case "insurance":
+          setInsuranceTotal(insuranceTotal + expense.total);
+          console.log("adding " + insuranceTotal + " insu");
+          break;
+        case "academic":
+          setAcademicTotal(academicTotal + expense.total);
+          console.log("adding " + academicTotal + " acad");
+          break;
+        case "entertainment":
+          setEntertainmentTotal(entertainmentTotal + expense.total);
+          console.log("adding " + entertainmentTotal + " entr");
+          break;
+        default:
+          break;
+      }
+    })
+  }, [startDate, endDate, onAdd])
+
   /**
    * Appends to expense state array and asynchronously adds the expense item in firebase.
    * @returns void
@@ -211,29 +251,6 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       };
       const newExpenses = [...expenses, newExpense];
       setExpenses(newExpenses);
-
-      switch (newExpense.category) {
-        case "rent":
-          setRentTotal(rentTotal + newExpense.total);
-          break;
-        case "groceries":
-          setGroceryTotal(groceryTotal + newExpense.total);
-          break;
-        case "food":
-          setFoodTotal(foodTotal + newExpense.total);
-          break;
-        case "insurance":
-          setInsuranceTotal(insuranceTotal + newExpense.total);
-          break;
-        case "academic":
-          setAcademicTotal(academicTotal + newExpense.total);
-          break;
-        case "entertainment":
-          setEntertainmentTotal(entertainmentTotal + newExpense.total);
-          break;
-        default:
-          break;
-      }
 
       // Add expense to db
       const userRef = await getDocs(
@@ -274,6 +291,8 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
           })
         }
       })
+
+      setOnAdd(!onAdd);
 
       handleClose()
     }
