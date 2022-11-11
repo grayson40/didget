@@ -149,27 +149,21 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
             switch (_expense.category) {
               case "rent":
                 setRentTotal(rentTotal + _expense.total);
-                console.log("adding " + rentTotal + " rent");
                 break;
               case "groceries":
                 setGroceryTotal(groceryTotal + _expense.total);
-                console.log("adding " + groceryTotal + " groc");
                 break;
               case "food":
                 setFoodTotal(foodTotal + _expense.total);
-                console.log("adding " + foodTotal + " food");
                 break;
               case "insurance":
                 setInsuranceTotal(insuranceTotal + _expense.total);
-                console.log("adding " + insuranceTotal + " insu");
                 break;
               case "academic":
                 setAcademicTotal(academicTotal + _expense.total);
-                console.log("adding " + academicTotal + " acad");
                 break;
               case "entertainment":
                 setEntertainmentTotal(entertainmentTotal + _expense.total);
-                console.log("adding " + entertainmentTotal + " entr");
                 break;
               default:
                 break;
@@ -201,27 +195,21 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       switch (expense.category) {
         case "rent":
           setRentTotal(rentTotal + expense.total);
-          console.log("adding " + rentTotal + " rent");
           break;
         case "groceries":
           setGroceryTotal(groceryTotal + expense.total);
-          console.log("adding " + groceryTotal + " groc");
           break;
         case "food":
           setFoodTotal(foodTotal + expense.total);
-          console.log("adding " + foodTotal + " food");
           break;
         case "insurance":
           setInsuranceTotal(insuranceTotal + expense.total);
-          console.log("adding " + insuranceTotal + " insu");
           break;
         case "academic":
           setAcademicTotal(academicTotal + expense.total);
-          console.log("adding " + academicTotal + " acad");
           break;
         case "entertainment":
           setEntertainmentTotal(entertainmentTotal + expense.total);
-          console.log("adding " + entertainmentTotal + " entr");
           break;
         default:
           break;
