@@ -24,7 +24,8 @@ import { auth, db } from '../firebase';
 //  Class habit
 export default class Habit {
     
-  constructor(user_id) {
+  constructor() {
+    const d = new Date;
     const [open, setOpen] = useState(false);
     const [expenses, setExpenses] = useState([]);
     const [error, setError] = useState('')
@@ -42,34 +43,32 @@ export default class Habit {
     const date = useRef();
     const dataFetchedRef = useRef(false);
 
-
     //  user averages
-    var Rent_Average;
-    var Insurance_Average;
-    var Academic_Average;
-    var Entertainment_Average;
-    var Groceries_Average;
-    var Food_Average;
-    var Total_Average;
-    
+    var [Rent_Average, setRentAverage]  =                   useState(0);
+    var [Insurance_Average, setInsuranceAverage] =          useState(0);
+    var [Academic_Average, setAcademicAverage] =            useState(0);
+    var [Entertainment_Average, setEntertainmentAverage] =  useState(0);
+    var [Grocery_Average, setGroceryAverage] =              useState(0);
+    var [Food_Average, setFoodAverage] =                    useState(0);
+    var [Total_Average, setTotalAverage] =                  useState(0);
 
 
     //  locals: Values are junk data
-    var Local_Rent_Average = 500.82;
-    var Local_Insurance_Average = 150.24;
-    var Local_Academic_Average = 45.98;
-    var Local_Entertainment_Average = 66.90;
-    var Local_Groceries_Average = 129.88;
-    var Local_Food_Average = 98.99;
+    var [Local_Rent_Average, setLocal_Rent_Average] = useState(500.82);
+    var [Local_Insurance_Average, setLocal_Insurance_Average] = useState(150.24);
+    var [Local_Academic_Average, setLocal_Academic_Average] = useState(45.98);
+    var [Local_Entertainment_Average, setLocal_Entertainment_Average] = useState(66.90);
+    var [Local_Groceries_Average, setLocal_Groceries_Average] = useState(129.88);
+    var [Local_Food_Average, setLocal_Food_Average] = useState(98.99);
 
-    var Local_Overall_Average = Local_Rent_Average + Local_Insurance_Average + Local_Academic_Average + 
-    Local_Entertainment_Average + Local_Groceries_Average + Local_Food_Average;
+    var [Local_Overall_Average, setLocal_Overall_Average] = useState(Local_Rent_Average + Local_Insurance_Average + Local_Academic_Average + 
+    Local_Entertainment_Average + Local_Groceries_Average + Local_Food_Average);
 
     var isInMonth = (value) => {
       const date = value.deadline
       const arr = date.split("/")
   
-      return parseInt(arr[0]) === desiredMonth;
+      return parseInt(arr[0]) === value;
     }
     
     async function fetchData() {
@@ -142,7 +141,25 @@ export default class Habit {
         console.log('in expense page effect')
       }, [])
 
-      this.calcAverages();
+      let temp = 1.1;
+      let arr = { 
+        Rent_Average,
+        Insurance_Average, 
+        Academic_Average, 
+        Entertainment_Average, 
+        Grocery_Average, 
+        Food_Average,
+        temp
+      };
+      
+      arr = this.calcAverages(expenses, isInMonth, arr);
+
+      setRentAverage(arr[0]);
+      setInsuranceAverage(arr[1]);
+      setAcademicAverage(arr[2]);
+      setEntertainmentAverage(arr[3]);
+      setGroceryAverage(arr[4]);
+      setFoodAverage(arr[5]);
     };
 
         // getters for user averages
@@ -200,9 +217,9 @@ export default class Habit {
         }
     
 
-  calcAverages() {
+  calcAverages(expenses, isInMonth, arr) {
     let cur = new Date;
-    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, TotalT = 0;
+    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, totalT = 0;
     var lowestMonth = cur.getMonth();
     var curMonth = cur.getMonth();
     cur = 12 + cur.getMonth();
@@ -247,13 +264,15 @@ export default class Habit {
          })
 
          // assign averages
-          Rent_Average = totalR/(abs(curMonth - lowestMonth));
-          Groceries_Average = totalG/(abs(curMonth - lowestMonth)); 
-          Food_Average = totalF/(abs(curMonth - lowestMonth));
-          Insurance_Average = totalI/(abs(curMonth - lowestMonth)); 
-          Academic_Average = totalA/(abs(curMonth - lowestMonth));
-          Entertainment_Average = totalE/(abs(curMonth - lowestMonth));
-          Total_Average = TotalT/(abs(curMonth - lowestMonth));
+          arr[0] = (totalR/(Math.abs(curMonth - lowestMonth)));
+          arr[1] = (totalI/(Math.abs(curMonth - lowestMonth))); 
+          arr[2] = (totalA/(Math.abs(curMonth - lowestMonth)));
+          arr[3] = (totalE/(Math.abs(curMonth - lowestMonth)));
+          arr[4] = (totalG/(Math.abs(curMonth - lowestMonth))); 
+          arr[5] = (totalF/(Math.abs(curMonth - lowestMonth)));
+          arr[6] = (totalT/(Math.abs(curMonth - lowestMonth)));
+
+          return arr;
         }
       }
 
