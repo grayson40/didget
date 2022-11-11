@@ -24,7 +24,7 @@ import {
 
 
 
-export default function Cards() {
+export default function Cards({ date }) {
     const [budgetBool, setBudgetBool] = useState(false)
     async function fetchData() {
         if (auth.currentUser) {
@@ -97,6 +97,7 @@ export default function Cards() {
   ];
 
 
+    const [isBudget, setIsBudget] = useState(true);
 
   // Render Cards
   return (
@@ -113,7 +114,7 @@ export default function Cards() {
                 </Button>
                 <Collapse in={open1}>
                     <div>
-                      <ScheduleContent showButton={false} />
+                      <ScheduleContent showButton={false} inDate={date}/>
                     </div>
                 </Collapse>
             </Card>
@@ -146,6 +147,11 @@ export default function Cards() {
                         </PieChart>
                         }
                         
+                        <div style={{textAlign: 'center'}}>
+                          <Button style={{marginRight: '20px'}} onClick={(e) => setIsBudget(true)}>Budget</Button>
+                          <Button onClick={(e) => setIsBudget(false)}>Expenses</Button>
+                        </div>
+                        <BudgetContent isBudget={isBudget} inDate={date}/>
                     </div>
                     </Container>
                 </Collapse>
@@ -160,7 +166,7 @@ export default function Cards() {
                 </Button>
                 <Collapse in={open4}>
                     <div>
-                        <NotesContent showButton={false}/>
+                        <NotesContent showButton={false} date={date}/>
                     </div>
                 </Collapse>
             </Card>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Container, Card, Row, Col, Modal, Form, Button } from 'react-bootstrap'
+import { Container, Card, Row, Col, Modal, Form, Button, ProgressBar } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
@@ -15,6 +15,8 @@ import {
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
 import HabitItem from './HabitItem';
+import ExpenseItem from './ExpenseItem';
+import '../styles/budget.css'
 
 // Color by category dictionaries
 const bordFill =
@@ -64,12 +66,13 @@ const monthsDict = {
 
 const d = new Date();
 
-export default function BudgetContent({ notInCard, showButton }) {
+export default function BudgetContent({ notInCard, inDate, showButton, isBudget, inFinancial }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [expenses, setExpenses] = useState([])
+  const [incomes, setIncomes] = useState([])
   const [month, setMonth] = useState(d.getMonth() + 1);
   const [year, setYear] = useState(d.getFullYear())
   const rentLimit = useRef();
@@ -78,6 +81,13 @@ export default function BudgetContent({ notInCard, showButton }) {
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const incomeRef = useRef();
+
+  // const toDate = () => {
+  //   let date = new Date();
+  //   const today = `${date.getMonth() + 1}/${date.getFullYear()}`
+  //   return today;
+  // };
 
 
   /**
@@ -126,6 +136,7 @@ export default function BudgetContent({ notInCard, showButton }) {
               collection(db, `users/${user.id}/expenses/`)
             )
           );
+
           setExpenses(
             expensesRef.docs.map((expense) => ({
               id: expense.data().id,
@@ -133,6 +144,20 @@ export default function BudgetContent({ notInCard, showButton }) {
               place: expense.data().place,
               total: expense.data().total,
               date: expense.data().date
+            }))
+          )
+
+          const incomesRef = await getDocs(
+            query(
+              collection(db, `users/${user.id}/incomes`)
+            )
+          );
+          setIncomes(
+            incomesRef.docs.map((income) => ({
+              id: income.id,
+              income: income.data().income,
+              month: income.data().month,
+              year: income.data().year
             }))
           )
         }
@@ -298,6 +323,12 @@ export default function BudgetContent({ notInCard, showButton }) {
       }))
     )
 
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+
     // Add budgets to db
     newBudgets.forEach(async (category) => {
       const newBudget = {
@@ -306,11 +337,6 @@ export default function BudgetContent({ notInCard, showButton }) {
         current: category.current,
         month: category.month
       }
-      const userRef = await getDocs(
-        query(
-          collection(db, "users")
-        )
-      );
       userRef.docs.map(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
           const collectionRef = collection(db, `users/${user.id}/budgets/`);
@@ -318,6 +344,20 @@ export default function BudgetContent({ notInCard, showButton }) {
         }
       })
     })
+
+    if (incomes.filter(isInMonth).length === 0) {
+      const newIncome = {
+        income: parseInt(incomeRef.current.value),
+        month: month,
+        year: year
+      }
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const incomesRef = collection(db, `users/${user.id}/incomes/`);
+          await addDoc(incomesRef, newIncome);
+        }
+      })
+    }
 
     fetchData()
     handleClose()
@@ -378,48 +418,217 @@ export default function BudgetContent({ notInCard, showButton }) {
     return inMonth === month;
   }
 
+  const expenseInMonth = (value) => {
+    const arr = value.date.split('/')
+    const _month = parseInt(arr[0])
+    return _month === month;
+  }
+
+  const calculateExpenseTotal = () => {
+    let total = 0;
+    expenses.filter(expenseInMonth).forEach((expense) => {
+      total += expense.total
+    })
+    return total
+  }
+
+  const calculateIncomeAverage = () => {
+    let total = 0
+    let count = 0
+    if (incomes.length === 0) return 0
+    incomes.forEach((income) => {
+      total += income.income
+      count++
+    })
+    return parseInt(total / count)
+  }
+
+  const cardFilter = (value) => {
+    // console.log(inDate)
+    const arr = inDate.split('/')
+    const cardMonth = parseInt(arr[0])
+    const inMonth = value.month
+    // console.log(`${inMonth} ${cardMonth}`)
+    return inMonth === cardMonth
+  }
+
+  const expenseFilter = (value) => {
+    const expDate = new Date(value.date)
+    const d = new Date(inDate)
+    return expDate.getMonth() === d.getMonth() && expDate.getDate() === d.getDate()
+  }
+
+  const updateIncome = async (id, newIncome) => {
+    console.log(`${id} ${newIncome}`)
+    incomes.forEach((income) => {
+      if (income.id === id) {
+        income.income = parseInt(newIncome)
+        console.log('set new Income')
+      }
+    })
+    setIncomes(incomes)
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/incomes/`)
+          )
+        );
+        incomesRef.docs.forEach(async (income) => {
+          console.log(income.id)
+          if (income.id === id) {
+            console.log('in here')
+            const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
+            await updateDoc(docRef, { income: parseInt(newIncome) })
+              .then(console.log('document updated'))
+          }
+        })
+      }
+    })
+    fetchData()
+  }
+
+  const InlineEdit = ({ element }) => {
+    const [editingValue, setEditingValue] = useState(element.income);
+
+    const onChange = (event) => {
+      setEditingValue(event.target.value);
+    }
+
+    const onKeyDown = (event) => {
+      if (event.key === "Enter" || event.key === "Escape") {
+        event.target.blur();
+      }
+    }
+
+    const onBlur = (event) => {
+      const val = parseInt(event.target.value)
+      if (event.target.value.trim() === "") {
+        setEditingValue(element.income);
+      } else {
+        if (val !== element.income) {
+          updateIncome(element.id, val)
+        }
+      }
+    }
+
+    return (
+      <input
+        class='inline'
+        type="text"
+        aria-label="Field name"
+        value={editingValue}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        onBlur={onBlur}
+      />
+    )
+  }
+
+  const deleteIncome = async (id) => {
+    const newIncomes = incomes.filter((income) => income.id !== id)
+    setIncomes(newIncomes)
+    const userRef = await getDocs(
+      query(
+        collection(db, "users")
+      )
+    );
+    userRef.docs.map(async (user) => {
+      if (user.data().uid === auth.currentUser.uid) {
+        const incomesRef = await getDocs(
+          query(
+            collection(db, `users/${user.id}/incomes/`)
+          )
+        );
+        incomesRef.docs.forEach(async (income) => {
+          console.log(income.id)
+          if (income.id === id) {
+            console.log('in here')
+            const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
+            await deleteDoc(docRef)
+              .then(console.log('document deleted'))
+          }
+        })
+      }
+    })
+  }
+
   return (
     <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
       {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
       <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-
-        <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
-          <Row>
-            <Col>
-              <Button onClick={prevMonth}>Prev</Button>
-            </Col>
-            <Col>{`${monthsDict[month]} ${year}`}</Col>
-            <Col>
-              <Button onClick={nextMonth}>Next</Button>
-            </Col>
-          </Row>
-        </Container>
-
-        <BarChart data={graphData.filter(isInMonth)} layout="vertical" width={600} height={250} >
-          <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
-            {
-              graphData.filter(isInMonth).map((entry, index) => (
-                <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
-              ))
+        {showButton ?
+          <>
+            {graphData.filter(isInMonth).length !== 0 ?
+              <BarChart data={graphData.filter(isInMonth)} layout="vertical" width={600} height={250} >
+                <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+                  {
+                    graphData.filter(isInMonth).map((entry, index) => (
+                      <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
+                    ))
+                  }
+                </Bar>
+                <Bar dataKey="max" barSize={10}>
+                  {
+                    graphData.filter(isInMonth).map((entry, index) => (
+                      <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
+                    ))
+                  }
+                </Bar>
+                {/*
+                
+                NOTICE NOTICE NOTICE
+                BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+      
+                */}
+                <XAxis stroke="black" type="number" reversed />
+                <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+                <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+              </BarChart>
+              : null
             }
-          </Bar>
-          <Bar dataKey="max" barSize={10}>
-            {
-              graphData.filter(isInMonth).map((entry, index) => (
-                <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
-              ))
+          </>
+          :
+          <>
+            {isBudget ?
+              <> {graphData.filter(cardFilter).length !== 0 ?
+                <BarChart data={graphData.filter(cardFilter)} layout="vertical" width={600} height={250} >
+                  <Bar dataKey="expense" fill='#FFA07A' barSize={10}>
+                    {
+                      graphData.filter(isInMonth).map((entry, index) => (
+                        <Cell key={'expense'} fill={bordFill[entry.name.toLowerCase()]} />
+                      ))
+                    }
+                  </Bar>
+                  <Bar dataKey="max" barSize={10}>
+                    {
+                      graphData.filter(isInMonth).map((entry, index) => (
+                        <Cell key={'limit'} fill={backFill[entry.name.toLowerCase()]} />
+                      ))
+                    }
+                  </Bar>
+                  {/*
+                
+                NOTICE NOTICE NOTICE
+                BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
+      
+                */}
+                  <XAxis stroke="black" type="number" reversed />
+                  <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
+                  <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
+                </BarChart>
+                : <p>{`No budget for ${monthsDict[parseInt(inDate.split('/')[0])]}`}</p>
+              }
+              </>
+              : null
             }
-          </Bar>
-          {/*
-              
-              NOTICE NOTICE NOTICE
-              BELOW FOR DARK/LIGHT MODES CHANGE STROKE TO BE THE COLOR DESIRED
-    
-              */}
-          <XAxis stroke="black" type="number" reversed />
-          <YAxis stroke="black" type="category" width={150} padding={{ left: 20 }} orientation={"right"} dataKey="symbol" />
-          <ReferenceLine x={100} stroke="red" strokeDasharray="3 3" />
-        </BarChart>
+          </>
+        }
 
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
@@ -428,6 +637,17 @@ export default function BudgetContent({ notInCard, showButton }) {
             {/* {error && <Alert variant="danger">{error}</Alert>} */}
             <Form>
               {/* TODO: add budget category and limit fields */}
+              <Form.Group id='income'>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>
+                    {incomes.filter(isInMonth).length === 0
+                      ? <Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()} />
+                      : <p>Income already set</p>
+                    }
+                  </Col>
+                </Row>
+              </Form.Group>
               <Form.Group id='rent'>
                 <Row className="mb-2">
                   <Col className="border-end">Rent</Col>
@@ -484,20 +704,130 @@ export default function BudgetContent({ notInCard, showButton }) {
         </Modal>
 
         {
-          notInCard ?
-            <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
-              <Card.Header>
-                Budget
-              </Card.Header>
-              <Card.Header>
+          showButton ?
+            <>
+              {/* Income Card */}
+              {incomes.filter(isInMonth).length !== 0 ?
+                incomes.filter(isInMonth).map((income) => (
+                  <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+                    <Card.Header>
+                      <Row className="mb-2">
+                        <Col className="border-end">Income</Col>
+                        <Col>$<InlineEdit element={income} /> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          {calculateExpenseTotal() < income.income
+                            ? <ProgressBar animated variant="success" now={(calculateExpenseTotal() / income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                            : <ProgressBar animated variant="danger" now={(calculateExpenseTotal() / income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                          }
+                        </Col>
+                      </Row>
+                    </Card.Header>
+                  </Card>
+                ))
+                : <p>{`No income for ${monthsDict[month]}`}</p>
+              }
+              <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
                 <Row>
-                  <Col className="border-end">Category</Col>
-                  <Col>Limit</Col>
+                  <Col sm={4}>
+                    <Button onClick={prevMonth}>Prev</Button>
+                  </Col>
+                  <Col >{`${monthsDict[month]} ${year}`}</Col>
+                  <Col sm={4}>
+                    <Button onClick={nextMonth}>Next</Button>
+                  </Col>
                 </Row>
-              </Card.Header>
-            </Card>
+              </Container>
+              <>
+                {budgets.filter(isInMonth).length !== 0 ?
+                  <>
+                    <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+                      <Card.Header>
+                        Budget
+                      </Card.Header>
+                      <Card.Header>
+                        <Row>
+                          <Col className="border-end">Category</Col>
+                          <Col>Limit</Col>
+                        </Row>
+                      </Card.Header>
+                    </Card>
+                    {budgets.filter(isInMonth).map((item, index) => (
+                      <>
+                        <BudgetItem
+                          key={index}
+                          item={item}
+                          bordColor={backFill[item.category.toLowerCase()]}
+                          backColor={bordFill[item.category.toLowerCase()]}
+                          onUpdate={updateBudget}
+                        />
+                      </>
+                    ))
+                    }
+                  </>
+                  : <p>{`No budget for ${monthsDict[month]}`}</p>
+                }
+              </>
+            </>
             :
-            <></>
+            <>
+              <>
+                {inFinancial ?
+                  <>
+                    {/* Display top 3 budgets */}
+                    {
+                      budgets.filter(isInMonth).sort(function (a, b) { return b.current - a.current }).map((budget, index) => {
+                        if (index <= 2) {
+                          return (
+                            <BudgetItem
+                              key={index}
+                              item={budget}
+                              bordColor={backFill[budget.category.toLowerCase()]}
+                              backColor={bordFill[budget.category.toLowerCase()]}
+                              onUpdate={updateBudget}
+                            />
+                          )
+                        }
+                        return null
+                      })
+                    }
+                  </>
+                  :
+                  <>
+                    {isBudget ?
+                      <>{budgets.filter(cardFilter).map((item, index) => (
+                        <BudgetItem
+                          key={index}
+                          item={item}
+                          bordColor={backFill[item.category.toLowerCase()]}
+                          backColor={bordFill[item.category.toLowerCase()]}
+                          onUpdate={updateBudget}
+                        />
+                      ))
+                      }
+                      </>
+                      :
+                      <>
+                        {expenses.filter(expenseFilter).length !== 0 ?
+                          <>
+                            {expenses.filter(expenseFilter).map((expense, index) => (
+                              <ExpenseItem
+                                key={index}
+                                expense={expense}
+                                bordColor={backFill[expense.category.toLowerCase()]}
+                                backColor={bordFill[expense.category.toLowerCase()]}
+                              />
+                            ))}
+                          </>
+                          : <p>No expenses for today</p>
+                        }
+                      </>
+                    }
+                  </>
+                }
+              </>
+            </>
         }
 
         {/*Cards with Name, Total, Category, and Date*/}
@@ -517,7 +847,7 @@ export default function BudgetContent({ notInCard, showButton }) {
         <HabitItem/>
         
       </Container>
-      { showButton &&
+      {showButton &&
         <>
           {
             budgets.filter(isInMonth).length !== 0 ? (<Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>

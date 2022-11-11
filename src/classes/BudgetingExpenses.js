@@ -84,3 +84,23 @@ class Budget{
     }
 }
 
+
+//Create a class for income that tracks your current monthly income
+//Income class consists of
+//  amount: your current monthly income, set by user
+//  date: the month and year which this income is registered
+class Income {
+    constructor(amount, date){
+        this.amount = amount;
+        this.date = date;
+    }
+
+    getAmount() {
+        return this.amount;
+    }
+
+    getDate() {
+        return this.date;
+    }
+}
+
