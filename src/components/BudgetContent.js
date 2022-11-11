@@ -783,6 +783,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                             />
                           )
                         }
+                        return null
                       })
                     }
                   </>

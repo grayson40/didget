@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Container, Card, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Fab from '@mui/material/Fab'
 import { FaPlus } from 'react-icons/fa'
-import TopBar from './TopBar'
-import PageBar from './PageBar'
 import { uuidv4 } from '@firebase/util'
 import { PieChart, Pie, Cell, Legend } from 'recharts'
 import {
@@ -569,6 +567,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
                     />
                   )
                 }
+                return null
               })
             }
           </>

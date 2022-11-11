@@ -7,9 +7,7 @@ import TaskContent from './TaskContent'
 import {
   collection,
   getDocs,
-  query,
-  addDoc,
-  doc,
+  query
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
@@ -173,7 +171,7 @@ export default function Course(props) {
         :
         <>
           {tasks.filter(isCourseTask).filter(isInDate).length === 0
-            ? <p>No tasks due today</p>
+            ? <p style={{ textAlign: 'center'}}>No tasks due today</p>
             :
             <Card className='mb-4'>
               <Card.Header as="h5">

@@ -183,6 +183,7 @@ export default function NotesContent(props) {
               if (index <= 2) {
                 return <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
               }
+              return null
             })}
           </>
         }
