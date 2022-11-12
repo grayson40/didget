@@ -26,6 +26,7 @@ const bordFill =
   'food': '#F9E79F',
   'insurance': '#AED6F1',
   'academic': '#A2D9CE',
+  'debt': '#614d4b'
 }
 
 const backFill =
@@ -36,6 +37,7 @@ const backFill =
   'food': '#F4D03F',
   'insurance': '#5DADE2',
   'academic': '#45B39D',
+  'debt': '#423736'
 }
 
 // Symbol dictionary
@@ -45,7 +47,8 @@ const symbolsDict = {
   'Food': '🍔',
   'Insurance': '📋',
   'Academic': '📚',
-  'Entertainment': '🍿'
+  'Entertainment': '🍿',
+  'Debt': '💳'
 }
 
 const monthsDict = {
@@ -80,6 +83,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const debtLimit = useRef();
   const incomeRef = useRef();
 
   // const toDate = () => {
@@ -234,7 +238,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
    * @returns void
    */
   const createBudget = async () => {
-    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0;
+    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0, debtTotal = 0;
     expenses.forEach((expense) => {
       let arr = expense.date.split('/')
       let expenseMonth = parseInt(arr[0])
@@ -258,6 +262,9 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
           case "entertainment":
             entertainmentTotal += parseInt(expense.total)
             break;
+          case "debt":
+            debtTotal += parseInt(expense.total)
+            break
           default:
             break;
         }
@@ -298,6 +305,12 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
         category: "Entertainment",
         limit: parseInt(entertainmentLimit.current.value),
         current: entertainmentTotal,
+        month: month
+      },
+      {
+        category: "Debt",
+        limit: parseInt(debtLimit.current.value),
+        current: debtTotal,
         month: month
       }
     ]
@@ -710,6 +723,14 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                   <Col className="border-end">Entertainment</Col>
                   <Col>
                     <Form.Control type='entertainment' ref={entertainmentLimit} />
+                  </Col>
+                </Row>
+              </Form.Group>
+              <Form.Group id='debt'>
+                <Row className="mb-2">
+                  <Col className="border-end">Debt</Col>
+                  <Col>
+                    <Form.Control type='debt' ref={debtLimit} />
                   </Col>
                 </Row>
               </Form.Group>

@@ -32,6 +32,7 @@ const categoryFill =
   food: '#64B5F6',
   insurance: '#4DD0E1',
   academic: '#81C784',
+  debt: 'black',
 }
 
 // Color by category dictionaries
@@ -43,6 +44,7 @@ const expenseFill =
   'food': '#F9E79F',
   'insurance': '#AED6F1',
   'academic': '#A2D9CE',
+  'debt': '#705e5c'
 }
 
 const limitFill =
@@ -53,6 +55,7 @@ const limitFill =
   'food': '#F4D03F',
   'insurance': '#5DADE2',
   'academic': '#45B39D',
+  'debt': '#473433',
 }
 
 
@@ -60,13 +63,16 @@ export default function Expenses({ notInCard, showButton}) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
+  const [debts, setDebts] = useState([])
   const [error, setError] = useState('')
+  const [userId, setUserId] = useState()
   var [rentTotal, setRentTotal] = useState(0)
   var [groceryTotal, setGroceryTotal] = useState(0)
   var [foodTotal, setFoodTotal] = useState(0)
   var [insuranceTotal, setInsuranceTotal] = useState(0)
   var [academicTotal, setAcademicTotal] = useState(0)
   var [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  var [debtTotal, setDebtTotal] = useState(0)
   const [startDate, setStartDate] = useState(new Date(firstDay))
   const [endDate, setEndDate] = useState(new Date(lastDay))
   const place = useRef();
@@ -106,6 +112,11 @@ export default function Expenses({ notInCard, showButton}) {
       category: "entertainment",
       spent: entertainmentTotal,
       fill: categoryFill.entertainment
+    },
+    {
+      category: "debt",
+      spent: debtTotal,
+      fill: categoryFill.debt
     }
   ]
 
@@ -131,11 +142,37 @@ export default function Expenses({ notInCard, showButton}) {
       // Iterate through the documents fetched
       usersRef.forEach(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
+
+          setUserId(user.id)
+
           const expensesRef = await getDocs(
             query(
               collection(db, `users/${user.id}/expenses/`)
             )
           );
+
+          // Get the debtCollectionRef and get its docs
+          const debtsRef = await getDocs(
+            query (
+              collection(db, `users/${user.id}/debts/`)
+            )
+          )
+          
+          // Get all the debts and set their debtPaid values to 0
+          debtsRef.docs.forEach((debt) => {
+
+            // Create a new debt
+            const _debt = {
+              id: debt.data().id,
+              debtName: debt.data().debtName,
+              debtVal: debt.data().debtVal,
+              debtPaid: 0
+            }
+            
+            // Add it to the debts
+            setDebts((current) => [...current, _debt])
+
+          })
 
           expensesRef.docs.forEach((expense) => {
             const _expense = {
@@ -172,15 +209,101 @@ export default function Expenses({ notInCard, showButton}) {
                 setEntertainmentTotal(entertainmentTotal + _expense.total);
                 console.log("adding " + entertainmentTotal + " entr");
                 break;
+              case "debt":
+                setDebtTotal(debtTotal + _expense.total)
+                console.log("adding " + debtTotal + " debt")
+
+                // Update the debtPaid attribute for each debt object
+                debts.forEach((debt) => {
+                  if(debt.debtName.toLowerCase() === _expense.place.toLowerCase()){
+                    debt.debtPaid += _expense.total
+                    console.log('Adding ' + _expense.total + ' to ' + debt.debtPaid + ' for ' + debt.debtName)
+                  }
+                })
+                break
               default:
                 break;
-            }
+            }            
           })
         }
       })
     }
     console.log('fetching expense data')
   }
+
+  async function updateDebtPaidAttr() {
+
+    /** Update the debtPaid attributes of each debt by running through expenses
+        and finding corresponding debts */
+
+    // Iterate through each expense
+    expenses.forEach((expense) => {
+
+      // If the expense's category is 'debt'
+      if (expense.category === "debt") {
+
+        // Iterate through each debt
+        debts.forEach((debt) => {
+
+          // Find the corresponding debt (if any)
+          if (debt.debtName === expense.place) {
+            
+            // Increment it's debtPaid by expense's total
+            debt.debtPaid += expense.total
+
+            console.log(`Adding ${expense.place}'s ${expense.total} to ${debt.debtName} debt`)
+          }
+        })
+      }
+    })
+
+    // Get the debtCollectionRef and get its docs
+    const debtsRef = await getDocs(
+      query(
+        collection(db, `users/${userId}/debts/`)
+      )
+    )
+
+    /** Update Firebase with the new debtPaid attributes */
+
+    // Iterate through each debt in the database
+    await debtsRef.docs.forEach((debt) => {
+
+      // Iterate through each debt stored locally
+      debts.forEach(async (debtlocal) => {
+
+        // For each corresponding id match
+        if (debtlocal.id === debt.data().id) {
+
+          // Get the docRef
+          const debtDocRef = doc(db, `users/${userId}/debts/${debt.id}`)
+
+          // Update the firebase debt copy with its updated debtPaid
+          await updateDoc(debtDocRef, { debtPaid: debtlocal.debtPaid })
+            .then(() => {
+              console.log(`Debt id ${debt.id} updated`)
+            })
+            .catch(error => {
+              setError(error.toString())
+            })
+
+        }
+      })
+    })
+  }
+
+  /**
+   * Works everytime debts array changes. For our purposes, that means once
+   * debts are set from the first useEffect().
+   * 
+   * @returns void
+   */
+  useEffect(() =>{
+    
+    updateDebtPaidAttr()
+    console.log('Updating DebtPaidAttr')
+
+  }, [debts && expenses])
 
   useEffect(() => {
     if (dataFetchedRef.current) {
@@ -233,6 +356,9 @@ export default function Expenses({ notInCard, showButton}) {
         case "entertainment":
           setEntertainmentTotal(entertainmentTotal + newExpense.total);
           break;
+        case "debt":
+          setDebtTotal(debtTotal + newExpense.total)
+          break
         default:
           break;
       }
@@ -288,6 +414,9 @@ export default function Expenses({ notInCard, showButton}) {
    * @returns void
    */
   const updateExpense = async (id, updatedExpense) => {
+
+    console.log(debts)
+
     // Update on screen
     let totalDifference = 0;
     console.log(`updating ${id}`)
@@ -327,6 +456,9 @@ export default function Expenses({ notInCard, showButton}) {
       case "entertainment":
         setEntertainmentTotal(entertainmentTotal + totalDifference);
         break;
+      case "debt":
+        setDebtTotal(debtTotal + totalDifference)
+        break
       default:
         break;
     }
@@ -449,6 +581,9 @@ export default function Expenses({ notInCard, showButton}) {
           case "entertainment":
             setEntertainmentTotal(entertainmentTotal - deletedExpenseTotal);
             break;
+          case "debt":
+            setDebtTotal(debtTotal - deletedExpenseTotal)
+            break
           default:
             break;
         }
@@ -525,6 +660,7 @@ export default function Expenses({ notInCard, showButton}) {
                 <option value="insurance">Insurance</option>
                 <option value="rent">Rent</option>
                 <option value="food">Food</option>
+                <option value="debt">Debt</option>
               </select>
             </Form.Group>
             <Form.Group id='date'>
@@ -557,7 +693,8 @@ export default function Expenses({ notInCard, showButton}) {
               { value: 'Food', color: limitFill['food'] },
               { value: 'Insu', color: limitFill['insurance'] },
               { value: 'Acad', color: limitFill['academic'] },
-              { value: 'Ente', color: limitFill['entertainment'] }
+              { value: 'Ente', color: limitFill['entertainment'] },
+              { value: 'Debt', color: limitFill['debt'] }
             ]}></Legend>
           </PieChart>
         </Container>
