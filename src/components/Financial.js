@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Alert, Button, Container, Card, Collapse, Form, Modal } from 'react-bootstrap'
+import { Alert, Button, Container, Card, Col, Collapse, Form, Modal, Row } from 'react-bootstrap'
 import Fab from '@mui/material/Fab'
 import { FaPlus } from 'react-icons/fa'
 import TopBar from './TopBar'
@@ -22,7 +22,7 @@ import {
 export default function Financial() {
 
     // States for Financials page
-    const [error, setError] = useState()
+    const [error, setError] = useState('')
     const [currentUserId, setCurrentUserId] = useState()
 
     // Refs for Financials page
@@ -34,6 +34,7 @@ export default function Financial() {
 
     // States for Debt Implementation
     const [debtCollecRef, setDebtCollecRef] = useState()
+    const [debtCollecDocsRef, setDebtCollecDocsRef] = useState()
     const [openDebtForm, setOpenDebtForm] = useState(false)
     const [debtFormError, setDebtFormError] = useState('')
     const [debts, setDebts] = useState([])
@@ -83,22 +84,26 @@ export default function Financial() {
                     setCurrentUserId(user.id)
 
                     // Fetch the Debt docs
-                    const debtCollecRef = await getDocs(
+                    const debtCollectionDocsRef = await getDocs(
                         query(
                             collection(db, `users/${user.id}/debts/`)
                         )
                     );
+
+                    // Set debtCollecDocsRef
+                    setDebtCollecDocsRef(debtCollectionDocsRef)
 
                     // Set debtCollecRef
                     let debtcollectionref = collection(db, `users/${user.id}/debts/`)
                     setDebtCollecRef(debtcollectionref)
 
                     // For each Debt document
-                    debtCollecRef.docs.forEach((debt) => {
+                    debtCollectionDocsRef.docs.forEach((debt) => {
                         const _debt = {
                             id: debt.data().id,
                             debtName: debt.data().debtName,
-                            debtVal: debt.data().debtVal
+                            debtVal: debt.data().debtVal,
+                            debtPaid: debt.data().debtPaid
                         }
 
                         // Set the Debt State
@@ -141,7 +146,8 @@ export default function Financial() {
             const newDebt = {
                 id: uuidv4(),
                 debtName: debtNameFormAttr.current.value,
-                debtVal: parseInt(debtValFormAttr.current.value)
+                debtVal: parseInt(debtValFormAttr.current.value),
+                debtPaid: 0
             };
 
             // Create a new array with the new debt added
@@ -150,14 +156,21 @@ export default function Financial() {
             // Set the debts as the new list
             setDebts(newDebts)
 
+            console.log(newDebt)
+
             /* Add the debts to Firebase */
             await addDoc(debtCollecRef, newDebt)
-
-            console.log(`Adding new debt:`)
-            console.log(newDebt)
+                .then(() => {
+                    console.log('Document Added')
+                })
+                .catch(error => {
+                    setError(error.toString())
+                })
 
             handleClose()
         }
+        console.log(error)
+        setError('')
     }
 
     /**
@@ -167,7 +180,7 @@ export default function Financial() {
      * @param {*} updatedDebt 
      * @returns void
      */
-    const updateDebt = async (id, updatedDebt) => {
+    const updateDebt = async (id, updatedDebtVal) => {
 
         // Iterate through each debt
         debts.forEach((debt) => {
@@ -176,26 +189,24 @@ export default function Financial() {
             if (debt.id === id) {
 
                 // Update the Debt object
-                debt.id = updatedDebt.id
-                debt.debtName = updatedDebt.debtName
-                debt.debtVal = updatedDebt.debtVal
+                debt.debtVal = updatedDebtVal
             }
         });
 
         // Set the new debts
         setDebts(debts)
 
-        // Update Firebase
-        debtCollecRef.docs.forEach(async (debt) => {
+        // Iterate through the debts
+        debtCollecDocsRef.docs.forEach(async (debt) => {
 
-            // Find the updated debt object
-            if (debt.data().id === id) {
+            // Find the appropriate debt
+            if(debt.data().id === id) {
 
-                // Get the doc reference
+                // Get the docRef
                 const debtDocRef = doc(db, `users/${currentUserId}/debts/${debt.id}`)
 
                 // Update the doc
-                await updateDoc(debtCollecRef, updatedDebt)
+                await updateDoc(debtDocRef, { debtVal: updatedDebtVal} )
                     .then(() => {
                         console.log(`Debt id ${id} updated`)
                     })
@@ -204,6 +215,7 @@ export default function Financial() {
                     })
             }
         })
+
     }
 
     /**
@@ -218,25 +230,29 @@ export default function Financial() {
         const newDebts = debts.filter((debt) => debt.id !== id)
         setDebts(newDebts)
 
-        // Iterate through all the debt items
-        debtCollecRef.docs.forEach(async (debt) => {
+        // Iterate through the debts
+        debtCollecDocsRef.docs.forEach(async (debt) => {
 
-            // If its the debt item of interest
-            if (debt.data().id === id) {
+            // Find the appropriate debt
+            if(debt.data().id === id) {
 
                 // Get the docRef
-                const deletedDocRef = doc(db, `users/${currentUserId}/debts/${debt.id}`)
+                const debtDocRef = doc(db, `users/${currentUserId}/debts/${debt.id}`)
 
-                // Delete the doc
-                await deleteDoc(deletedDocRef)
+                console.log(debt)
+                // Delete from Firebase
+                await deleteDoc(debtDocRef)
                     .then(() => {
-                        console.log(`Debt id ${id} deleted.`)
+                        console.log('Document Deleted')
                     })
                     .catch(error => {
                         setError(error.toString())
                     })
             }
         })
+
+        console.log(error)
+        setError('')
     }
 
     return (
@@ -306,16 +322,26 @@ export default function Financial() {
                         </Button>
                         <Collapse in={open4}>
                             <Container>
-                                {/*
-                                    debts.map(( debt, index ) => (
+                                <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
+                                    <Card.Header>
+                                        Debt
+                                    </Card.Header>
+                                    <Card.Header>
+                                        <Row>
+                                            <Col sm={7} className="border-end">Name</Col>
+                                            <Col sm={5}>Outstanding</Col>
+                                        </Row>
+                                    </Card.Header>
+                                </Card>
+                                {debts.map( (debt, index) => (
                                         <DebtItem
                                             key={index}
                                             debt={debt}
-                                            onDelete={deleteDebt}
                                             onUpdate={updateDebt}
+                                            onDelete={deleteDebt}
                                         />
-                                    ))
-                                    */}
+                                ))
+                                }
                             </Container>
                         </Collapse>
                     </Card>
