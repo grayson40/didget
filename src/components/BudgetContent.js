@@ -844,7 +844,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
             </>
           ))
         }
-        <HabitItem/>
+        <HabitItem />
         
       </Container>
       {showButton &&
