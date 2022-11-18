@@ -68,6 +68,7 @@ export default function Course(props) {
     handleClose()
   }
 
+
   // Modal close
   const handleClose = () => {
     setOpen(false);
@@ -171,7 +172,7 @@ export default function Course(props) {
         :
         <>
           {tasks.filter(isCourseTask).filter(isInDate).length === 0
-            ? <p style={{ textAlign: 'center'}}>No tasks due today</p>
+            ? null
             :
             <Card className='mb-4'>
               <Card.Header as="h5">
