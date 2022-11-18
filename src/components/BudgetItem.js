@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Card, Row, Col, ProgressBar } from 'react-bootstrap'
 import '../styles/budget.css';
+import HabitItem from './HabitItem';
 
-export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
+export default function BudgetItem({ key, item, bordColor, backColor, onUpdate }) {
 
   //Calulates the total amount of money left (spending limit - amount spent)
   function left(limit, spent) {
@@ -69,6 +70,7 @@ export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
               }
             </Col>
           </Row>
+          <HabitItem index = {key}/>
         </Card.Body>
       </Card>
     </>

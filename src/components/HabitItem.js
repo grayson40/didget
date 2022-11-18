@@ -13,7 +13,7 @@ import {
 
 // let pageHabit = new Habit();
 
-export default function HabitItem() {
+export default function HabitItem({ current, index }) {
   const [expenses, setExpenses] = useState([]);
   const [rentTotal, setRentTotal] = useState(0)
   const [groceryTotal, setGroceryTotal] = useState(0)
@@ -88,15 +88,9 @@ export default function HabitItem() {
     console.log('fetching expense data')
   }
 
-  var isInMonth = (value) => {
-    const date = value.date
-    const arr = date.split("/")
-
-    return parseInt(arr[0]) === value;
-  }
 
   function calcAverages() {
-    let cur = new Date;
+    let cur = new Date();
     console.log(cur)
     var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, totalT = 0;
     var lowestMonth = cur.getMonth() - 5;
@@ -139,10 +133,10 @@ export default function HabitItem() {
           default:
             break;
         }
-
       }
-    })
-    let arr = []
+    
+      return 0;})
+    let arr = [];
 
     // assign averages
     arr[0] = (totalR / (Math.abs(curMonth - lowestMonth)));
@@ -162,11 +156,12 @@ export default function HabitItem() {
     setAverages(arr);
   }
 
+
   return (
     <Container>
     <button onClick={handleClick}>Click me</button>
     {
-      averages.map((average) => (<p>{average}</p>))
+      averages[index]
     }
     </Container>
   );
