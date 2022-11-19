@@ -161,7 +161,7 @@ export default function HabitItem({ current, index }) {
     <Container>
     <button onClick={handleClick}>Click me</button>
     {
-      averages[index]
+      averages.map((average) => (<p>{average}</p>))
     }
     </Container>
   );
