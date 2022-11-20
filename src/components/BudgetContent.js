@@ -757,6 +757,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                       <>
                         <BudgetItem
                           key={index}
+                          index = {index}
                           item={item}
                           bordColor={backFill[item.category.toLowerCase()]}
                           backColor={bordFill[item.category.toLowerCase()]}

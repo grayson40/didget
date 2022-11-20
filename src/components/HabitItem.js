@@ -13,7 +13,7 @@ import {
 
 // let pageHabit = new Habit();
 
-export default function HabitItem({ current, index }) {
+export default function HabitItem({ current }) {
   const [expenses, setExpenses] = useState([]);
   const [rentTotal, setRentTotal] = useState(0)
   const [groceryTotal, setGroceryTotal] = useState(0)
@@ -22,10 +22,12 @@ export default function HabitItem({ current, index }) {
   const [academicTotal, setAcademicTotal] = useState(0)
   const [entertainmentTotal, setEntertainmentTotal] = useState(0)
   const [averages, setAverages] = useState([]);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     fetchData();
   }, [])
+
 
   async function fetchData() {
     if (auth.currentUser) {
@@ -151,17 +153,48 @@ export default function HabitItem({ current, index }) {
   }
 
   const handleClick = () => {
+    verifyIndex();
     const arr = calcAverages();
     console.log('in here')
     setAverages(arr);
   }
 
+  const verifyIndex = () => {
+    console.log(current);
+    switch (current) {
+      case "rent":
+        setIndex(0);
+        break;
+      case "groceries":
+        console.log("Big g lol");
+        setIndex(4);
+        break;
+      case "food":
+        setIndex(5);
+        break;
+      case "insurance":
+        setIndex(1);
+        break;
+      case "academic":
+        setIndex(2);
+        break;
+      case "entertainment":
+        setIndex(3);
+        break;
+      default:
+        setIndex(6)
+        break;
+    }
+
+
+  }
 
   return (
     <Container>
     <button onClick={handleClick}>Click me</button>
     {
-      averages.map((average) => (<p>{average}</p>))
+      //averages.map((average) => (<p>{average}</p>))
+      <p>{averages[index]}</p>
     }
     </Container>
   );
