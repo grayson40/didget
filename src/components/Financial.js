@@ -87,7 +87,6 @@ export default function Financial() {
         fetchDebtData()
         dataFetchedRef.current = true
 
-        console.log('Ending use effect')
     }, [])
 
     /**
@@ -171,9 +170,6 @@ export default function Financial() {
      * @returns void
      */
     const handleClose = () => {
-        console.log(graphData.map((entry) => (
-            entry.value
-        )))
         setOpenDebtForm(false)
         setDebtFormError('')
     }
@@ -325,10 +321,7 @@ export default function Financial() {
                 
                 // Update the newPaid and newLeft 
                 newPaid -= debt.debtPaid
-                newLeft -= debt.debtVal
-
-                console.log(newPaid)
-                console.log(newLeft)
+                newLeft -= (debt.debtVal - debt.debtPaid)
             }
         })
 
@@ -349,7 +342,6 @@ export default function Financial() {
                 // Get the docRef
                 const debtDocRef = doc(db, `users/${currentUserId}/debts/${debt.id}`)
 
-                console.log(debt)
                 // Delete from Firebase
                 await deleteDoc(debtDocRef)
                     .then(() => {
@@ -441,8 +433,8 @@ export default function Financial() {
                                         }
                                     </Pie>
                                     <Legend payload={[
-                                        { value: 'Paid', color: completionFill['paid'] },
-                                        { value: 'Left', color: completionFill['left'] }
+                                        { value: `Paid: ${paid}`, color: completionFill['paid'] },
+                                        { value: `Left: ${left}`, color: completionFill['left'] }
                                     ]}></Legend>
                                 </PieChart>
                                 <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">

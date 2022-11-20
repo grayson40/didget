@@ -89,7 +89,7 @@ export default function DebtItem({ debt, onDelete, onUpdate }) {
                             {/*Compares current amount to limit, turns red if over and green if under limit*/}
                             {amountLeft(debt.debtVal, debt.debtPaid) >= 0
                                 ? <ProgressBar animated now={percentPaid(debt.debtVal, debt.debtPaid)} label={`$${debt.debtPaid} Paid`} />
-                                : <ProgressBar animated variant="success" now={percentPaid(debt.debtVal, debt.debtPaid)} label={`$${debt.paid} Paid`} />
+                                : <ProgressBar animated variant="success" now={percentPaid(debt.debtVal, debt.debtPaid)} label={`$${debt.debtPaid} Paid`} />
                             }
                         </Col>
                     </Row>
