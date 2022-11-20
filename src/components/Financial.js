@@ -18,6 +18,7 @@ import {
     updateDoc,
     deleteDoc
 } from 'firebase/firestore';
+import { PieChart, Pie, Cell, Legend } from 'recharts'
 
 export default function Financial() {
 
@@ -38,11 +39,40 @@ export default function Financial() {
     const [openDebtForm, setOpenDebtForm] = useState(false)
     const [debtFormError, setDebtFormError] = useState('')
     const [debts, setDebts] = useState([])
+    const [paid, setPaid] = useState()
+    const [left, setLeft] = useState()
 
     // States for Card implementations
     const [open1, setOpen1] = useState(true)
     const [open3, setOpen3] = useState(true)
     const [open4, setOpen4] = useState(true)
+
+    /** GRAPH DATA AND FILLERS */
+    // Graph Completion Fill
+    const completionFill = {
+        'paid': '#4cb38e',
+        'left': '#eee36b'
+    }
+
+    // Category Colors
+    const categoryFill = {
+        paid: '#4cb38e',
+        left: '#eee36b'
+    }
+
+    // Graph object
+    var graphData = [
+        {
+            category: "paid",
+            value: paid,
+            fill: categoryFill.paid
+        },
+        {
+            category: "left",
+            value: left,
+            fill: categoryFill.left
+        }
+    ]
 
     // Runs when the page is first loaded
     useEffect(() => {
@@ -97,6 +127,9 @@ export default function Financial() {
                     let debtcollectionref = collection(db, `users/${user.id}/debts/`)
                     setDebtCollecRef(debtcollectionref)
 
+                    let paidTotal = 0
+                    let leftTotal = 0
+
                     // For each Debt document
                     debtCollectionDocsRef.docs.forEach((debt) => {
                         const _debt = {
@@ -106,9 +139,15 @@ export default function Financial() {
                             debtPaid: debt.data().debtPaid
                         }
 
+                        paidTotal += _debt.debtPaid
+                        leftTotal += _debt.debtVal
+
                         // Set the Debt State
                         setDebts((current) => [...current, _debt])
                     })
+                    
+                    setPaid(paidTotal)
+                    setLeft(leftTotal) 
                 }
             })
         }
@@ -120,6 +159,9 @@ export default function Financial() {
      * @returns void
      */
     const handleClose = () => {
+        console.log(graphData.map((entry) => (
+            entry.value
+        )))
         setOpenDebtForm(false)
         setDebtFormError('')
     }
@@ -322,6 +364,19 @@ export default function Financial() {
                         </Button>
                         <Collapse in={open4}>
                             <Container>
+                                <PieChart width={430} height={250}>
+                                    <Pie data={graphData} dataKey="value" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
+                                        {
+                                            graphData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={completionFill[entry.category.toLowerCase()]} />
+                                            ))
+                                        }
+                                    </Pie>
+                                    <Legend payload={[
+                                        { value: 'Paid', color: completionFill['paid'] },
+                                        { value: 'Left', color: completionFill['left'] }
+                                    ]}></Legend>
+                                </PieChart>
                                 <Card style={{ width: '500px', textAlign: "Center" }} className="mb-2">
                                     <Card.Header>
                                         Debt
