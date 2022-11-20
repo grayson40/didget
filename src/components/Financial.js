@@ -36,6 +36,7 @@ export default function Financial() {
     // States for Debt Implementation
     const [debtCollecRef, setDebtCollecRef] = useState()
     const [debtCollecDocsRef, setDebtCollecDocsRef] = useState()
+    const [expensesCollecDocsRef, setExpensesCollecDocsRef] = useState()
     const [openDebtForm, setOpenDebtForm] = useState(false)
     const [debtFormError, setDebtFormError] = useState('')
     const [debts, setDebts] = useState([])
@@ -128,7 +129,7 @@ export default function Financial() {
                     setDebtCollecRef(debtcollectionref)
 
                     let paidTotal = 0
-                    let leftTotal = 0
+                    let debtTotal = 0
 
                     // For each Debt document
                     debtCollectionDocsRef.docs.forEach((debt) => {
@@ -140,14 +141,25 @@ export default function Financial() {
                         }
 
                         paidTotal += _debt.debtPaid
-                        leftTotal += _debt.debtVal
+                        debtTotal += _debt.debtVal
 
                         // Set the Debt State
                         setDebts((current) => [...current, _debt])
                     })
                     
+                    // Set the totals
                     setPaid(paidTotal)
-                    setLeft(leftTotal) 
+                    setLeft(debtTotal - paidTotal) 
+
+                    // Fetch the expenseDocs
+                    const expensesCollectionDocsRef = await getDocs(
+                        query(
+                            collection(db, `users/${user.id}/expenses/`)
+                        )
+                    )
+
+                    // Set the ref to be used later
+                    setExpensesCollecDocsRef(expensesCollectionDocsRef)
                 }
             })
         }
@@ -192,6 +204,13 @@ export default function Financial() {
                 debtPaid: 0
             };
 
+            // Iterate through the expenses and tally up any past expenditure on the debt
+            expensesCollecDocsRef.docs.forEach((expense) => {
+                if(expense.data().category === 'debt' && expense.data().place === newDebt.debtName) {
+                    newDebt.debtPaid += expense.data().total
+                }
+            })
+
             // Create a new array with the new debt added
             const newDebts = [...debts, newDebt];
 
@@ -209,6 +228,21 @@ export default function Financial() {
                     setError(error.toString())
                 })
 
+            // Calculate debtLeft to be paid in the newDebt
+            let newDebt_left = newDebt.debtVal - newDebt.debtPaid
+
+            // Update totalPaid
+            let newPaid = paid
+            newPaid += newDebt.debtPaid
+
+            // Update totalLeft
+            let newLeft = left
+            newLeft += newDebt_left
+
+            // Set both totalPaid and totalLeft
+            setPaid(newPaid)
+            setLeft(newLeft)
+
             handleClose()
         }
         console.log(error)
@@ -224,11 +258,17 @@ export default function Financial() {
      */
     const updateDebt = async (id, updatedDebtVal) => {
 
+        // var declaration
+        let debtDifference = 0
+
         // Iterate through each debt
         debts.forEach((debt) => {
 
             // If its the desired debt object
             if (debt.id === id) {
+
+                // Calculate the difference between the old and updated debtVal
+                debtDifference = updatedDebtVal - debt.debtVal
 
                 // Update the Debt object
                 debt.debtVal = updatedDebtVal
@@ -237,6 +277,11 @@ export default function Financial() {
 
         // Set the new debts
         setDebts(debts)
+
+        // Update totalLeft
+        let newLeft = left
+        newLeft += debtDifference
+        setLeft(newLeft)
 
         // Iterate through the debts
         debtCollecDocsRef.docs.forEach(async (debt) => {
@@ -268,9 +313,32 @@ export default function Financial() {
      */
     const deleteDebt = async (id) => {
 
+        // Var declarations
+        let newPaid = paid
+        let newLeft = left
+
+        // Iterate through each debt
+        debts.forEach((debt) => {
+            
+            // If its the corresponding debt
+            if(debt.id === id) {
+                
+                // Update the newPaid and newLeft 
+                newPaid -= debt.debtPaid
+                newLeft -= debt.debtVal
+
+                console.log(newPaid)
+                console.log(newLeft)
+            }
+        })
+
         // Set the new debts with all the debts except the one we're attempting to delete
         const newDebts = debts.filter((debt) => debt.id !== id)
         setDebts(newDebts)
+
+        // Set new Paid and Left
+        setPaid(newPaid)
+        setLeft(newLeft)
 
         // Iterate through the debts
         debtCollecDocsRef.docs.forEach(async (debt) => {
