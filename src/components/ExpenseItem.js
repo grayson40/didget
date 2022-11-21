@@ -53,6 +53,7 @@ export default function ExpenseItem({ expense, onDelete, onUpdate, backColor, bo
                 <option value="insurance">Insurance</option>
                 <option value="rent">Rent</option>
                 <option value="food">Food</option>
+                <option value="debt">Debt</option>
               </select>
             </Form.Group>
             <Form.Group id='date'>
