@@ -831,20 +831,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
             </>
         }
 
-        {/*Cards with Name, Total, Category, and Date*/}
-        {
-          budgets.filter(isInMonth).map((item, index) => (
-            <>
-              <BudgetItem
-                key={index}
-                item={item}
-                bordColor={backFill[item.category.toLowerCase()]}
-                backColor={bordFill[item.category.toLowerCase()]}
-                onUpdate={updateBudget}
-              />
-            </>
-          ))
-        }
         <HabitItem />
         
       </Container>
