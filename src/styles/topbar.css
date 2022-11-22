@@ -8,6 +8,17 @@
     color: black;
 }
 
+#light .card {
+    color: black;
+    outline-style: groove;
+    outline-color: black !important;
+    outline-width: 1px;
+}
+
+#light .card-header {
+    background-color: lightgray;
+}
+
 #dark {
     background-color: rgb(105, 98, 98);
 }
@@ -46,7 +57,7 @@
     color: white;
     outline-style: groove;
     outline-color: black !important;
-    outline-width: 2px;
+    outline-width: 1px;
 }
 
 #dark .card header {
