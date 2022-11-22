@@ -2,6 +2,12 @@
     background-color: white;
 }
 
+#light button {
+    background-color: gold !important;
+    border-color: gold;
+    color: black;
+}
+
 #dark {
     background-color: rgb(105, 98, 98);
 }
