@@ -27,6 +27,7 @@ const bordFill =
   'food': '#F9E79F',
   'insurance': '#AED6F1',
   'academic': '#A2D9CE',
+  'debt': '#614d4b'
 }
 
 const backFill =
@@ -37,6 +38,7 @@ const backFill =
   'food': '#F4D03F',
   'insurance': '#5DADE2',
   'academic': '#45B39D',
+  'debt': '#423736'
 }
 
 // Symbol dictionary
@@ -46,7 +48,8 @@ const symbolsDict = {
   'Food': '🍔',
   'Insurance': '📋',
   'Academic': '📚',
-  'Entertainment': '🍿'
+  'Entertainment': '🍿',
+  'Debt': '💳'
 }
 
 const monthsDict = {
@@ -66,7 +69,7 @@ const monthsDict = {
 
 const d = new Date();
 
-export default function BudgetContent({ notInCard, inDate, showButton, isBudget, inFinancial }) {
+export default function BudgetContent({ notInCard, inDate, showButton, isBudget }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
@@ -81,6 +84,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const debtLimit = useRef();
   const incomeRef = useRef();
 
   // const toDate = () => {
@@ -240,7 +244,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
    * @returns void
    */
   const createBudget = async () => {
-    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0;
+    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0, debtTotal = 0;
     expenses.forEach((expense) => {
       let arr = expense.date.split('/')
       let expenseMonth = parseInt(arr[0])
@@ -264,6 +268,9 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
           case "entertainment":
             entertainmentTotal += parseInt(expense.total)
             break;
+          case "debt":
+            debtTotal += parseInt(expense.total)
+            break
           default:
             break;
         }
@@ -304,6 +311,12 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         category: "Entertainment",
         limit: parseInt(entertainmentLimit.current.value),
         current: entertainmentTotal,
+        month: month
+      },
+      {
+        category: "Debt",
+        limit: parseInt(debtLimit.current.value),
+        current: debtTotal,
         month: month
       }
     ]
@@ -437,10 +450,10 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
     let count = 0
     if (incomes.length === 0) return 0
     incomes.forEach((income) => {
-      total += income.income
-      count++
+          total += income.income
+          count++
     })
-    return parseInt(total / count)
+    return parseInt(total/count)
   }
 
   const cardFilter = (value) => {
@@ -484,7 +497,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
           if (income.id === id) {
             console.log('in here')
             const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
-            await updateDoc(docRef, { income: parseInt(newIncome) })
+            await updateDoc(docRef, {income: parseInt(newIncome)})
               .then(console.log('document updated'))
           }
         })
@@ -495,17 +508,17 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
 
   const InlineEdit = ({ element }) => {
     const [editingValue, setEditingValue] = useState(element.income);
-
+    
     const onChange = (event) => {
       setEditingValue(event.target.value);
     }
-
+    
     const onKeyDown = (event) => {
       if (event.key === "Enter" || event.key === "Escape") {
         event.target.blur();
       }
     }
-
+    
     const onBlur = (event) => {
       const val = parseInt(event.target.value)
       if (event.target.value.trim() === "") {
@@ -516,7 +529,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         }
       }
     }
-
+  
     return (
       <input
         class='inline'
@@ -630,6 +643,29 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
           </>
         }
 
+        {/* Income Card */}
+        {incomes.filter(isInMonth).length !== 0 ?
+          incomes.filter(isInMonth).map((income) => (
+            <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>$<InlineEdit element={income}/> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {calculateExpenseTotal() < income.income
+                      ? <ProgressBar animated variant="success" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                      : <ProgressBar animated variant="danger" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                    }
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          ))
+          : <p>{`No income for ${monthsDict[month]}`}</p>
+        }
+
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
           <Modal.Body>
@@ -641,10 +677,10 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Income</Col>
                   <Col>
-                    {incomes.filter(isInMonth).length === 0
-                      ? <Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()} />
-                      : <p>Income already set</p>
-                    }
+                  {incomes.filter(isInMonth).length === 0 
+                  ?<Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
+                  :<p>Income already set</p>
+                  }
                   </Col>
                 </Row>
               </Form.Group>
@@ -696,6 +732,14 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                   </Col>
                 </Row>
               </Form.Group>
+              <Form.Group id='debt'>
+                <Row className="mb-2">
+                  <Col className="border-end">Debt</Col>
+                  <Col>
+                    <Form.Control type='debt' ref={debtLimit} />
+                  </Col>
+                </Row>
+              </Form.Group>
               <Button className='w-100 mt-3' onClick={createBudget}>
                 Create Budget
               </Button>
@@ -706,28 +750,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         {
           showButton ?
             <>
-              {/* Income Card */}
-              {incomes.filter(isInMonth).length !== 0 ?
-                incomes.filter(isInMonth).map((income) => (
-                  <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
-                    <Card.Header>
-                      <Row className="mb-2">
-                        <Col className="border-end">Income</Col>
-                        <Col>$<InlineEdit element={income} /> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          {calculateExpenseTotal() < income.income
-                            ? <ProgressBar animated variant="success" now={(calculateExpenseTotal() / income.income * 100)} label={`$${calculateExpenseTotal()}`} />
-                            : <ProgressBar animated variant="danger" now={(calculateExpenseTotal() / income.income * 100)} label={`$${calculateExpenseTotal()}`} />
-                          }
-                        </Col>
-                      </Row>
-                    </Card.Header>
-                  </Card>
-                ))
-                : <p>{`No income for ${monthsDict[month]}`}</p>
-              }
               <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
                 <Row>
                   <Col sm={4}>
@@ -773,61 +795,35 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
             </>
             :
             <>
-              <>
-                {inFinancial ?
-                  <>
-                    {/* Display top 3 budgets */}
-                    {
-                      budgets.filter(isInMonth).sort(function (a, b) { return b.current - a.current }).map((budget, index) => {
-                        if (index <= 2) {
-                          return (
-                            <BudgetItem
-                              key={index}
-                              item={budget}
-                              bordColor={backFill[budget.category.toLowerCase()]}
-                              backColor={bordFill[budget.category.toLowerCase()]}
-                              onUpdate={updateBudget}
-                            />
-                          )
-                        }
-                        return null
-                      })
-                    }
-                  </>
-                  :
-                  <>
-                    {isBudget ?
-                      <>{budgets.filter(cardFilter).map((item, index) => (
-                        <BudgetItem
-                          key={index}
-                          item={item}
-                          bordColor={backFill[item.category.toLowerCase()]}
-                          backColor={bordFill[item.category.toLowerCase()]}
-                          onUpdate={updateBudget}
-                        />
-                      ))
-                      }
-                      </>
-                      :
-                      <>
-                        {expenses.filter(expenseFilter).length !== 0 ?
-                          <>
-                            {expenses.filter(expenseFilter).map((expense, index) => (
-                              <ExpenseItem
-                                key={index}
-                                expense={expense}
-                                bordColor={backFill[expense.category.toLowerCase()]}
-                                backColor={bordFill[expense.category.toLowerCase()]}
-                              />
-                            ))}
-                          </>
-                          : <p>No expenses for today</p>
-                        }
-                      </>
-                    }
-                  </>
+              {isBudget ?
+                <>{budgets.filter(cardFilter).map((item, index) => (
+                  <BudgetItem
+                    key={index}
+                    item={item}
+                    bordColor={backFill[item.category.toLowerCase()]}
+                    backColor={bordFill[item.category.toLowerCase()]}
+                    onUpdate={updateBudget}
+                  />
+                ))
                 }
-              </>
+                </>
+                :
+                <>
+                  {expenses.filter(expenseFilter).length !== 0 ?
+                    <>
+                      {expenses.filter(expenseFilter).map((expense, index) => (
+                        <ExpenseItem
+                          key={index}
+                          expense={expense}
+                          bordColor={backFill[expense.category.toLowerCase()]}
+                          backColor={bordFill[expense.category.toLowerCase()]}
+                        />
+                      ))}
+                    </>
+                    : <p>No expenses for today</p>
+                  }
+                </>
+              }
             </>
         }
 

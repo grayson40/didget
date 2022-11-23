@@ -164,29 +164,12 @@ export default function NotesContent(props) {
   };
 
   return (
-    <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%' }}>
+    <Container fluid style = {{ paddingTop: '6%', paddingBottom: '6%' }}>
       <Container fluid style={{ width: '500px', marginTop: '5%' }}>
         {/* Render user notes */}
-        {props.showButton ?
-          <>
-            {notes.map((note) => (
-              <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
-            ))}
-          </>
-          :
-          <>
-            {notes.sort(function (a, b) {
-              const d1 = new Date(a.date);
-              const d2 = new Date(b.date);
-              return d2 - d1;
-            }).map((note, index) => {
-              if (index <= 2) {
-                return <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
-              }
-              return null
-            })}
-          </>
-        }
+        {notes.map((note) => (
+          <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
+        ))}
 
         {/* Form to create a new note */}
         <Modal open={open} onClose={handleClose}>
