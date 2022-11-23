@@ -15,12 +15,13 @@ import {
 
 export default function HabitItem({ current }) {
   const [expenses, setExpenses] = useState([]);
-  const [rentTotal, setRentTotal] = useState(0)
-  const [groceryTotal, setGroceryTotal] = useState(0)
-  const [foodTotal, setFoodTotal] = useState(0)
-  const [insuranceTotal, setInsuranceTotal] = useState(0)
-  const [academicTotal, setAcademicTotal] = useState(0)
-  const [entertainmentTotal, setEntertainmentTotal] = useState(0)
+  const [rentTotal, setRentTotal] = useState(0);
+  const [groceryTotal, setGroceryTotal] = useState(0);
+  const [foodTotal, setFoodTotal] = useState(0);
+  const [insuranceTotal, setInsuranceTotal] = useState(0);
+  const [academicTotal, setAcademicTotal] = useState(0);
+  const [entertainmentTotal, setEntertainmentTotal] = useState(0);
+  const [debtTotal, setDebtTotal] = useState(0);
   const [averages, setAverages] = useState([]);
   const [index, setIndex] = useState(0);
 
@@ -80,6 +81,10 @@ export default function HabitItem({ current }) {
                 setEntertainmentTotal(entertainmentTotal + _expense.total);
                 console.log("adding " + entertainmentTotal + " entr");
                 break;
+              case "debt":
+                setDebtTotal(debtTotal + _expense.total);
+                console.log("adding " + debtTotal + " debt");
+                break;
               default:
                 break;
             }
@@ -92,15 +97,18 @@ export default function HabitItem({ current }) {
 
 
   function calcAverages() {
+    //  Function for calculating averages in each category
     let cur = new Date();
     console.log(cur)
-    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, totalT = 0;
-    var lowestMonth = cur.getMonth() - 5;
+    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, totalD = 0, totalT = 0;
+    //var lowestMonth = cur.getMonth() - 5;
     var curMonth = cur.getMonth() + 1;
+    var lowestMonth = curMonth - 1;
     cur = 12 + cur.getMonth();
     expenses.map((expense) => {
-      console.log(`${lowestMonth} ${curMonth}`)
-      if ((parseInt(expense.date.split("/")[0]) >= lowestMonth) && (parseInt(expense.date.split("/")[0]) <= curMonth)) {
+      console.log(`${lowestMonth} ${curMonth}`);
+      if ((parseInt(expense.date.split("/")[0]) < curMonth) 
+      && ((parseInt(expense.date.split("/")[0])) >= (curMonth - 5))) {
         switch (expense.category) {
           case "rent":
             totalR += expense.total;
@@ -132,6 +140,11 @@ export default function HabitItem({ current }) {
             totalT += expense.total;
             if (curMonth < lowestMonth) lowestMonth = curMonth;
             break;
+          case "debt":
+            totalD += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
           default:
             break;
         }
@@ -139,15 +152,26 @@ export default function HabitItem({ current }) {
     
       return 0;})
     let arr = [];
+    console.log(lowestMonth);
+
+    console.log("Rent: " + totalR + "\n" +
+    "Insu: " + totalI + "\n" +
+    "Acad: " + totalA + "\n" +
+    "Ente: " + totalE + "\n" +
+    "Groc: " + totalG + "\n" +
+    "Food: " + totalF + "\n" +
+    "Debt: " + totalD + "\n" +
+    "Tota: " + totalT + "\n");
 
     // assign averages
-    arr[0] = (totalR / (Math.abs(curMonth - lowestMonth)));
-    arr[1] = (totalI / (Math.abs(curMonth - lowestMonth)));
-    arr[2] = (totalA / (Math.abs(curMonth - lowestMonth)));
-    arr[3] = (totalE / (Math.abs(curMonth - lowestMonth)));
-    arr[4] = (totalG / (Math.abs(curMonth - lowestMonth)));
-    arr[5] = (totalF / (Math.abs(curMonth - lowestMonth)));
-    arr[6] = (totalT / (Math.abs(curMonth - lowestMonth)));
+    arr[0] = (totalR / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[1] = (totalI / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[2] = (totalA / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[3] = (totalE / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[4] = (totalG / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[5] = (totalF / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[6] = (totalD / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[7] = (totalT / (Math.abs(curMonth - lowestMonth + 1)));
 
     return arr;
   }
@@ -159,18 +183,12 @@ export default function HabitItem({ current }) {
     setAverages(arr);
   }
 
+  //  Create a function that changes the index to where a category's average is in the array of averages
   const verifyIndex = () => {
     console.log(current);
     switch (current) {
       case "rent":
         setIndex(0);
-        break;
-      case "groceries":
-        console.log("Big g lol");
-        setIndex(4);
-        break;
-      case "food":
-        setIndex(5);
         break;
       case "insurance":
         setIndex(1);
@@ -181,8 +199,17 @@ export default function HabitItem({ current }) {
       case "entertainment":
         setIndex(3);
         break;
+      case "groceries":
+        setIndex(4);
+        break;
+      case "food":
+        setIndex(5);
+        break;
+      case "debt":
+        setIndex(6);
+        break;
       default:
-        setIndex(6)
+        setIndex(7)
         break;
     }
 
