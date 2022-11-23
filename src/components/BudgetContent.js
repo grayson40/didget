@@ -14,7 +14,6 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import BudgetItem from './BudgetItem';
-import HabitItem from './HabitItem';
 import ExpenseItem from './ExpenseItem';
 import '../styles/budget.css'
 
@@ -78,6 +77,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
   const [incomes, setIncomes] = useState([])
   const [month, setMonth] = useState(d.getMonth() + 1);
   const [year, setYear] = useState(d.getFullYear())
+  const [averages, setAverages] = useState([]);
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
@@ -170,15 +170,17 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     console.log('fetching budget data')
   }
 
-
-
-
-
   // Used to fetch users notes from firestore
   useEffect(() => {
     fetchData();
     console.log('in budget page effect')
   }, [])
+
+  useEffect(() => {
+    const arr = calcAverages();
+    console.log('in here')
+    setAverages(arr);
+  }, [expenses])
 
   /**
    * Closes the add budget modal.
@@ -571,6 +573,92 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     })
   }
 
+  function calcAverages() {
+    //  Function for calculating averages in each category
+    let cur = new Date();
+    //console.log(cur)
+    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, totalD = 0, totalT = 0;
+    //var lowestMonth = cur.getMonth() - 5;
+    var curMonth = cur.getMonth() + 1;
+    var lowestMonth = curMonth - 1;
+    cur = 12 + cur.getMonth();
+
+    expenses.map((expense) => {
+      //console.log(`${lowestMonth} ${curMonth}`);
+      if ((parseInt(expense.date.split("/")[0]) < curMonth)
+        && ((parseInt(expense.date.split("/")[0])) >= (curMonth - 5))) {
+        switch (expense.category) {
+          case "rent":
+            totalR += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "groceries":
+            totalG += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "food":
+            totalF += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "insurance":
+            totalI += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "academic":
+            totalA += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "entertainment":
+            totalE += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "debt":
+            totalD += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          default:
+            break;
+        }
+      }
+
+      return 0;
+    })
+    let arr = [];
+    //console.log(lowestMonth);
+
+    console.log("Rent: " + totalR + "\n" +
+      "Insu: " + totalI + "\n" +
+      "Acad: " + totalA + "\n" +
+      "Ente: " + totalE + "\n" +
+      "Groc: " + totalG + "\n" +
+      "Food: " + totalF + "\n" +
+      "Debt: " + totalD + "\n" +
+      "Tota: " + totalT + "\n");
+
+    // assign averages
+    arr[0] = (totalR / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[1] = (totalI / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[2] = (totalA / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[3] = (totalE / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[4] = (totalG / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[5] = (totalF / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[6] = (totalD / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[7] = (totalT / (Math.abs(curMonth - lowestMonth + 1)));
+
+    console.log(arr)
+
+    return arr;
+  }
+
+  
+
   return (
     <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
       {/* Create a vertically aligned bar chart containing the dataset of limits and expense totals */}
@@ -826,8 +914,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
               }
             </>
         }
-
-        <HabitItem />
         
       </Container>
       {showButton &&

@@ -70,7 +70,6 @@ export default function BudgetItem({ index, item, bordColor, backColor, onUpdate
               }
             </Col>
           </Row>
-          <HabitItem current = {item.category.toLowerCase()}/>
         </Card.Body>
       </Card>
     </>
