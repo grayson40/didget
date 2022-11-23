@@ -182,6 +182,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     setAverages(arr);
   }, [expenses])
 
+
   /**
    * Closes the add budget modal.
    */
@@ -631,16 +632,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
       return 0;
     })
     let arr = [];
-    //console.log(lowestMonth);
-
-    console.log("Rent: " + totalR + "\n" +
-      "Insu: " + totalI + "\n" +
-      "Acad: " + totalA + "\n" +
-      "Ente: " + totalE + "\n" +
-      "Groc: " + totalG + "\n" +
-      "Food: " + totalF + "\n" +
-      "Debt: " + totalD + "\n" +
-      "Tota: " + totalT + "\n");
 
     // assign averages
     arr[0] = (totalR / (Math.abs(curMonth - lowestMonth + 1)));
@@ -651,8 +642,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
     arr[5] = (totalF / (Math.abs(curMonth - lowestMonth + 1)));
     arr[6] = (totalD / (Math.abs(curMonth - lowestMonth + 1)));
     arr[7] = (totalT / (Math.abs(curMonth - lowestMonth + 1)));
-
-    console.log(arr)
 
     return arr;
   }
@@ -776,7 +765,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Rent</Col>
                   <Col>
-                    <Form.Control type='rent' ref={rentLimit} />
+                    <Form.Control type='rent' ref={rentLimit} placeholder={averages[0]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -784,7 +773,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Groceries</Col>
                   <Col>
-                    <Form.Control type='groceries' ref={groceriesLimit} />
+                    <Form.Control type='groceries' ref={groceriesLimit} placeholder={averages[4]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -792,7 +781,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Food</Col>
                   <Col>
-                    <Form.Control type='food' ref={foodLimit} />
+                    <Form.Control type='food' ref={foodLimit} placeholder={averages[5]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -800,7 +789,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Insurance</Col>
                   <Col>
-                    <Form.Control type='insurance' ref={insuranceLimit} />
+                    <Form.Control type='insurance' ref={insuranceLimit} placeholder={averages[1]} />
                   </Col>
                 </Row>
               </Form.Group>
@@ -808,7 +797,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Academic</Col>
                   <Col>
-                    <Form.Control type='academic' ref={academicLimit} />
+                    <Form.Control type='academic' ref={academicLimit} placeholder={averages[2]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -816,7 +805,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Entertainment</Col>
                   <Col>
-                    <Form.Control type='entertainment' ref={entertainmentLimit} />
+                    <Form.Control type='entertainment' ref={entertainmentLimit} placeholder={averages[3]} />
                   </Col>
                 </Row>
               </Form.Group>
@@ -824,7 +813,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
                 <Row className="mb-2">
                   <Col className="border-end">Debt</Col>
                   <Col>
-                    <Form.Control type='debt' ref={debtLimit} />
+                    <Form.Control type='debt' ref={debtLimit} placeholder={averages[6]}/>
                   </Col>
                 </Row>
               </Form.Group>
