@@ -10,6 +10,9 @@ export default function BudgetItem({ index, item, bordColor, backColor, onUpdate
   }
   //Calculates the percentage for the progress bar ((total spent/spending limit)*100)
   function progressPercent(limit, spent) {
+    if (limit === 0 && spent === 0) {
+      return 0;
+    }
     return (spent / limit) * 100
   }
 
