@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Container, Card, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Fab from '@mui/material/Fab'
 import { FaPlus } from 'react-icons/fa'
+import TopBar from './TopBar'
+import PageBar from './PageBar'
 import { uuidv4 } from '@firebase/util'
 import { PieChart, Pie, Cell, Legend } from 'recharts'
 import {
@@ -30,6 +32,7 @@ const categoryFill =
   food: '#64B5F6',
   insurance: '#4DD0E1',
   academic: '#81C784',
+  debt: 'black',
 }
 
 // Color by category dictionaries
@@ -41,6 +44,7 @@ const expenseFill =
   'food': '#F9E79F',
   'insurance': '#AED6F1',
   'academic': '#A2D9CE',
+  'debt': '#705e5c'
 }
 
 const limitFill =
@@ -51,21 +55,23 @@ const limitFill =
   'food': '#F4D03F',
   'insurance': '#5DADE2',
   'academic': '#45B39D',
+  'debt': '#473433',
 }
 
 
-export default function Expenses({ notInCard, showButton, inFinancial }) {
+export default function Expenses({ notInCard, showButton }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('')
+  const [userId, setUserId] = useState()
   var [rentTotal, setRentTotal] = useState(0)
   var [groceryTotal, setGroceryTotal] = useState(0)
   var [foodTotal, setFoodTotal] = useState(0)
   var [insuranceTotal, setInsuranceTotal] = useState(0)
   var [academicTotal, setAcademicTotal] = useState(0)
   var [entertainmentTotal, setEntertainmentTotal] = useState(0)
-  const [onAdd, setOnAdd] = useState(false);
+  var [debtTotal, setDebtTotal] = useState(0)
   const [startDate, setStartDate] = useState(new Date(firstDay))
   const [endDate, setEndDate] = useState(new Date(lastDay))
   const place = useRef();
@@ -105,6 +111,11 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       category: "entertainment",
       spent: entertainmentTotal,
       fill: categoryFill.entertainment
+    },
+    {
+      category: "debt",
+      spent: debtTotal,
+      fill: categoryFill.debt
     }
   ]
 
@@ -130,6 +141,9 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       // Iterate through the documents fetched
       usersRef.forEach(async (user) => {
         if (user.data().uid === auth.currentUser.uid) {
+
+          setUserId(user.id)
+
           const expensesRef = await getDocs(
             query(
               collection(db, `users/${user.id}/expenses/`)
@@ -149,25 +163,35 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
             switch (_expense.category) {
               case "rent":
                 setRentTotal(rentTotal + _expense.total);
+                console.log("adding " + rentTotal + " rent");
                 break;
               case "groceries":
                 setGroceryTotal(groceryTotal + _expense.total);
+                console.log("adding " + groceryTotal + " groc");
                 break;
               case "food":
                 setFoodTotal(foodTotal + _expense.total);
+                console.log("adding " + foodTotal + " food");
                 break;
               case "insurance":
                 setInsuranceTotal(insuranceTotal + _expense.total);
+                console.log("adding " + insuranceTotal + " insu");
                 break;
               case "academic":
                 setAcademicTotal(academicTotal + _expense.total);
+                console.log("adding " + academicTotal + " acad");
                 break;
               case "entertainment":
                 setEntertainmentTotal(entertainmentTotal + _expense.total);
+                console.log("adding " + entertainmentTotal + " entr");
                 break;
+              case "debt":
+                setDebtTotal(debtTotal + _expense.total)
+                console.log("adding " + debtTotal + " debt")
+                break
               default:
                 break;
-            }
+            }            
           })
         }
       })
@@ -184,44 +208,12 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
     console.log('in expense page effect')
   }, [])
 
-  useEffect(() => {
-    setRentTotal(0);
-    setGroceryTotal(0);
-    setFoodTotal(0);
-    setInsuranceTotal(0);
-    setAcademicTotal(0);
-    setEntertainmentTotal(0);
-    expenses.filter(isInDateRange).forEach((expense) => {
-      switch (expense.category) {
-        case "rent":
-          setRentTotal(rentTotal + expense.total);
-          break;
-        case "groceries":
-          setGroceryTotal(groceryTotal + expense.total);
-          break;
-        case "food":
-          setFoodTotal(foodTotal + expense.total);
-          break;
-        case "insurance":
-          setInsuranceTotal(insuranceTotal + expense.total);
-          break;
-        case "academic":
-          setAcademicTotal(academicTotal + expense.total);
-          break;
-        case "entertainment":
-          setEntertainmentTotal(entertainmentTotal + expense.total);
-          break;
-        default:
-          break;
-      }
-    })
-  }, [startDate, endDate, onAdd])
-
   /**
    * Appends to expense state array and asynchronously adds the expense item in firebase.
    * @returns void
    */
   const addExpense = async () => {
+
     // Add expense to screen
     if (category.current.value === '') {
       setError('Error: Category cannot be empty')
@@ -239,6 +231,70 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       };
       const newExpenses = [...expenses, newExpense];
       setExpenses(newExpenses);
+
+      switch (newExpense.category) {
+        case "rent":
+          setRentTotal(rentTotal + newExpense.total);
+          break;
+        case "groceries":
+          setGroceryTotal(groceryTotal + newExpense.total);
+          break;
+        case "food":
+          setFoodTotal(foodTotal + newExpense.total);
+          break;
+        case "insurance":
+          setInsuranceTotal(insuranceTotal + newExpense.total);
+          break;
+        case "academic":
+          setAcademicTotal(academicTotal + newExpense.total);
+          break;
+        case "entertainment":
+          setEntertainmentTotal(entertainmentTotal + newExpense.total);
+          break;
+        case "debt":
+          setDebtTotal(debtTotal + newExpense.total)
+
+          // Get the debtCollectionRef and get its docs
+          const debtsRef = await getDocs(
+            query(
+              collection(db, `users/${userId}/debts/`)
+            )
+          )
+
+          // Get all the debts and set their debtPaid values to 0
+          debtsRef.docs.forEach(async (debt) => {
+
+            // Create a new debt
+            const _debt = {
+              id: debt.data().id,
+              debtName: debt.data().debtName,
+              debtVal: debt.data().debtVal,
+              debtPaid: debt.data().debtPaid
+            }
+
+            // If there's a corresponding debt to the newExpense, update its debtPaid attr
+            if(_debt.debtName.toLowerCase() === newExpense.place.toLowerCase()) {
+              _debt.debtPaid += newExpense.total
+
+              console.log(_debt)
+
+              // Get the docRef
+              const debtDocRef = doc(db, `users/${userId}/debts/${debt.id}`)
+
+              // Update the doc
+              await updateDoc(debtDocRef, { debtPaid: _debt.debtPaid })
+                .then(() => {
+                  console.log(`Debt id ${_debt.id} updated`)
+                })
+                .catch(error => {
+                  setError(error.toString())
+                })
+            }
+          })
+          break
+        default:
+          break;
+      }
 
       // Add expense to db
       const userRef = await getDocs(
@@ -280,8 +336,6 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
         }
       })
 
-      setOnAdd(!onAdd);
-
       handleClose()
     }
   };
@@ -293,6 +347,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
    * @returns void
    */
   const updateExpense = async (id, updatedExpense) => {
+
     // Update on screen
     let totalDifference = 0;
     console.log(`updating ${id}`)
@@ -332,6 +387,47 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       case "entertainment":
         setEntertainmentTotal(entertainmentTotal + totalDifference);
         break;
+      case "debt":
+        setDebtTotal(debtTotal + totalDifference)
+
+        // Get the debtCollectionRef and get its docs
+        const debtsRef = await getDocs(
+          query(
+            collection(db, `users/${userId}/debts/`)
+          )
+        )
+
+        // Get all the debts and set their debtPaid values to 0
+        debtsRef.docs.forEach(async (debt) => {
+
+          // Create a new debt
+          const _debt = {
+            id: debt.data().id,
+            debtName: debt.data().debtName,
+            debtVal: debt.data().debtVal,
+            debtPaid: debt.data().debtPaid
+          }
+
+          // If there's a corresponding debt to the newExpense, update its debtPaid attr
+          if (_debt.debtName.toLowerCase() === updatedExpense.place.toLowerCase()) {
+            _debt.debtPaid += totalDifference
+
+            console.log(_debt)
+
+            // Get the docRef
+            const debtDocRef = doc(db, `users/${userId}/debts/${debt.id}`)
+
+            // Update the doc
+            await updateDoc(debtDocRef, { debtPaid: _debt.debtPaid })
+              .then(() => {
+                console.log(`Debt id ${_debt.id} updated`)
+              })
+              .catch(error => {
+                setError(error.toString())
+              })
+          }
+        })
+        break
       default:
         break;
     }
@@ -397,6 +493,8 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
    * @returns void
    */
   const deleteExpense = async (id) => {
+
+    let deletedExpensePlace = null
     let deletedExpenseCategory = null
     let deletedExpenseTotal = null
     let deletedExpenseDate = null
@@ -422,6 +520,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
           if (expense.data().id === id) {
             // Update expense
             const docRef = doc(db, `users/${user.id}/expenses/${expense.id}`)
+            deletedExpensePlace = expense.data().place
             deletedExpenseCategory = expense.data().category
             deletedExpenseTotal = expense.data().total
             deletedExpenseDate = expense.data().date
@@ -454,6 +553,49 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
           case "entertainment":
             setEntertainmentTotal(entertainmentTotal - deletedExpenseTotal);
             break;
+          case "debt":
+            setDebtTotal(debtTotal - deletedExpenseTotal)
+
+            // Get the debtCollectionRef and get its docs
+            const debtsRef = await getDocs(
+              query(
+                collection(db, `users/${userId}/debts/`)
+              )
+            )
+
+            // Get all the debts and set their debtPaid values to 0
+            debtsRef.docs.forEach(async (debt) => {
+
+              // Create a new debt
+              const _debt = {
+                id: debt.data().id,
+                debtName: debt.data().debtName,
+                debtVal: debt.data().debtVal,
+                debtPaid: debt.data().debtPaid
+              }
+
+              console.log(`wanting to delete ${deletedExpensePlace}`)
+
+              // If there's a corresponding debt to the newExpense, update its debtPaid attr
+              if (_debt.debtName.toLowerCase() === deletedExpensePlace.toLowerCase()) {
+                _debt.debtPaid -= deletedExpenseTotal
+
+                console.log(_debt)
+
+                // Get the docRef
+                const debtDocRef = doc(db, `users/${userId}/debts/${debt.id}`)
+
+                // Update the doc
+                await updateDoc(debtDocRef, { debtPaid: _debt.debtPaid })
+                  .then(() => {
+                    console.log(`Debt id ${_debt.id} updated`)
+                  })
+                  .catch(error => {
+                    setError(error.toString())
+                  })
+              }
+            })
+            break
           default:
             break;
         }
@@ -483,7 +625,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       }
     })
   }
-
+  
   const handleStartDateChange = (e) => {
     e.preventDefault()
     const arr = e.target.value.split('-')
@@ -502,15 +644,6 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
     const expenseDate = new Date(expense.date)
 
     return expenseDate >= startDate && expenseDate <= endDate
-  }
-
-  const isInMonth = (expense) => {
-    const d = new Date();
-    const month = d.getMonth() + 1;
-    const arr = expense.date.split('/');
-    const expMonth = parseInt(arr[0]);
-
-    return month === expMonth;
   }
 
   return (
@@ -539,6 +672,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
                 <option value="insurance">Insurance</option>
                 <option value="rent">Rent</option>
                 <option value="food">Food</option>
+                <option value="debt">Debt</option>
               </select>
             </Form.Group>
             <Form.Group id='date'>
@@ -552,100 +686,77 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
           </Form>
         </Modal.Body>
       </Modal>
+
       <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
-        {inFinancial ?
-          <>
-            {
-              expenses.filter(isInMonth).sort(function (a, b) {
-                const d1 = new Date(a.date);
-                const d2 = new Date(b.date);
-                return d2 - d1;
-              }).map((expense, index) => {
-                if (index <= 2) {
-                  return (
-                    <ExpenseItem
-                      key={index}
-                      expense={expense}
-                      onDelete={deleteExpense}
-                      onUpdate={updateExpense}
-                      backColor={expenseFill[expense.category.toLowerCase()]}
-                      bordColor={limitFill[expense.category.toLowerCase()]}
-                      notInCard={notInCard}
-                    />
-                  )
-                }
-                return null
-              })
-            }
-          </>
-          :
-          <>
-            <Container height="260px">
-              <PieChart width={430} height={250}>
-                <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
-                  {
-                    graphData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={limitFill[entry.category.toLowerCase()]} />
-                    ))
-                  }
-                </Pie>
-                <Legend payload={[
-                  { value: 'Rent', color: limitFill['rent'] },
-                  { value: 'Groc', color: limitFill['groceries'] },
-                  { value: 'Food', color: limitFill['food'] },
-                  { value: 'Insu', color: limitFill['insurance'] },
-                  { value: 'Acad', color: limitFill['academic'] },
-                  { value: 'Ente', color: limitFill['entertainment'] }
-                ]}></Legend>
-              </PieChart>
-            </Container>
-            <br></br>
-            <Row >
-              <Col sm={4}>
-                {/* <Form.Label>From</Form.Label> */}
-                <Form.Group controlId="start">
-                  <Form.Control type="date" onChange={handleStartDateChange} />
-                </Form.Group>
-              </Col>
-              <Col style={{ fontSize: '30px', textAlign: 'center', maxWidth: '140px' }}>-</Col>
-              <Col sm={4}>
-                {/* <Form.Label>To</Form.Label> */}
-                <Form.Group controlId="end">
-                  <Form.Control type="date" onChange={handleEndDateChange} />
-                </Form.Group>
-              </Col>
-            </Row>
-            <br></br>
-            {
-              notInCard ?
-                <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
-                  <Card.Header>
-                    Expenses
-                  </Card.Header>
-                  <Card.Header>
-                    <Row>
-                      <Col sm={4} className="border-end">Place</Col>
-                      <Col sm={4} className="border-end">Total</Col>
-                      <Col sm={4}>Date</Col>
-                    </Row>
-                  </Card.Header>
-                </Card>
-                :
-                <></>
-            }
-            {expenses.filter(isInDateRange).map((expense, index) => (
-              <ExpenseItem
-                key={index}
-                expense={expense}
-                onDelete={deleteExpense}
-                onUpdate={updateExpense}
-                backColor={expenseFill[expense.category.toLowerCase()]}
-                bordColor={limitFill[expense.category.toLowerCase()]}
-                notInCard={notInCard}
-              />
-            ))
-            }
-          </>
+        <PageBar name='Expenses' />
+        <TopBar />
+        <Container height="260px">
+          <PieChart width={430} height={250}>
+            <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
+              {
+                graphData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={limitFill[entry.category.toLowerCase()]} />
+                ))
+              }
+            </Pie>
+            <Legend payload={[
+              { value: 'Rent', color: limitFill['rent'] },
+              { value: 'Groc', color: limitFill['groceries'] },
+              { value: 'Food', color: limitFill['food'] },
+              { value: 'Insu', color: limitFill['insurance'] },
+              { value: 'Acad', color: limitFill['academic'] },
+              { value: 'Ente', color: limitFill['entertainment'] },
+              { value: 'Debt', color: limitFill['debt'] }
+            ]}></Legend>
+          </PieChart>
+        </Container>
+        <br></br>
+        <Row >
+          <Col sm={4}>
+            {/* <Form.Label>From</Form.Label> */}
+            <Form.Group controlId="start">
+              <Form.Control type="date" onChange={handleStartDateChange} />
+            </Form.Group>
+          </Col>
+          <Col style={{ fontSize: '30px', textAlign: 'center', maxWidth: '140px' }}>-</Col>
+          <Col sm={4}>
+            {/* <Form.Label>To</Form.Label> */}
+            <Form.Group controlId="end">
+              <Form.Control type="date" onChange={handleEndDateChange} />
+            </Form.Group>
+          </Col>
+        </Row>
+        <br></br>
+        {
+          notInCard ?
+            <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                Expenses
+              </Card.Header>
+              <Card.Header>
+                <Row>
+                  <Col sm={4} className="border-end">Place</Col>
+                  <Col sm={4} className="border-end">Total</Col>
+                  <Col sm={4}>Date</Col>
+                </Row>
+              </Card.Header>
+            </Card>
+            :
+            <></>
+        }
+
+        {
+          expenses.filter(isInDateRange).map((expense, index) => (
+            <ExpenseItem
+              key={index}
+              expense={expense}
+              onDelete={deleteExpense}
+              onUpdate={updateExpense}
+              backColor={expenseFill[expense.category.toLowerCase()]}
+              bordColor={limitFill[expense.category.toLowerCase()]}
+              notInCard={notInCard}
+            />
+          ))
         }
       </Container>
       {showButton ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
@@ -653,7 +764,7 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-        : null
+      : null
       }
     </Container>
   )

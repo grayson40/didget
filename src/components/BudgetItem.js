@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card, Row, Col, ProgressBar } from 'react-bootstrap'
 import '../styles/budget.css';
 
-export default function BudgetItem({ item, bordColor, backColor, onUpdate }) {
+export default function BudgetItem({ index, item, bordColor, backColor, onUpdate, habit }) {
 
   //Calulates the total amount of money left (spending limit - amount spent)
   function left(limit, spent) {

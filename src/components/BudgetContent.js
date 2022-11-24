@@ -26,6 +26,7 @@ const bordFill =
   'food': '#F9E79F',
   'insurance': '#AED6F1',
   'academic': '#A2D9CE',
+  'debt': '#614d4b'
 }
 
 const backFill =
@@ -36,6 +37,7 @@ const backFill =
   'food': '#F4D03F',
   'insurance': '#5DADE2',
   'academic': '#45B39D',
+  'debt': '#423736'
 }
 
 // Symbol dictionary
@@ -45,7 +47,8 @@ const symbolsDict = {
   'Food': '🍔',
   'Insurance': '📋',
   'Academic': '📚',
-  'Entertainment': '🍿'
+  'Entertainment': '🍿',
+  'Debt': '💳'
 }
 
 const monthsDict = {
@@ -65,7 +68,7 @@ const monthsDict = {
 
 const d = new Date();
 
-export default function BudgetContent({ notInCard, inDate, showButton, isBudget, inFinancial }) {
+export default function BudgetContent({ notInCard, inDate, showButton, isBudget }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [graphData, setGraphData] = useState([]);
@@ -74,12 +77,14 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
   const [incomes, setIncomes] = useState([])
   const [month, setMonth] = useState(d.getMonth() + 1);
   const [year, setYear] = useState(d.getFullYear())
+  const [averages, setAverages] = useState([]);
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
   const insuranceLimit = useRef();
   const academicLimit = useRef();
   const entertainmentLimit = useRef();
+  const debtLimit = useRef();
   const incomeRef = useRef();
 
   // const toDate = () => {
@@ -87,6 +92,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
   //   const today = `${date.getMonth() + 1}/${date.getFullYear()}`
   //   return today;
   // };
+
 
   /**
    * Fetches budget data from firebase. Sets budget and graph state.
@@ -170,6 +176,16 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
     console.log('in budget page effect')
   }, [])
 
+  useEffect(() => {
+    const arr = calcAverages();
+    //  Go
+
+
+    console.log('in here')
+    setAverages(arr);
+  }, [expenses])
+
+
   /**
    * Closes the add budget modal.
    */
@@ -234,7 +250,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
    * @returns void
    */
   const createBudget = async () => {
-    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0;
+    var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0, debtTotal = 0;
     expenses.forEach((expense) => {
       let arr = expense.date.split('/')
       let expenseMonth = parseInt(arr[0])
@@ -258,11 +274,15 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
           case "entertainment":
             entertainmentTotal += parseInt(expense.total)
             break;
+          case "debt":
+            debtTotal += parseInt(expense.total)
+            break
           default:
             break;
         }
       }
     })
+
     const newBudgets = [
       {
         category: "Rent",
@@ -298,6 +318,12 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         category: "Entertainment",
         limit: parseInt(entertainmentLimit.current.value),
         current: entertainmentTotal,
+        month: month
+      },
+      {
+        category: "Debt",
+        limit: parseInt(debtLimit.current.value),
+        current: debtTotal,
         month: month
       }
     ]
@@ -431,10 +457,10 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
     let count = 0
     if (incomes.length === 0) return 0
     incomes.forEach((income) => {
-      total += income.income
-      count++
+          total += income.income
+          count++
     })
-    return parseInt(total / count)
+    return parseInt(total/count)
   }
 
   const cardFilter = (value) => {
@@ -478,7 +504,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
           if (income.id === id) {
             console.log('in here')
             const docRef = doc(db, `users/${user.id}/incomes/${income.id}`)
-            await updateDoc(docRef, { income: parseInt(newIncome) })
+            await updateDoc(docRef, {income: parseInt(newIncome)})
               .then(console.log('document updated'))
           }
         })
@@ -489,17 +515,17 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
 
   const InlineEdit = ({ element }) => {
     const [editingValue, setEditingValue] = useState(element.income);
-
+    
     const onChange = (event) => {
       setEditingValue(event.target.value);
     }
-
+    
     const onKeyDown = (event) => {
       if (event.key === "Enter" || event.key === "Escape") {
         event.target.blur();
       }
     }
-
+    
     const onBlur = (event) => {
       const val = parseInt(event.target.value)
       if (event.target.value.trim() === "") {
@@ -510,7 +536,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         }
       }
     }
-
+  
     return (
       <input
         class='inline'
@@ -551,6 +577,80 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
       }
     })
   }
+
+  function calcAverages() {
+    //  Function for calculating averages in each category
+    let cur = new Date();
+    //console.log(cur)
+    var totalR = 0, totalI = 0, totalF = 0, totalG = 0, totalE = 0, totalA = 0, totalD = 0, totalT = 0;
+    //var lowestMonth = cur.getMonth() - 5;
+    var curMonth = cur.getMonth() + 1;
+    var lowestMonth = curMonth - 1;
+    cur = 12 + cur.getMonth();
+
+    expenses.map((expense) => {
+      //console.log(`${lowestMonth} ${curMonth}`);
+      if ((parseInt(expense.date.split("/")[0]) < curMonth)
+        && ((parseInt(expense.date.split("/")[0])) >= (curMonth - 5))) {
+        switch (expense.category) {
+          case "rent":
+            totalR += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "groceries":
+            totalG += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "food":
+            totalF += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "insurance":
+            totalI += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "academic":
+            totalA += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "entertainment":
+            totalE += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          case "debt":
+            totalD += expense.total;
+            totalT += expense.total;
+            if (curMonth < lowestMonth) lowestMonth = curMonth;
+            break;
+          default:
+            break;
+        }
+      }
+
+      return 0;
+    })
+    let arr = [];
+
+    // assign averages
+    arr[0] = (totalR / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[1] = (totalI / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[2] = (totalA / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[3] = (totalE / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[4] = (totalG / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[5] = (totalF / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[6] = (totalD / (Math.abs(curMonth - lowestMonth + 1)));
+    arr[7] = (totalT / (Math.abs(curMonth - lowestMonth + 1)));
+
+    return arr;
+  }
+
+  
 
   return (
     <Container fluid style={{ paddingTop: '6%', paddingBottom: '6%', top: "5%", justifyContent: "flex-center" }}>
@@ -624,6 +724,29 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
           </>
         }
 
+        {/* Income Card */}
+        {incomes.filter(isInMonth).length !== 0 ?
+          incomes.filter(isInMonth).map((income) => (
+            <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
+              <Card.Header>
+                <Row className="mb-2">
+                  <Col className="border-end">Income</Col>
+                  <Col>$<InlineEdit element={income}/> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {calculateExpenseTotal() < income.income
+                      ? <ProgressBar animated variant="success" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                      : <ProgressBar animated variant="danger" now={(calculateExpenseTotal()/income.income * 100)} label={`$${calculateExpenseTotal()}`} />
+                    }
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          ))
+          : <p>{`No income for ${monthsDict[month]}`}</p>
+        }
+
         {/* popup add window */}
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
           <Modal.Body>
@@ -635,10 +758,10 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Income</Col>
                   <Col>
-                    {incomes.filter(isInMonth).length === 0
-                      ? <Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()} />
-                      : <p>Income already set</p>
-                    }
+                  {incomes.filter(isInMonth).length === 0 
+                  ?<Form.Control type='income' ref={incomeRef} placeholder={calculateIncomeAverage()}/>
+                  :<p>Income already set</p>
+                  }
                   </Col>
                 </Row>
               </Form.Group>
@@ -646,7 +769,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Rent</Col>
                   <Col>
-                    <Form.Control type='rent' ref={rentLimit} />
+                    <Form.Control type='rent' ref={rentLimit} placeholder={averages[0]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -654,7 +777,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Groceries</Col>
                   <Col>
-                    <Form.Control type='groceries' ref={groceriesLimit} />
+                    <Form.Control type='groceries' ref={groceriesLimit} placeholder={averages[4]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -662,7 +785,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Food</Col>
                   <Col>
-                    <Form.Control type='food' ref={foodLimit} />
+                    <Form.Control type='food' ref={foodLimit} placeholder={averages[5]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -670,7 +793,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Insurance</Col>
                   <Col>
-                    <Form.Control type='insurance' ref={insuranceLimit} />
+                    <Form.Control type='insurance' ref={insuranceLimit} placeholder={averages[1]} />
                   </Col>
                 </Row>
               </Form.Group>
@@ -678,7 +801,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Academic</Col>
                   <Col>
-                    <Form.Control type='academic' ref={academicLimit} />
+                    <Form.Control type='academic' ref={academicLimit} placeholder={averages[2]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -686,7 +809,15 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                 <Row className="mb-2">
                   <Col className="border-end">Entertainment</Col>
                   <Col>
-                    <Form.Control type='entertainment' ref={entertainmentLimit} />
+                    <Form.Control type='entertainment' ref={entertainmentLimit} placeholder={averages[3]} />
+                  </Col>
+                </Row>
+              </Form.Group>
+              <Form.Group id='debt'>
+                <Row className="mb-2">
+                  <Col className="border-end">Debt</Col>
+                  <Col>
+                    <Form.Control type='debt' ref={debtLimit} placeholder={averages[6]}/>
                   </Col>
                 </Row>
               </Form.Group>
@@ -700,28 +831,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         {
           showButton ?
             <>
-              {/* Income Card */}
-              {incomes.filter(isInMonth).length !== 0 ?
-                incomes.filter(isInMonth).map((income) => (
-                  <Card style={{ color: 'white', width: '500px', textAlign: "Center" }} className="mb-2">
-                    <Card.Header>
-                      <Row className="mb-2">
-                        <Col className="border-end">Income</Col>
-                        <Col>$<InlineEdit element={income} /> <Button onClick={(e) => deleteIncome(income.id)}><FaTrashAlt /></Button></Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          {calculateExpenseTotal() < income.income
-                            ? <ProgressBar animated variant="success" now={(calculateExpenseTotal() / income.income * 100)} label={`$${calculateExpenseTotal()}`} />
-                            : <ProgressBar animated variant="danger" now={(calculateExpenseTotal() / income.income * 100)} label={`$${calculateExpenseTotal()}`} />
-                          }
-                        </Col>
-                      </Row>
-                    </Card.Header>
-                  </Card>
-                ))
-                : <p>{`No income for ${monthsDict[month]}`}</p>
-              }
               <Container style={{ width: '600px', marginTop: '5%', marginBottom: '5%' }}>
                 <Row>
                   <Col sm={4}>
@@ -751,6 +860,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
                       <>
                         <BudgetItem
                           key={index}
+                          index = {index}
                           item={item}
                           bordColor={backFill[item.category.toLowerCase()]}
                           backColor={bordFill[item.category.toLowerCase()]}
@@ -766,64 +876,38 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
             </>
             :
             <>
-              <>
-                {inFinancial ?
-                  <>
-                    {/* Display top 3 budgets */}
-                    {
-                      budgets.filter(isInMonth).sort(function (a, b) { return b.current - a.current }).map((budget, index) => {
-                        if (index <= 2) {
-                          return (
-                            <BudgetItem
-                              key={index}
-                              item={budget}
-                              bordColor={backFill[budget.category.toLowerCase()]}
-                              backColor={bordFill[budget.category.toLowerCase()]}
-                              onUpdate={updateBudget}
-                            />
-                          )
-                        }
-                        return null
-                      })
-                    }
-                  </>
-                  :
-                  <>
-                    {isBudget ?
-                      <>{budgets.filter(cardFilter).map((item, index) => (
-                        <BudgetItem
-                          key={index}
-                          item={item}
-                          bordColor={backFill[item.category.toLowerCase()]}
-                          backColor={bordFill[item.category.toLowerCase()]}
-                          onUpdate={updateBudget}
-                        />
-                      ))
-                      }
-                      </>
-                      :
-                      <>
-                        {expenses.filter(expenseFilter).length !== 0 ?
-                          <>
-                            {expenses.filter(expenseFilter).map((expense, index) => (
-                              <ExpenseItem
-                                key={index}
-                                expense={expense}
-                                bordColor={backFill[expense.category.toLowerCase()]}
-                                backColor={bordFill[expense.category.toLowerCase()]}
-                              />
-                            ))}
-                          </>
-                          : <p>No expenses for today</p>
-                        }
-                      </>
-                    }
-                  </>
+              {isBudget ?
+                <>{budgets.filter(cardFilter).map((item, index) => (
+                  <BudgetItem
+                    key={index}
+                    item={item}
+                    bordColor={backFill[item.category.toLowerCase()]}
+                    backColor={bordFill[item.category.toLowerCase()]}
+                    onUpdate={updateBudget}
+                  />
+                ))
                 }
-              </>
+                </>
+                :
+                <>
+                  {expenses.filter(expenseFilter).length !== 0 ?
+                    <>
+                      {expenses.filter(expenseFilter).map((expense, index) => (
+                        <ExpenseItem
+                          key={index}
+                          expense={expense}
+                          bordColor={backFill[expense.category.toLowerCase()]}
+                          backColor={bordFill[expense.category.toLowerCase()]}
+                        />
+                      ))}
+                    </>
+                    : <p>No expenses for today</p>
+                  }
+                </>
+              }
             </>
         }
-
+        
       </Container>
       {showButton &&
         <>
@@ -841,5 +925,6 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         </>
       }
     </Container>
+    
   )
 }
