@@ -181,7 +181,7 @@
 }
 
 .dropdown button:hover {
-    background-color: gold !important;
+    background-color: purple !important;
 }
 
 .dropdown button::after {
