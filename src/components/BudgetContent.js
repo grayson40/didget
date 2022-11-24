@@ -178,6 +178,9 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
 
   useEffect(() => {
     const arr = calcAverages();
+    //  Go
+
+
     console.log('in here')
     setAverages(arr);
   }, [expenses])
@@ -279,6 +282,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget 
         }
       }
     })
+
     const newBudgets = [
       {
         category: "Rent",
