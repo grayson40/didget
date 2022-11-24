@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Container, Card, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap'
 import Fab from '@mui/material/Fab'
 import { FaPlus } from 'react-icons/fa'
-import TopBar from './TopBar'
-import PageBar from './PageBar'
 import { uuidv4 } from '@firebase/util'
 import { PieChart, Pie, Cell, Legend } from 'recharts'
 import {
@@ -59,7 +57,7 @@ const limitFill =
 }
 
 
-export default function Expenses({ notInCard, showButton }) {
+export default function Expenses({ notInCard, showButton, inFinancial }) {
   if (notInCard !== false) notInCard = true;
   const [open, setOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
@@ -191,7 +189,7 @@ export default function Expenses({ notInCard, showButton }) {
                 break
               default:
                 break;
-            }            
+            }
           })
         }
       })
@@ -273,7 +271,7 @@ export default function Expenses({ notInCard, showButton }) {
             }
 
             // If there's a corresponding debt to the newExpense, update its debtPaid attr
-            if(_debt.debtName.toLowerCase() === newExpense.place.toLowerCase()) {
+            if (_debt.debtName.toLowerCase() === newExpense.place.toLowerCase()) {
               _debt.debtPaid += newExpense.total
 
               console.log(_debt)
@@ -625,7 +623,7 @@ export default function Expenses({ notInCard, showButton }) {
       }
     })
   }
-  
+
   const handleStartDateChange = (e) => {
     e.preventDefault()
     const arr = e.target.value.split('-')
@@ -644,6 +642,15 @@ export default function Expenses({ notInCard, showButton }) {
     const expenseDate = new Date(expense.date)
 
     return expenseDate >= startDate && expenseDate <= endDate
+  }
+
+  const isInMonth = (expense) => {
+    const d = new Date();
+    const month = d.getMonth() + 1;
+    const arr = expense.date.split('/');
+    const expMonth = parseInt(arr[0]);
+
+    return month === expMonth;
   }
 
   return (
@@ -688,75 +695,120 @@ export default function Expenses({ notInCard, showButton }) {
       </Modal>
 
       <Container fixed="top" fluid style={{ width: '500px', marginTop: "5%" }}>
-        <PageBar name='Expenses' />
-        <TopBar />
-        <Container height="260px">
-          <PieChart width={430} height={250}>
-            <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
-              {
-                graphData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={limitFill[entry.category.toLowerCase()]} />
-                ))
-              }
-            </Pie>
-            <Legend payload={[
-              { value: 'Rent', color: limitFill['rent'] },
-              { value: 'Groc', color: limitFill['groceries'] },
-              { value: 'Food', color: limitFill['food'] },
-              { value: 'Insu', color: limitFill['insurance'] },
-              { value: 'Acad', color: limitFill['academic'] },
-              { value: 'Ente', color: limitFill['entertainment'] },
-              { value: 'Debt', color: limitFill['debt'] }
-            ]}></Legend>
-          </PieChart>
-        </Container>
-        <br></br>
-        <Row >
-          <Col sm={4}>
-            {/* <Form.Label>From</Form.Label> */}
-            <Form.Group controlId="start">
-              <Form.Control type="date" onChange={handleStartDateChange} />
-            </Form.Group>
-          </Col>
-          <Col style={{ fontSize: '30px', textAlign: 'center', maxWidth: '140px' }}>-</Col>
-          <Col sm={4}>
-            {/* <Form.Label>To</Form.Label> */}
-            <Form.Group controlId="end">
-              <Form.Control type="date" onChange={handleEndDateChange} />
-            </Form.Group>
-          </Col>
-        </Row>
-        <br></br>
-        {
-          notInCard ?
-            <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
-              <Card.Header>
-                Expenses
-              </Card.Header>
-              <Card.Header>
-                <Row>
-                  <Col sm={4} className="border-end">Place</Col>
-                  <Col sm={4} className="border-end">Total</Col>
-                  <Col sm={4}>Date</Col>
-                </Row>
-              </Card.Header>
-            </Card>
-            :
-            <></>
-        }
-
-        {
-          expenses.filter(isInDateRange).map((expense, index) => (
-            <ExpenseItem
-              key={index}
-              expense={expense}
-              onDelete={deleteExpense}
-              onUpdate={updateExpense}
-              backColor={expenseFill[expense.category.toLowerCase()]}
-              bordColor={limitFill[expense.category.toLowerCase()]}
-              notInCard={notInCard}
-            />
-          ))
+        {inFinancial ?
+          <>
+            <Container height="260px">
+              <PieChart width={430} height={250}>
+                <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
+                  {
+                    graphData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={limitFill[entry.category.toLowerCase()]} />
+                    ))
+                  }
+                </Pie>
+                <Legend payload={[
+                  { value: 'Rent', color: limitFill['rent'] },
+                  { value: 'Groc', color: limitFill['groceries'] },
+                  { value: 'Food', color: limitFill['food'] },
+                  { value: 'Insu', color: limitFill['insurance'] },
+                  { value: 'Acad', color: limitFill['academic'] },
+                  { value: 'Ente', color: limitFill['entertainment'] },
+                  { value: 'Debt', color: limitFill['debt'] }
+                ]}></Legend>
+              </PieChart>
+            </Container>
+            {
+              expenses.filter(isInMonth).sort(function (a, b) {
+                const d1 = new Date(a.date);
+                const d2 = new Date(b.date);
+                return d2 - d1;
+              }).map((expense, index) => {
+                if (index <= 2) {
+                  return (
+                    <ExpenseItem
+                      key={index}
+                      expense={expense}
+                      onDelete={deleteExpense}
+                      onUpdate={updateExpense}
+                      backColor={expenseFill[expense.category.toLowerCase()]}
+                      bordColor={limitFill[expense.category.toLowerCase()]}
+                      notInCard={notInCard}
+                    />
+                  )
+                }
+                return null;
+              })
+            }
+          </>
+          :
+          <>
+            <Container height="260px">
+              <PieChart width={430} height={250}>
+                <Pie data={graphData} dataKey="spent" cx="50%" cy="50%" innerRadius={45} outerRadius={70} >
+                  {
+                    graphData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={limitFill[entry.category.toLowerCase()]} />
+                    ))
+                  }
+                </Pie>
+                <Legend payload={[
+                  { value: 'Rent', color: limitFill['rent'] },
+                  { value: 'Groc', color: limitFill['groceries'] },
+                  { value: 'Food', color: limitFill['food'] },
+                  { value: 'Insu', color: limitFill['insurance'] },
+                  { value: 'Acad', color: limitFill['academic'] },
+                  { value: 'Ente', color: limitFill['entertainment'] },
+                  { value: 'Debt', color: limitFill['debt'] }
+                ]}></Legend>
+              </PieChart>
+            </Container>
+            <br></br>
+            <Row >
+              <Col sm={4}>
+                {/* <Form.Label>From</Form.Label> */}
+                <Form.Group controlId="start">
+                  <Form.Control type="date" onChange={handleStartDateChange} />
+                </Form.Group>
+              </Col>
+              <Col style={{ fontSize: '30px', textAlign: 'center', maxWidth: '140px' }}>-</Col>
+              <Col sm={4}>
+                {/* <Form.Label>To</Form.Label> */}
+                <Form.Group controlId="end">
+                  <Form.Control type="date" onChange={handleEndDateChange} />
+                </Form.Group>
+              </Col>
+            </Row>
+            <br></br>
+            {
+              notInCard ?
+                <Card style={{ width: '450px', textAlign: "Center" }} className="mb-2">
+                  <Card.Header>
+                    Expenses
+                  </Card.Header>
+                  <Card.Header>
+                    <Row>
+                      <Col sm={4} className="border-end">Place</Col>
+                      <Col sm={4} className="border-end">Total</Col>
+                      <Col sm={4}>Date</Col>
+                    </Row>
+                  </Card.Header>
+                </Card>
+                :
+                <></>
+            }
+            {expenses.filter(isInDateRange).map((expense, index) => (
+              <ExpenseItem
+                key={index}
+                expense={expense}
+                onDelete={deleteExpense}
+                onUpdate={updateExpense}
+                backColor={expenseFill[expense.category.toLowerCase()]}
+                bordColor={limitFill[expense.category.toLowerCase()]}
+                notInCard={notInCard}
+              />
+            ))
+            }
+          </>
         }
       </Container>
       {showButton ? <Container style={{ width: '100px', position: "fixed", right: '15%', bottom: "3%", display: 'flex' }}>
@@ -764,7 +816,7 @@ export default function Expenses({ notInCard, showButton }) {
           <FaPlus size={"30px"} />
         </Fab>
       </Container>
-      : null
+        : null
       }
     </Container>
   )
