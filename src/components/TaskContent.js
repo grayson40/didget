@@ -93,6 +93,9 @@ export default function TaskContent(props) {
         }
       })
       handleClose();
+      setName('');
+      setDeadline('');
+      setCourse('');
     }
     else {
       setError('Error: no fields can be blank');
