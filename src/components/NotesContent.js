@@ -169,9 +169,13 @@ export default function NotesContent(props) {
         {/* Render user notes */}
         {props.showButton ?
           <>
-            {notes.map((note) => (
-              <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
-            ))}
+            {notes.sort(function (a, b) {
+              const d1 = new Date(a.date);
+              const d2 = new Date(b.date);
+              return d2 - d1;
+            }).map((note, index) => {
+              return <Note key={note.noteId} note={note} inCard={props.showButton} onUpdate={updateNote} onDelete={deleteNote} />
+            })}
           </>
           :
           <>

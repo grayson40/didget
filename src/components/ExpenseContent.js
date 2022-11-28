@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Container, Card, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap'
+import { Container, Card, Row, Col, Modal, Form, Button, Alert, DropdownButton } from 'react-bootstrap'
 import Fab from '@mui/material/Fab'
 import { FaPlus } from 'react-icons/fa'
 import { uuidv4 } from '@firebase/util'
@@ -19,7 +19,7 @@ import ExpenseItem from './ExpenseItem'
 // Date object
 const d = new Date();
 const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
-const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate() + 1);
+const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 1);
 
 // Budget colors
 const categoryFill =
@@ -764,18 +764,22 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
             </Container>
             <br></br>
             <Row >
+              {/* Dropdown for start date */}
               <Col sm={4}>
-                {/* <Form.Label>From</Form.Label> */}
-                <Form.Group controlId="start">
-                  <Form.Control type="date" onChange={handleStartDateChange} />
-                </Form.Group>
+                <DropdownButton title={startDate.toLocaleDateString()} id="dropdown-basic-button" style={{ background: 'gold', borderRadius: '5px' }}>
+                  <Form.Group controlId="start">
+                    <Form.Control type="date" onChange={handleStartDateChange} />
+                  </Form.Group>
+                </DropdownButton>
               </Col>
               <Col style={{ fontSize: '30px', textAlign: 'center', maxWidth: '140px' }}>-</Col>
+              {/* Dropdown for end date */}
               <Col sm={4}>
-                {/* <Form.Label>To</Form.Label> */}
-                <Form.Group controlId="end">
-                  <Form.Control type="date" onChange={handleEndDateChange} />
-                </Form.Group>
+                <DropdownButton title={endDate.toLocaleDateString()} id="dropdown-basic-button" style={{ background: 'gold', borderRadius: '5px'}}>
+                  <Form.Group controlId="end">
+                    <Form.Control type="date" onChange={handleEndDateChange} />
+                  </Form.Group>
+                </DropdownButton>
               </Col>
             </Row>
             <br></br>

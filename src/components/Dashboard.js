@@ -1,6 +1,6 @@
 // import necessary libraries
 import React, { useState } from 'react'
-import { Container, Nav, Form } from 'react-bootstrap';
+import { Container, Nav, Form, DropdownButton } from 'react-bootstrap';
 import TopBar from './TopBar';
 import Cards from './Cards';
 
@@ -27,9 +27,13 @@ export default function Dashboard() {
       {/* call to display date selector tool */}
       <Nav class="navbar navbar-toggleable-sm bg-faded navbar-light fixed-top fixed-top-2">
         <div class="container-fluid p-2 justify-content-center">
-          <Form.Group controlId="start">
-            <Form.Control type="date" onChange={handleDateChange} />
-          </Form.Group>
+            {/* Dropdown for date */}
+            <DropdownButton title={date} id="dropdown-basic-button" style={{ background: 'gold' }}>
+              {/* dropdown button Settings */}
+              <Form.Group controlId="start">
+                <Form.Control type="date" onChange={handleDateChange} />
+              </Form.Group>
+            </DropdownButton>
         </div>
       </Nav>
 
