@@ -69,31 +69,35 @@ export default function ScheduleContent(props) {
   }, [])
 
   const addCourse = async () => {
-    // add course to screen
-    const newCourse = {
-      courseId: uuidv4(),
-      name: name.current.value,
-      meetDay: meetDay.current.value,
-      meetTime: meetTime.current.value,
-      professor: professor.current.value
-    };
-    const newCourses = [...courses, newCourse];
-    setCourses(newCourses);
-
-    // add course to database
-    const userRef = await getDocs(
-      query(
-        collection(db, "users")
-      )
-    );
-    userRef.docs.map(async (user) => {
-      if (user.data().uid === auth.currentUser.uid) {
-        const collectionRef = collection(db, `users/${user.id}/courses/`);
-        await addDoc(collectionRef, newCourse);
-      }
-    })
-
-    handleClose();
+    if (name.current.value !== '' && meetDay.current.value !== '' && meetTime.current.value !== '' && professor.current.value !== '') {
+      // add course to screen
+      const newCourse = {
+        courseId: uuidv4(),
+        name: name.current.value,
+        meetDay: meetDay.current.value,
+        meetTime: meetTime.current.value,
+        professor: professor.current.value
+      };
+      const newCourses = [...courses, newCourse];
+      setCourses(newCourses);
+  
+      // add course to database
+      const userRef = await getDocs(
+        query(
+          collection(db, "users")
+        )
+      );
+      userRef.docs.map(async (user) => {
+        if (user.data().uid === auth.currentUser.uid) {
+          const collectionRef = collection(db, `users/${user.id}/courses/`);
+          await addDoc(collectionRef, newCourse);
+        }
+      })
+  
+      handleClose();
+    } else {
+      setError('Error: no fields can be left blank.');
+    }
   };
 
   const deleteCourse = async (id) => {
