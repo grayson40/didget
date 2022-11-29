@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Container, Card, Row, Col, Modal, Form, Button, ProgressBar } from 'react-bootstrap'
+import { Container, Card, Row, Col, Modal, Form, Button, ProgressBar, Alert } from 'react-bootstrap'
 import Fab from '@mui/material/Fab';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa'
 import { ReferenceLine, BarChart, Bar, Cell, XAxis, YAxis } from 'recharts';
@@ -78,6 +78,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
   const [month, setMonth] = useState(d.getMonth() + 1);
   const [year, setYear] = useState(d.getFullYear())
   const [averages, setAverages] = useState([]);
+  const [error, setError] = useState('')
   const rentLimit = useRef();
   const groceriesLimit = useRef();
   const foodLimit = useRef();
@@ -243,6 +244,18 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
    * @returns void
    */
   const createBudget = async () => {
+    if (rentLimit.current.value === '' ||
+      groceriesLimit.current.value === '' ||
+      foodLimit.current.value === '' ||
+      insuranceLimit.current.value === '' ||
+      academicLimit.current.value === '' ||
+      entertainmentLimit.current.value === '' ||
+      debtLimit.current.value === '' ||
+      incomeRef.current.value === '') {
+      setError('Error: no fields can be blank.');
+      return;
+    }
+
     var rentTotal = 0, groceriesTotal = 0, foodTotal = 0, insuranceTotal = 0, academicTotal = 0, entertainmentTotal = 0, debtTotal = 0;
     expenses.forEach((expense) => {
       let arr = expense.date.split('/')
@@ -374,6 +387,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
 
     fetchData()
     handleClose()
+    setError('')
   }
 
   const deleteBudgets = async () => {
@@ -707,7 +721,7 @@ export default function BudgetContent({ notInCard, inDate, showButton, isBudget,
         <Modal show={open} onClose={handleClose} onHide={handleClose}>
           <Modal.Body>
             <h2 className='text-center mb-4'>Create Budget</h2>
-            {/* {error && <Alert variant="danger">{error}</Alert>} */}
+            {error && <Alert variant="danger">{error}</Alert>}
             <Form>
               {/* TODO: add budget category and limit fields */}
               <Form.Group id='income'>
