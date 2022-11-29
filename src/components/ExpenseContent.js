@@ -211,7 +211,6 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
    * @returns void
    */
   const addExpense = async () => {
-
     // Add expense to screen
     if (category.current.value === '') {
       setError('Error: Category cannot be empty')
@@ -219,6 +218,8 @@ export default function Expenses({ notInCard, showButton, inFinancial }) {
       setError('Error: Place cannot be empty')
     } else if (total.current.value === '') {
       setError('Error: Total cannot be empty')
+    } else if (category.current.value === 'Select Category ...') {
+      setError('Error: Category cannot be empty')
     } else {
       const newExpense = {
         id: uuidv4(),
